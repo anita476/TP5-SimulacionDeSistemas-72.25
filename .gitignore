@@ -66,3 +66,39 @@ vcpkg_installed/
 # test output & cache
 Testing/
 .cache/
+
+
+# OS
+.DS_Store
+
+# Python 
+.venv 
+__pycache__
+.log
+
+# Dumps del motor y animaciones
+data/
+!python/requirements.txt
+!configs/*.txt
+*.gif
+data/*.png
+*.webp
+!docs/results/**/*.png
+!docs/results/**/*.txt
+!docs/results/**/*.gif
+.vscode/c_cpp_properties.json
+
+# latex 
+*.aux
+*.gz
+*.fdb_latexmk
+*.nav
+*.snm
+*.fls 
+*.toc
+docs/extra
+
+# these runs are too expensive 
+docs/results/1.2/**/*.txt
+docs/presentation/main.pdf
+docs/presentation/main.vrb
