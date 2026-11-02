@@ -1,7 +1,7 @@
 #pragma once
 #include "particle.hpp"
 
-struct Pair {
+struct FSMPair {
   Particle left;
   Particle right;
   double kn;
