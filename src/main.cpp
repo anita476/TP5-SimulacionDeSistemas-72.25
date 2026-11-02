@@ -26,7 +26,13 @@ int main(int argc, char *argv[]) {
       .scan<'g', double>()
       .help("Final time, should be taken from experimental data. Default is "
             "average from experimental data");
-
+  program.add_argument("--kn").default_value(1.2e5).scan<'g', double>().help(
+      "Compression: Normal k");
+  program.add_argument("--kt").default_value(2.4e5).scan<'g', double>().help(
+      "Friction: Tangential k");
+  program.add_argument("--out-path", "--out_path", "--outpath")
+      .default_value("data/sim/")
+      .help("Path for output files");
   try {
     program.parse_args(argc, argv);
   } catch (const std::exception &err) {
