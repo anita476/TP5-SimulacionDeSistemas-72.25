@@ -17,8 +17,15 @@ int main(int argc, char *argv[]) {
       .default_value(0.25)
       .scan<'g', double>()
       .help("Compressible radius, used for CPM (use with rmin)");
-  program.add_argument("--dt").default_value(0.0).scan<'g', double>().help(
-      "Time step, should be taken from experimental data");
+  program.add_argument("--dt")
+      .default_value(0.066581442)
+      .scan<'g', double>()
+      .help("Time step, should be taken from experimental data");
+  program.add_argument("--tf")
+      .default_value(13.743811430)
+      .scan<'g', double>()
+      .help("Final time, should be taken from experimental data. Default is "
+            "average from experimental data");
 
   try {
     program.parse_args(argc, argv);
@@ -31,6 +38,7 @@ int main(int argc, char *argv[]) {
     // create the two particles with the initial speed 0
 
     // untill they reach the desired tf, step
+    // print each step
 
   } catch (const std::exception &err) {
     std::cerr << "error: " << err.what() << '\n';
