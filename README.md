@@ -38,3 +38,9 @@ Para compilar el motor de simulación:
 ```bash 
 cmake -S . -B build && cmake --build build
 ```
+
+
+### Referencias
+
+[CPP Reference](https://cppreference.com/)
+

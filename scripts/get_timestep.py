@@ -6,6 +6,9 @@ from pathlib import Path
 DEFAULT_DATA_PATH = (
     Path(__file__).resolve().parent.parent / "data" / "elusion_1_contra_1.txt"
 )
+DEFAULT_TRIALS_PATH = (
+    Path(__file__).resolve().parent.parent / "data" / "LEEME_elusion1contra1.txt"
+)
 
 
 def read_data(data_path: Path) -> tuple[float, list[int]]:
@@ -49,9 +52,39 @@ def read_data(data_path: Path) -> tuple[float, list[int]]:
     return frame_rate, sorted(frames)
 
 
+def read_trials(trials_path: Path) -> list[tuple[int, str, str, int, int]]:
+    trials: list[tuple[int, str, str, int, int]] = []
+    trial_pattern = re.compile(
+        r"prueba\s+(\d+):\s*sale izquierda\s+([^,]+),\s*sale derecha\s+([^,]+),"
+        r"\s*cuadros\s+(\d+)-(\d+)",
+        re.IGNORECASE,
+    )
+
+    with trials_path.open(encoding="utf-8") as trials_file:
+        for line in trials_file:
+            match = trial_pattern.search(line)
+            if match:
+                number, left_person, right_person, start_frame, final_frame = (
+                    match.groups()
+                )
+                trials.append(
+                    (
+                        int(number),
+                        left_person.strip(),
+                        right_person.strip(),
+                        int(start_frame),
+                        int(final_frame),
+                    )
+                )
+
+    if not trials:
+        raise ValueError(f"{trials_path}: no trial frame ranges found")
+    return trials
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Print frame times and the timestep for the elusion dataset."
+        description="Print per-pair durations and timesteps for the elusion dataset."
     )
     parser.add_argument(
         "data_file",
@@ -60,40 +93,48 @@ def main() -> None:
         default=DEFAULT_DATA_PATH,
         help=f"input data file (default: {DEFAULT_DATA_PATH})",
     )
-    data_path = parser.parse_args().data_file
+    parser.add_argument(
+        "--trials-file",
+        type=Path,
+        default=DEFAULT_TRIALS_PATH,
+        help=f"file containing trial frame ranges (default: {DEFAULT_TRIALS_PATH})",
+    )
+    args = parser.parse_args()
+    data_path = args.data_file
+    trials_path = args.trials_file
 
     frame_rate, frames = read_data(data_path)
+    trials = read_trials(trials_path)
     timestep = 1 / frame_rate
 
     print(f"Data file: {data_path}")
     print(f"Frame rate: {frame_rate:.6f} fps")
-    print("Timesteps (frame, time from frame 0 [s], delta from previous [s]):")
-    previous_frame: int | None = None
-    for frame in frames:
-        time = frame / frame_rate
-        delta = (
-            "n/a"
-            if previous_frame is None
-            else f"{(frame - previous_frame) / frame_rate:.9f}"
-        )
-        print(f"{frame}, {time:.9f}, {delta}")
-        previous_frame = frame
+    print(f"Trial data: {trials_path}")
+    print("Per-pair total times and timesteps:")
+    print("Trial | Pair (left-right) | Frames | dt (s/frame) | Total time (s)")
 
-    start_frame = frames[0]
-    final_frame = frames[-1]
-    start_time = start_frame / frame_rate
-    final_time = final_frame / frame_rate
-    total_time = final_time - start_time
-    print(f"Start time: {start_time:.9f} s (frame {start_frame})")
-    print(f"Final time: {final_time:.9f} s (frame {final_frame})")
-    print(
-        f"Total time: {final_time:.9f} - {start_time:.9f} "
-        f"= {total_time:.9f} s"
-    )
-    print(
-        f"Gathered timestep used: 1 / {frame_rate:.6f} = "
-        f"{timestep:.9f} s/frame"
-    )
+    total_times: list[float] = []
+    for number, left_person, right_person, start_frame, final_frame in trials:
+        if final_frame <= start_frame:
+            raise ValueError(
+                f"Trial {number}: final frame must be after start frame"
+            )
+        if start_frame not in frames or final_frame not in frames:
+            raise ValueError(
+                f"Trial {number}: frame range {start_frame}-{final_frame} "
+                "is outside the data"
+            )
+
+        total_time = (final_frame - start_frame) / frame_rate
+        total_times.append(total_time)
+        print(
+            f"{number:5} | {left_person} - {right_person} | "
+            f"{start_frame}-{final_frame} | {timestep:.9f} | {total_time:.9f}"
+        )
+
+    average_total_time = sum(total_times) / len(total_times)
+    print(f"Average total time: {average_total_time:.9f} s")
+    print(f"Gathered timestep used: 1 / {frame_rate:.6f} = {timestep:.9f} s/frame")
 
 
 if __name__ == "__main__":
