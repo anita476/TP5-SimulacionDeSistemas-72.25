@@ -29,3 +29,12 @@ Pruebas/pasadas: 19
   prueba  19: sale izquierda  29, sale derecha  38, cuadros 22902-23074, distancia minima 0.61 m
 
 ```
+
+
+### Compilación 
+
+Para compilar el motor de simulación:
+
+```bash 
+cmake -S . -B build && cmake --build build
+```
