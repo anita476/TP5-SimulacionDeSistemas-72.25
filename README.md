@@ -40,6 +40,25 @@ cmake -S . -B build && cmake --build build
 ```
 
 
+### Animación de trayectorias experimentales
+
+Requiere Python >= 3.10 y los datos en `data/` (`elusion_1_contra_1.txt` y
+`LEEME_elusion1contra1.txt`):
+
+```bash
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r scripts/requirements.txt
+```
+
+```bash
+python scripts/animate.py --trial 1 --show
+python scripts/animate.py --trial 1 --out data/anim/prueba1.gif
+python scripts/animate.py --trial 1 --mp4 data/anim/prueba1.mp4   # requiere ffmpeg
+python scripts/animate.py --trial 1 --png data/anim/prueba1.png --frame 80
+```
+
+
 ### Referencias
 
 [CPP Reference](https://cppreference.com/)
