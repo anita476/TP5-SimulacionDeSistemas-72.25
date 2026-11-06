@@ -47,8 +47,17 @@ Requiere Python >= 3.10 y los datos en `data/` (`elusion_1_contra_1.txt` y
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
+source .venv/bin/activate
 pip install -r scripts/requirements.txt
+```
+
+En Windows (PowerShell), crear el entorno con un Python >= 3.10 del launcher `py`
+(el `python` del PATH puede ser otro, por ejemplo el 3.9 de MSYS2):
+
+```powershell
+py -3.13 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r scripts/requirements.txt
 ```
 
 ```bash
