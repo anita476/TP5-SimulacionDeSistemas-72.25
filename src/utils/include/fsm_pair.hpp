@@ -6,4 +6,5 @@ struct FSMPair {
   Particle right;
   double kn;
   double kt;
+  double tau;
 };
