@@ -67,6 +67,15 @@ python scripts/animate.py --trial 1 --mp4 data/anim/prueba1.mp4   # requiere ffm
 python scripts/animate.py --trial 1 --png data/anim/prueba1.png --frame 80
 ```
 
+Tramo semihorizontal de cada prueba (sin la llegada a la posición inicial ni lo
+posterior al destino), un `data/cruces/pruebaN.txt` por prueba con el mismo
+formato que los datos, y su animación en `data/cruces/gif/pruebaN.gif`:
+
+```bash
+python scripts/extract_crossings.py
+python scripts/animate_crossings.py
+```
+
 
 ### Referencias
 

@@ -3,6 +3,11 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import NoReturn
 
+_DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data"
+DEFAULT_DATA_PATH = _DATA_DIR / "elusion_1_contra_1.txt"
+DEFAULT_TRIALS_PATH = _DATA_DIR / "LEEME_elusion1contra1.txt"
+DEFAULT_CROSSINGS_DIR = _DATA_DIR / "cruces"
+
 _FRAME_RATE = re.compile(r"\bframerate:\s*([0-9]+(?:\.[0-9]+)?)\s*fps\b", re.IGNORECASE)
 
 Position = tuple[float, float]
@@ -51,3 +56,33 @@ def read_experiment(path: str | Path) -> Experiment:
     if not tracks:
         raise ValueError(f"{path_s}: no data rows")
     return Experiment(frame_rate=frame_rate, tracks=tracks)
+
+
+def read_trials(trials_path: Path) -> list[tuple[int, str, str, int, int]]:
+    trials: list[tuple[int, str, str, int, int]] = []
+    trial_pattern = re.compile(
+        r"prueba\s+(\d+):\s*sale izquierda\s+([^,]+),\s*sale derecha\s+([^,]+),"
+        r"\s*cuadros\s+(\d+)-(\d+)",
+        re.IGNORECASE,
+    )
+
+    with trials_path.open(encoding="utf-8") as trials_file:
+        for line in trials_file:
+            match = trial_pattern.search(line)
+            if match:
+                number, left_person, right_person, start_frame, final_frame = (
+                    match.groups()
+                )
+                trials.append(
+                    (
+                        int(number),
+                        left_person.strip(),
+                        right_person.strip(),
+                        int(start_frame),
+                        int(final_frame),
+                    )
+                )
+
+    if not trials:
+        raise ValueError(f"{trials_path}: no trial frame ranges found")
+    return trials
