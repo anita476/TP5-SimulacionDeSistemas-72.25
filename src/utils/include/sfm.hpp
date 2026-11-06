@@ -1,6 +1,17 @@
 #pragma once
 #include "include/fsm_pair.hpp"
 #include "include/step.hpp"
+#include <vector>
+
+struct ContactForceInstance {
+  std::pair<double, double>
+      force_particle_1; // ON particle 1 caused by particle 2
+  std::pair<double, double> force_particle_2;
+};
+struct DrivingForceInstance {
+  std::pair<double, double> force_particle_1;
+  std::pair<double, double> force_particle_2;
+};
 
 /**
  * @brief Execute a step in a pair simulation.
