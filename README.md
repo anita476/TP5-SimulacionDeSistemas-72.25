@@ -40,6 +40,43 @@ cmake -S . -B build && cmake --build build
 ```
 
 
+### Animación de trayectorias experimentales
+
+Requiere Python >= 3.10 y los datos en `data/` (`elusion_1_contra_1.txt` y
+`LEEME_elusion1contra1.txt`):
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r scripts/requirements.txt
+```
+
+En Windows (PowerShell), crear el entorno con un Python >= 3.10 del launcher `py`
+(el `python` del PATH puede ser otro, por ejemplo el 3.9 de MSYS2):
+
+```powershell
+py -3.13 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r scripts/requirements.txt
+```
+
+```bash
+python scripts/animate.py --trial 1 --show
+python scripts/animate.py --trial 1 --out data/anim/prueba1.gif
+python scripts/animate.py --trial 1 --mp4 data/anim/prueba1.mp4   # requiere ffmpeg
+python scripts/animate.py --trial 1 --png data/anim/prueba1.png --frame 80
+```
+
+Tramo semihorizontal de cada prueba (sin la llegada a la posición inicial ni lo
+posterior al destino), un `data/cruces/pruebaN.txt` por prueba con el mismo
+formato que los datos, y su animación en `data/cruces/gif/pruebaN.gif`:
+
+```bash
+python scripts/extract_crossings.py
+python scripts/animate_crossings.py
+```
+
+
 ### Referencias
 
 [CPP Reference](https://cppreference.com/)
