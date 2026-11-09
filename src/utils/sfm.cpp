@@ -54,7 +54,7 @@ DrivingForceInstance driving_force(FSMPair pair,
 
 } // namespace
 
-Step sfm_step(FSMPair pair, double dt, double initial_time,
+Step sfm_step(FSMPair &pair, double dt, double initial_time,
               std::pair<double, double> target_left,
               std::pair<double, double> target_right) {
   auto [fc_l, fc_r] = contact_force(pair);

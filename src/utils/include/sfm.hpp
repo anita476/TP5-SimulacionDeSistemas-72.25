@@ -17,6 +17,6 @@ struct DrivingForceInstance {
  * @brief Execute a step in a pair simulation.
  * @returns Step if successfull, NULL if something went wrong
  */
-Step sfm_step(FSMPair pair, double dt, double initial_time,
+Step sfm_step(FSMPair &pair, double dt, double initial_time,
               std::pair<double, double> target_left,
               std::pair<double, double> target_right);

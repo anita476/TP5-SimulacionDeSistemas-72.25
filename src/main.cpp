@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
       .default_value("data/sim/")
       .help("Path for output files");
   program.add_argument("--traj_path", "--traj-path", "--trajpath")
-      .default_value("data/druces/pueba6.txt")
+      .default_value("data/cruces/prueba6.txt")
       .help("Path to the trajectory file");
   program.add_argument("--v_path", "--v-path", "--vpath")
       .default_value("data/pruebas_speeds.txt")
@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
       // for right, the target is left initial position
       std::pair<double, double> target_right = {pair.left.x, pair.left.y};
 
-      for (int i = 0; i < tf; i += dt) {
+      for (double i = 0.0; i < tf; i += dt) {
         Step step = sfm_step(pair, dt, i, target_left, target_right);
         write_sfm_traj_step(out, pair, i);
       }
