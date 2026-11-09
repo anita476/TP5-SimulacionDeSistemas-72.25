@@ -1,5 +1,5 @@
-#include "include/dump.h"
-#include "include/file_parser.h"
+#include "utils/include/dump.h"
+#include "utils/include/file_parser.h"
 #include "utils/include/sfm.hpp"
 #include <argparse/argparse.hpp>
 
@@ -109,8 +109,14 @@ int main(int argc, char *argv[]) {
       write_sfm_traj_header(out);
 
       // untill they reach the desired tf, step and dump
+      // for left, the target is right initial position
+      std::pair<double, double> target_left = {pair.right.x, pair.right.y};
+
+      // for right, the target is left initial position
+      std::pair<double, double> target_right = {pair.left.x, pair.left.y};
+
       for (int i = 0; i < tf; i += dt) {
-        Step step = sfm_step(pair, dt, i);
+        Step step = sfm_step(pair, dt, i, target_left, target_right);
         write_sfm_traj_step(out, pair, i);
       }
 

@@ -10,6 +10,10 @@ ContactForceInstance contact_force(FSMPair pair) {
   double rij = std::sqrt(dx * dx + dy * dy);
   double eij = rij - (pair.left.r + pair.right.r);
 
+  if (eij >= 0)
+    return {{0.0, 0.0},
+            {0.0, 0.0}}; // if they arent touching -> no contact force
+
   double enx = dx / rij, eny = dy / rij; // normal
   double etx = -eny, ety = enx;          // tangential
 
@@ -34,7 +38,7 @@ driving_force_particle(Particle particle, std::pair<double, double> target,
 
   // direction of desired vel
   double e0x = (dist > 1e-12) ? dx / dist : 0.0;
-  double e0y = (dist > 1e-12) ? dx / dist : 0.0;
+  double e0y = (dist > 1e-12) ? dy / dist : 0.0;
 
   return {particle.m * (particle.v0 * e0x - particle.vx / tau),
           particle.m * (particle.v0 * e0y - particle.vy / tau)};
@@ -49,3 +53,30 @@ DrivingForceInstance driving_force(FSMPair pair,
 }
 
 } // namespace
+
+Step sfm_step(FSMPair pair, double dt, double initial_time,
+              std::pair<double, double> target_left,
+              std::pair<double, double> target_right) {
+  auto [fc_l, fc_r] = contact_force(pair);
+  auto [fd_l, fd_r] = driving_force(pair, target_left, target_right);
+
+  double ax_l = (fd_l.first + fc_l.first) / pair.left.m;
+  double ay_l = (fd_l.second + fc_l.second) / pair.left.m;
+  double ax_r = (fd_r.first + fc_r.first) / pair.right.m;
+  double ay_r = (fd_r.second + fc_r.second) / pair.right.m;
+
+  // update speed, then update positions // @todo revisar esto, maybe se
+  // puede usar algo de verlet ?
+  pair.left.vx += ax_l * dt;
+  pair.left.vy += ay_l * dt;
+  pair.right.vx += ax_r * dt;
+  pair.right.vy += ay_r * dt;
+
+  pair.left.x += pair.left.vx * dt;
+  pair.left.y += pair.left.vy * dt;
+  pair.right.x += pair.right.vx * dt;
+  pair.right.y += pair.right.vy * dt;
+
+  return {initial_time + dt, pair.left.x, pair.left.y, pair.right.x,
+          pair.right.y};
+}
