@@ -39,11 +39,7 @@ Para compilar el motor de simulación:
 cmake -S . -B build && cmake --build build
 ```
 
-
-### Animación de trayectorias experimentales
-
-Requiere Python >= 3.10 y los datos en `data/` (`elusion_1_contra_1.txt` y
-`LEEME_elusion1contra1.txt`):
+y para los scripts crear el entorno virtual de python: 
 
 ```bash
 python -m venv .venv
@@ -51,14 +47,10 @@ source .venv/bin/activate
 pip install -r scripts/requirements.txt
 ```
 
-En Windows (PowerShell), crear el entorno con un Python >= 3.10 del launcher `py`
-(el `python` del PATH puede ser otro, por ejemplo el 3.9 de MSYS2):
 
-```powershell
-py -3.13 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r scripts/requirements.txt
-```
+### Animación de trayectorias experimentales
+
+
 
 ```bash
 python scripts/animate.py --trial 1 --show
@@ -76,8 +68,14 @@ python scripts/extract_crossings.py
 python scripts/animate_crossings.py
 ```
 
+Mediana de la rapidez de cada participante en cada prueba (en m/s), guardada
+como `prueba id_particula rapidez_mediana` en `data/pruebas_speeds.txt`:
+
+```bash
+python scripts/calculate_speeds.py
+```
+
 
 ### Referencias
 
 [CPP Reference](https://cppreference.com/)
-
