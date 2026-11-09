@@ -7,4 +7,6 @@ struct FSMPair {
   double kn;
   double kt;
   double tau;
+  double r_min;
+  double action_distance;
 };

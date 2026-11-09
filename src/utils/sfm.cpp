@@ -1,6 +1,7 @@
 #include "include/sfm.hpp"
 #include "include/fsm_pair.hpp"
 #include "include/particle.hpp"
+#include "include/quadratic_heuristic.hpp"
 #include <cmath>
 
 namespace {
@@ -30,15 +31,37 @@ ContactForceInstance contact_force(FSMPair pair) {
 }
 
 std::pair<double, double>
-driving_force_particle(Particle particle, std::pair<double, double> target,
-                       double tau) {
+driving_force_particle(FSMPair pair, std::pair<double, double> target,
+                       double tau, bool right) {
+  Particle particle, obstacle;
+  if (right) {
+    particle = pair.right;
+    obstacle = pair.left;
+  } else {
+    particle = pair.left;
+    obstacle = pair.right;
+  }
+
+  double e0x, e0y;
   double dx = (target.first - particle.x);
   double dy = (target.second - particle.y);
   double dist = std::sqrt(dx * dx + dy * dy);
 
-  // direction of desired vel
-  double e0x = (dist > 1e-12) ? dx / dist : 0.0;
-  double e0y = (dist > 1e-12) ? dy / dist : 0.0;
+  // are they conflicting ?
+  double dist_between_particles =
+      std::hypot((particle.x - obstacle.x), (particle.y - obstacle.y));
+  if ((dist_between_particles <= pair.action_distance &&
+       is_conflicting(particle, obstacle, target, pair.r_min))) {
+    const auto dir =
+        new_desired_direction(particle, obstacle, target, pair.r_min);
+    e0x = dir.first;
+    e0y = dir.second;
+  } else {
+
+    // direction of desired vel -> normal fst
+    e0x = (dist > 1e-12) ? dx / dist : 0.0;
+    e0y = (dist > 1e-12) ? dy / dist : 0.0;
+  }
 
   return {particle.m * (particle.v0 * e0x - particle.vx / tau),
           particle.m * (particle.v0 * e0y - particle.vy / tau)};
@@ -48,8 +71,8 @@ DrivingForceInstance driving_force(FSMPair pair,
                                    std::pair<double, double> target_p1,
                                    std::pair<double, double> target_p2) {
 
-  return {driving_force_particle(pair.left, target_p1, pair.tau),
-          driving_force_particle(pair.right, target_p2, pair.tau)};
+  return {driving_force_particle(pair, target_p1, pair.tau, false),
+          driving_force_particle(pair, target_p2, pair.tau, true)};
 }
 
 } // namespace

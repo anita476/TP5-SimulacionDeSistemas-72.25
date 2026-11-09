@@ -21,6 +21,7 @@ FetchContent_MakeAvailable(argparse)
 
 add_library(libs STATIC
     src/utils/sfm.cpp
+    src/utils/quadratic_heuristic.cpp
 )
 
 # Add include directories to a target.
