@@ -1,4 +1,11 @@
+#include "include/dump.h"
+#include "include/file_parser.h"
+#include "utils/include/sfm.hpp"
 #include <argparse/argparse.hpp>
+
+const double MASS = 10;
+const double TAU = 0.5;
+const int PRECISION = 8;
 
 int main(int argc, char *argv[]) {
   argparse::ArgumentParser program("Elusion-TP5", "0.1",
@@ -33,6 +40,12 @@ int main(int argc, char *argv[]) {
   program.add_argument("--out-path", "--out_path", "--outpath")
       .default_value("data/sim/")
       .help("Path for output files");
+  program.add_argument("--traj_path", "--traj-path", "--trajpath")
+      .default_value("data/druces/pueba6.txt")
+      .help("Path to the trajectory file");
+  program.add_argument("--v_path", "--v-path", "--vpath")
+      .default_value("data/pruebas_speeds.txt")
+      .help("Path to the median velocity file");
   try {
     program.parse_args(argc, argv);
   } catch (const std::exception &err) {
@@ -41,11 +54,69 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   try {
-    // create the two particles with the initial speed 0
+    if (program.get("--type") == "sfm") {
+      std::string traj_path = program.get("--traj_path");
+      std::string v_path = program.get("--v_path");
+      std::string out_path = program.get("--out_path");
+      double tf = program.get<double>("--tf");
+      double dt = program.get<double>("--dt");
 
-    // untill they reach the desired tf, step
-    // print each step
+      std::cout << "Model SFM\n";
 
+      // get the test num
+      int num = parse_test_num(traj_path);
+      // get the standard vels and pos
+      SpeedRow vdata = read_speed(v_path, num);
+      InitialPositions positions = parse_initial_positions(
+          traj_path, vdata.particle_left, vdata.particle_right);
+
+      // create the two particles with the initial speed 0
+      Particle left = {
+          .id = vdata.particle_left,
+          .m = MASS,
+          .r = program.get<double>("--r"),
+          .type = FIXED,
+          .v0 = vdata.particle_left_speed,
+          .vx = 0,
+          .vy = 0,
+          .x = positions.particle_left_x,
+          .y = positions.particle_left_y,
+      };
+      Particle right = {
+          .id = vdata.particle_right,
+          .m = MASS,
+          .r = program.get<double>("--r"),
+          .type = FIXED,
+          .v0 = vdata.particle_right_speed,
+          .vx = 0,
+          .vy = 0,
+          .x = positions.particle_right_x,
+          .y = positions.particle_right_y,
+      };
+      FSMPair pair = {
+          .kn = program.get<double>("--kn"),
+          .kt = program.get<double>("--kt"),
+          .left = left,
+          .right = right,
+          .tau = TAU,
+      };
+      // dump header
+      std::ofstream out(out_path);
+      if (!out.is_open()) {
+        throw std::runtime_error("Could not open output file: " + out_path);
+      }
+      out << std::setprecision(PRECISION);
+      write_sfm_traj_header(out);
+
+      // untill they reach the desired tf, step and dump
+      for (int i = 0; i < tf; i += dt) {
+        Step step = sfm_step(pair, dt, i);
+        write_sfm_traj_step(out, pair, i);
+      }
+
+    } else if (program.get("--type") == "cpm") {
+      throw std::invalid_argument("Model CPM not implemented");
+    }
   } catch (const std::exception &err) {
     std::cerr << "error: " << err.what() << '\n';
     return 1;
