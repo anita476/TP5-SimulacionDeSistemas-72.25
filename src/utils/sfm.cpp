@@ -63,8 +63,8 @@ driving_force_particle(FSMPair pair, std::pair<double, double> target,
     e0y = (dist > 1e-12) ? dy / dist : 0.0;
   }
 
-  return {particle.m * (particle.v0 * e0x - particle.vx / tau),
-          particle.m * (particle.v0 * e0y - particle.vy / tau)};
+  return {(particle.m * (particle.v0 * e0x - particle.vx) / tau),
+          (particle.m * (particle.v0 * e0y - particle.vy) / tau)};
 };
 
 DrivingForceInstance driving_force(FSMPair pair,

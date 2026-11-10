@@ -5,7 +5,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "lib"))
 
-from traj import DEFAULT_DATA_PATH, DEFAULT_TRIALS_PATH, read_trials
+from traj import DEFAULT_CROSSINGS_DIR
+
+_FRAME_RATE = re.compile(r"\bframerate:\s*([0-9]+(?:\.[0-9]+)?)\s*fps\b", re.IGNORECASE)
+_CROSSING_FILE = re.compile(r"prueba(\d+)\.txt")
 
 
 def read_data(data_path: Path) -> tuple[float, list[int]]:
@@ -20,11 +23,7 @@ def read_data(data_path: Path) -> tuple[float, list[int]]:
 
             if stripped_line.startswith("#"):
                 if frame_rate is None:
-                    match = re.search(
-                        r"\bframerate:\s*([0-9]+(?:\.[0-9]+)?)\s*fps\b",
-                        stripped_line,
-                        re.IGNORECASE,
-                    )
+                    match = _FRAME_RATE.search(stripped_line)
                     if match:
                         frame_rate = float(match.group(1))
                 continue
@@ -43,65 +42,54 @@ def read_data(data_path: Path) -> tuple[float, list[int]]:
 
     if frame_rate is None or frame_rate <= 0:
         raise ValueError(f"{data_path}: missing a positive framerate in the header")
-    if not frames:
-        raise ValueError(f"{data_path}: no data frames found")
+    if len(frames) < 2:
+        raise ValueError(f"{data_path}: expected at least two distinct data frames")
 
     return frame_rate, sorted(frames)
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Print per-pair durations and timesteps for the elusion dataset."
+        description="Write each crossing's total time and print its timestep."
     )
     parser.add_argument(
-        "data_file",
-        nargs="?",
+        "--in-dir",
         type=Path,
-        default=DEFAULT_DATA_PATH,
-        help=f"input data file (default: {DEFAULT_DATA_PATH})",
+        default=DEFAULT_CROSSINGS_DIR,
+        help=f"directory containing pruebaN.txt files (default: {DEFAULT_CROSSINGS_DIR})",
     )
     parser.add_argument(
-        "--trials-file",
+        "--out",
         type=Path,
-        default=DEFAULT_TRIALS_PATH,
-        help=f"file containing trial frame ranges (default: {DEFAULT_TRIALS_PATH})",
+        default=DEFAULT_CROSSINGS_DIR / "tiempos_totales.txt",
+        help="output file (default: data/cruces/tiempos_totales.txt)",
     )
     args = parser.parse_args()
-    data_path = args.data_file
-    trials_path = args.trials_file
 
-    frame_rate, frames = read_data(data_path)
-    trials = read_trials(trials_path)
-    timestep = 1 / frame_rate
+    crossing_files = []
+    for path in args.in_dir.glob("prueba*.txt"):
+        match = _CROSSING_FILE.fullmatch(path.name)
+        if match:
+            crossing_files.append((int(match.group(1)), path))
+    crossing_files.sort()
+    if not crossing_files:
+        sys.exit(f"{args.in_dir}: no files matching pruebaN.txt")
 
-    print(f"Data file: {data_path}")
-    print(f"Frame rate: {frame_rate:.6f} fps")
-    print(f"Trial data: {trials_path}")
-    print("Per-pair total times and timesteps:")
-    print("Trial | Pair (left-right) | Frames | dt (s/frame) | Total time (s)")
+    rows = []
+    try:
+        for crossing, path in crossing_files:
+            frame_rate, frames = read_data(path)
+            timestep = 1 / frame_rate
+            total_time = (frames[-1] - frames[0]) / frame_rate
+            rows.append(f"{crossing} {total_time:.9f}")
+            print(f"Cruce {crossing}: timestep = {timestep:.9f} s/frame")
 
-    total_times: list[float] = []
-    for number, left_person, right_person, start_frame, final_frame in trials:
-        if final_frame <= start_frame:
-            raise ValueError(
-                f"Trial {number}: final frame must be after start frame"
-            )
-        if start_frame not in frames or final_frame not in frames:
-            raise ValueError(
-                f"Trial {number}: frame range {start_frame}-{final_frame} "
-                "is outside the data"
-            )
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        args.out.write_text("".join(f"{row}\n" for row in rows), encoding="utf-8")
+    except (OSError, ValueError) as error:
+        sys.exit(str(error))
 
-        total_time = (final_frame - start_frame) / frame_rate
-        total_times.append(total_time)
-        print(
-            f"{number:5} | {left_person} - {right_person} | "
-            f"{start_frame}-{final_frame} | {timestep:.9f} | {total_time:.9f}"
-        )
-
-    average_total_time = sum(total_times) / len(total_times)
-    print(f"Average total time: {average_total_time:.9f} s")
-    print(f"Gathered timestep used: 1 / {frame_rate:.6f} = {timestep:.9f} s/frame")
+    print(f"Escrito {args.out} ({len(rows)} cruces)")
 
 
 if __name__ == "__main__":

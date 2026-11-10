@@ -12,9 +12,14 @@ struct InitialPositions {
   double particle_right_x;
   double particle_right_y;
 };
-
-InitialPositions parse_initial_positions(const std::string &path, int left_id,
-                                         int right_id) {
+struct InitialSpeeds {
+  double particle_left_x;
+  double particle_left_y;
+  double particle_right_x;
+  double particle_right_y;
+};
+inline InitialPositions parse_initial_positions(const std::string &path,
+                                                int left_id, int right_id) {
   std::ifstream file(path);
   if (!file.is_open()) {
     throw std::runtime_error("Could not open file: " + path);
@@ -71,7 +76,27 @@ struct FileRow {
   double c;
 };
 
-SpeedRow read_speed(const std::string &path, int num) {
+inline double parse_final_time(const std::string &path_str, int num) {
+  std::ifstream file(path_str);
+  if (!file.is_open()) {
+    throw std::runtime_error("Could not open file: " + path_str);
+  }
+  std::string line;
+  int num_file;
+  double tf;
+  while (std::getline(file, line)) {
+    std::istringstream iss(line);
+    if (!(iss >> num_file >> tf)) {
+      continue;
+    }
+    if (num_file == num) {
+      return tf;
+    }
+  }
+  return (-1.0);
+}
+
+inline SpeedRow read_speed(const std::string &path, int num) {
   std::ifstream file(path);
   if (!file.is_open()) {
     throw std::runtime_error("Could not open file: " + path);
@@ -110,7 +135,7 @@ SpeedRow read_speed(const std::string &path, int num) {
                            std::to_string(num));
 }
 
-int parse_test_num(const std::string &path_str) {
+inline int parse_test_num(const std::string &path_str) {
   std::filesystem::path p(path_str);
   std::string stem = p.stem().string();
 
@@ -119,4 +144,48 @@ int parse_test_num(const std::string &path_str) {
     throw std::runtime_error("Unexpected file name: " + stem);
   }
   return std::stoi(stem.substr(prefix.size()));
+}
+
+inline InitialSpeeds parse_initial_speeds(const std::string &path, int left_id,
+                                          int right_id, int run_num) {
+  std::ifstream file(path);
+  if (!file.is_open()) {
+    throw std::runtime_error("Could not open file: " + path);
+  }
+
+  InitialSpeeds ret{};
+  bool found_left = false;
+  bool found_right = false;
+  std::string line;
+
+  while (std::getline(file, line)) {
+    if (line.empty() || line[0] == '#') {
+      continue; // skip comments and blank lines
+    }
+
+    std::istringstream iss(line);
+    int num, id;
+    double vx, vy;
+    if (!(iss >> num >> id >> vx >> vy)) {
+      continue; // malformed line
+    }
+
+    if (id == left_id && !found_left && num == run_num) {
+      ret.particle_left_x = vx;
+      ret.particle_left_y = vy;
+      found_left = true;
+    } else if (id == right_id && !found_right && num == run_num) {
+      ret.particle_right_x = vx;
+      ret.particle_right_y = vy;
+      found_right = true;
+    }
+
+    if (found_left && found_right) {
+      return ret;
+    }
+  }
+
+  throw std::runtime_error("Could not find both particles (ids " +
+                           std::to_string(left_id) + " and " +
+                           std::to_string(right_id) + ") in " + path);
 }

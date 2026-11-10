@@ -56,7 +56,7 @@ def main() -> None:
     parser.add_argument("--out", help="output GIF")
     parser.add_argument("--mp4", help="output MP4 (requires ffmpeg)")
     parser.add_argument("--png", help="PNG of one frame")
-    parser.add_argument("--frame", type=int, default=None, help="PNG simulation row (default: middle; 0 = initial); snaps to the nearest drawn row")
+    parser.add_argument("--frame", type=int, default=None, help="PNG simulation row (default: last; 0 = initial); snaps to the nearest drawn row")
     parser.add_argument("--show", action="store_true", help="open a window")
     parser.add_argument("--fps", type=int, default=None, help="video frames per second (default: drawn frame rate rounded, ~real time)")
     parser.add_argument(
@@ -109,7 +109,7 @@ def main() -> None:
     fig, draw = make_figure(trial, pedestrians, drawn_rate, args.r)
 
     if args.png:
-        row = n_frames // 2 if args.frame is None else args.frame
+        row = n_frames - 1 if args.frame is None else args.frame
         if not 0 <= row < n_frames:
             sys.exit(f"--frame must be in [0, {n_frames - 1}]")
         index = min(round(row / stride), n_drawn - 1)  # nearest drawn frame

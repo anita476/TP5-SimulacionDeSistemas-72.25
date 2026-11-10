@@ -16,11 +16,6 @@ int main(int argc, char *argv[]) {
       .default_value(0.066581442)
       .scan<'g', double>()
       .help("Time step, should be taken from experimental data");
-  program.add_argument("--tf")
-      .default_value(13.743811430)
-      .scan<'g', double>()
-      .help("Final time, should be taken from experimental data. Default is "
-            "average from experimental data");
   program.add_argument("--kn").default_value(1.2e5).scan<'g', double>().help(
       "Compression: Normal k");
   program.add_argument("--kt").default_value(2.4e5).scan<'g', double>().help(
@@ -31,6 +26,12 @@ int main(int argc, char *argv[]) {
   program.add_argument("--traj_path", "--traj-path", "--trajpath")
       .default_value("data/cruces/prueba6.txt")
       .help("Path to the trajectory file");
+  program.add_argument("--time_path", "--time-path", "--timepath")
+      .default_value("data/tiempos_totales.txt");
+  program
+      .add_argument("--initial_speeds_path", "--initial-speeds-path",
+                    "--initialspeedspath")
+      .default_value("data/velocidades_iniciales.txt");
   program.add_argument("--v_path", "--v-path", "--vpath")
       .default_value("data/pruebas_speeds.txt")
       .help("Path to the median velocity file");
@@ -56,19 +57,38 @@ int main(int argc, char *argv[]) {
   }
   try {
     std::string traj_path = program.get("--traj_path");
+    std::string time_path = program.get("--time_path");
     std::string v_path = program.get("--v_path");
     std::string out_path = program.get("--out_path");
-    double tf = program.get<double>("--tf");
+    std::string initial_speeds_path = program.get("--initial_speeds_path");
+
     double dt = program.get<double>("--dt");
 
     std::cout << "Model SFM\n";
 
     // get the test num
     int num = parse_test_num(traj_path);
+    std::cout << "Simulating run " << num << "\n";
+
     // get the standard vels and pos
     SpeedRow vdata = read_speed(v_path, num);
+    std::cout << "Particle left: " << vdata.particle_left
+              << "average v: " << vdata.particle_left_speed << "\n";
+    std::cout << "Particle right: " << vdata.particle_right
+              << "average v: " << vdata.particle_right_speed << "\n";
+
+    double tf = parse_final_time(time_path, num);
+    if (tf <= 0) {
+      throw std::invalid_argument("Couldnt get final time from traj\n");
+    }
+    std::cout << "Final time: " << tf << "\n";
+
     InitialPositions positions = parse_initial_positions(
         traj_path, vdata.particle_left, vdata.particle_right);
+
+    // Obs!! Can use, @todo ask later
+    InitialSpeeds speeds = parse_initial_speeds(
+        initial_speeds_path, vdata.particle_left, vdata.particle_right, num);
 
     // create the two particles with the initial speed 0
     Particle left = {
@@ -77,8 +97,10 @@ int main(int argc, char *argv[]) {
         .r = program.get<double>("--r"),
         .type = FIXED,
         .v0 = vdata.particle_left_speed,
-        .vx = 0,
-        .vy = 0,
+        //.vx = speeds.particle_left_x,
+        //.vy = speeds.particle_left_y,
+        .vx = 0.0,
+        .vy = 0.0,
         .x = positions.particle_left_x,
         .y = positions.particle_left_y,
     };
@@ -88,8 +110,10 @@ int main(int argc, char *argv[]) {
         .r = program.get<double>("--r"),
         .type = FIXED,
         .v0 = vdata.particle_right_speed,
-        .vx = 0,
-        .vy = 0,
+        //.vx = speeds.particle_right_x,
+        //.vy = speeds.particle_right_y,
+        .vx = 0.0,
+        .vy = 0.0,
         .x = positions.particle_right_x,
         .y = positions.particle_right_y,
     };

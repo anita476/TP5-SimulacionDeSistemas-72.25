@@ -32,7 +32,7 @@ def main() -> None:
     parser.add_argument("--out", help="output GIF")
     parser.add_argument("--mp4", help="output MP4 (requires ffmpeg)")
     parser.add_argument("--png", help="PNG of one frame")
-    parser.add_argument("--frame", type=int, default=None, help="PNG frame index within the trial (default: middle; 0 = initial)")
+    parser.add_argument("--frame", type=int, default=None, help="PNG frame index within the trial (default: last; 0 = initial)")
     parser.add_argument("--show", action="store_true", help="open a window")
     parser.add_argument("--fps", type=int, default=None, help="video frames per second (default: experimental frame rate rounded, ~real time)")
     args = parser.parse_args()
@@ -64,7 +64,7 @@ def main() -> None:
     n_frames = final - start + 1
 
     if args.png:
-        index = n_frames // 2 if args.frame is None else args.frame
+        index = n_frames - 1 if args.frame is None else args.frame
         if not 0 <= index < n_frames:
             sys.exit(f"--frame must be in [0, {n_frames - 1}]")
         draw(index)

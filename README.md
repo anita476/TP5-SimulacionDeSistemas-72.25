@@ -47,6 +47,17 @@ source .venv/bin/activate
 pip install -r scripts/requirements.txt
 ```
 
+### Ejecución del motor 
+
+Ejemplo de ejecución:
+
+```bash 
+./build/ElusionSIM \
+  --traj_path data/cruces/prueba3.txt \
+  --r_min 0.4 --action_distance 60.0 \
+  --v_path data/pruebas_speeds.txt \
+  --out-path data/sim/prueba3_NEW.txt --dt 0.00001 \
+```
 
 ### Animación de trayectorias experimentales
 
@@ -68,11 +79,30 @@ python scripts/extract_crossings.py
 python scripts/animate_crossings.py
 ```
 
-Mediana de la rapidez de cada participante en cada prueba (en m/s), guardada
-como `prueba id_particula rapidez_mediana` en `data/pruebas_speeds.txt`:
+Duración total de cada cruce en segundos, calculada a partir de sus cuadros y
+framerate. El script escribe `numero_cruce tiempo_total` en
+`data/cruces/tiempos_totales.txt` e imprime el timestep de cada archivo:
+
+```bash
+python scripts/get_timestep.py
+```
+
+Promedio de las rapideces entre cuadros consecutivos para cada
+participante en cada prueba (en m/s), guardado como
+`prueba id_particula rapidez_promedio` en `data/pruebas_speeds.txt`:
 
 ```bash
 python scripts/calculate_speeds.py
+```
+
+Velocidades iniciales `vx` y `vy` de cada partícula en cada cruce, estimadas
+con las dos primeras posiciones registradas y guardadas como
+`cruce_num particula_id vx vy` en `data/cruces/velocidades_iniciales.txt`.
+Para cada cruce, primero aparece la partícula de la izquierda y después la de
+la derecha:
+
+```bash
+python scripts/get_initial_speeds.py
 ```
 
 

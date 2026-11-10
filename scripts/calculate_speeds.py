@@ -9,7 +9,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / "lib"))
 from lib.traj import DEFAULT_CROSSINGS_DIR, DEFAULT_DATA_PATH, DEFAULT_TRIALS_PATH, read_experiment, read_trials
 
 
-def median_speed(track: dict[int, tuple[float, float]], frame_rate: float) -> float:
+def average_speed(track: dict[int, tuple[float, float]], frame_rate: float) -> float:
     frames = sorted(track)
     if len(frames) < 2:
         raise ValueError("at least two positions are required to calculate speed")
@@ -20,11 +20,11 @@ def median_speed(track: dict[int, tuple[float, float]], frame_rate: float) -> fl
         x, y = track[frame]
         next_x, next_y = track[next_frame]
         speeds.append(math.hypot(next_x - x, next_y - y) / elapsed_time)
-    return statistics.median(speeds)
+    return statistics.fmean(speeds)
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Write the median speed of each participant in every crossing")
+    parser = argparse.ArgumentParser(description="Write the average speed of each participant in every crossing")
     parser.add_argument(
         "--in-dir", type=Path, default=DEFAULT_CROSSINGS_DIR, help=f"crossing files (default: {DEFAULT_CROSSINGS_DIR})"
     )
@@ -56,7 +56,7 @@ def main() -> None:
             for person in (left, right):
                 if person not in experiment.tracks:
                     raise ValueError(f"person {person} is not in the crossing data")
-                speed = median_speed(experiment.tracks[person], experiment.frame_rate)
+                speed = average_speed(experiment.tracks[person], experiment.frame_rate)
                 rows.append(f"{trial} {person} {speed:.6f}")
         except (OSError, ValueError) as error:
             sys.exit(f"{path}: {error}")
