@@ -73,9 +73,9 @@ int main(int argc, char *argv[]) {
     // get the standard vels and pos
     SpeedRow vdata = read_speed(v_path, num);
     std::cout << "Particle left: " << vdata.particle_left
-              << "average v: " << vdata.particle_left_speed << "\n";
+              << " average v: " << vdata.particle_left_speed << "\n";
     std::cout << "Particle right: " << vdata.particle_right
-              << "average v: " << vdata.particle_right_speed << "\n";
+              << " average v: " << vdata.particle_right_speed << "\n";
 
     double tf = parse_final_time(time_path, num);
     if (tf <= 0) {
