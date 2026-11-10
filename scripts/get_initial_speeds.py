@@ -5,7 +5,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "lib"))
 
-from traj import DEFAULT_CROSSINGS_DIR, DEFAULT_TRIALS_PATH, read_experiment, read_trials
+from lib.traj import DEFAULT_CROSSINGS_DIR, DEFAULT_TRIALS_PATH, read_experiment, read_trials
 
 _CROSSING_FILE = re.compile(r"prueba(\d+)\.txt")
 

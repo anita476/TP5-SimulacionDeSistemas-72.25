@@ -21,7 +21,7 @@ fi
 mkdir -p data/sim
 found=false
 
-for traj in data/cruces/prueba*.txt; do
+for traj in data/cruces_postprocess/prueba*.txt; do
   [[ -f "$traj" ]] || continue
   found=true
 

@@ -90,7 +90,7 @@ python scripts/animate_crossings.py
 
 Duración total de cada cruce en segundos, calculada a partir de sus cuadros y
 framerate. El script escribe `numero_cruce tiempo_total` en
-`data/cruces/tiempos_totales.txt` e imprime el timestep de cada archivo:
+`data/cruces_postprocess/tiempos_totales.txt` e imprime el timestep de cada archivo:
 
 ```bash
 python scripts/get_timestep.py
@@ -113,7 +113,23 @@ la derecha:
 ```bash
 python scripts/get_initial_speeds.py
 ```
+### Comparaciones de trayectorias 
 
+Para obtener la comparación trayectoria - simulación de un cruce acorde a la métrica 1 (nearest point):
+
+```
+python scripts/calculate_nearest_point.py --traj data/cruces/prueba3.txt --sim data/sim/prueba3_sim.txt -o data/comparisons/prueba3_compare.txt 
+``` 
+
+Luego para graficar esa diferencia: 
+```bash
+python scripts/plot_nearest_point_diff.py --diff data/comparisons/prueba3_compare.txt --outdir data/comparisons
+```
+Y para graficar las trayectorias (png):
+
+```bash
+python scripts/plot_traj.py --traj data/cruces/prueba1.txt data/cruces/prueba1.txt --sim data/sim/prueba1_sim.txt data/sim/prueba1_sim.txt --outdir data/comparisons
+```
 
 ### Referencias
 

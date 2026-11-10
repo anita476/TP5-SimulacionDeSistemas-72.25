@@ -4,7 +4,7 @@ Grafica las 2 curvas de diferencia (distancia^2 mínima al punto simulado más c
 en función del tiempo, a partir del archivo generado por metrica_punto_cercano.py.
 Las líneas punteadas horizontales marcan el promedio E2 de cada partícula.
 
-Color: izquierda = BLUE, derecha = VERMILLION. La partícula de la izquierda es la que
+Color: izquierda = VIOLET, derecha = RED. La partícula de la izquierda es la que
 empieza con menor x_exp. El tiempo es (frame - frame inicial común) / fps.
 
 Uso:
@@ -23,7 +23,7 @@ import numpy as np
 
 matplotlib.use("Agg")
 
-from lib.plot_style import BLUE, VERMILLION, apply_academic_style, style_axes
+from lib.plot_style import VIOLET, RED, apply_academic_style, style_axes
 
 FPS_DEFECTO = 15.0192
 
@@ -68,7 +68,7 @@ def leer_diff(ruta):
 
 def graficar(prueba, particulas, fps, outdir):
     ids = sorted(particulas, key=lambda p: particulas[p]["x"][0])  # menor x inicial -> izquierda
-    estilo = dict(zip(ids, [("izquierda", BLUE), ("derecha", VERMILLION)]))
+    estilo = dict(zip(ids, [("izquierda", VIOLET), ("derecha", RED)]))
     t0 = min(particulas[p]["frames"][0] for p in ids)
 
     apply_academic_style()
@@ -98,10 +98,10 @@ def graficar(prueba, particulas, fps, outdir):
     fig.legend(handles, labels, loc="lower center", ncol=2, frameon=True, fancybox=False)
 
     os.makedirs(outdir, exist_ok=True)
-    for ext in ("png", "pdf"):
-        ruta = os.path.join(outdir, f"diferencias_{prueba}.{ext}")
-        fig.savefig(ruta)
-        print(f"Guardado: {ruta}")
+    
+    ruta = os.path.join(outdir, f"diferencias_{prueba}.png")
+    fig.savefig(ruta)
+    print(f"Guardado: {ruta}")
     plt.close(fig)
 
 

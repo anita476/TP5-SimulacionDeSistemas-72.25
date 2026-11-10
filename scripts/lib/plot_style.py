@@ -7,6 +7,8 @@ BLUE = "#0072B2"
 VERMILLION = "#FF7003"
 GREEN = "#009E73"
 PURPLE = "#CC79A7"
+RED = "#DB2B2B"
+VIOLET = "#6E00B7"
 
 
 def apply_academic_style() -> None:

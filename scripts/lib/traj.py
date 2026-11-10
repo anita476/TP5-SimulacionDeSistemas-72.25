@@ -6,7 +6,7 @@ from typing import NoReturn
 _DATA_DIR = Path(__file__).resolve().parent.parent.parent / "data"
 DEFAULT_DATA_PATH = _DATA_DIR / "elusion_1_contra_1.txt"
 DEFAULT_TRIALS_PATH = _DATA_DIR / "LEEME_elusion1contra1.txt"
-DEFAULT_CROSSINGS_DIR = _DATA_DIR / "cruces"
+DEFAULT_CROSSINGS_DIR = _DATA_DIR / "cruces_postprocess"
 
 _FRAME_RATE = re.compile(r"\bframerate:\s*([0-9]+(?:\.[0-9]+)?)\s*fps\b", re.IGNORECASE)
 

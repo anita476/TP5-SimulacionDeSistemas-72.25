@@ -5,7 +5,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "lib"))
 
-from traj import DEFAULT_CROSSINGS_DIR
+from lib.traj import DEFAULT_CROSSINGS_DIR
 
 _FRAME_RATE = re.compile(r"\bframerate:\s*([0-9]+(?:\.[0-9]+)?)\s*fps\b", re.IGNORECASE)
 _CROSSING_FILE = re.compile(r"prueba(\d+)\.txt")
