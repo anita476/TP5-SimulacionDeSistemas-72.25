@@ -5,6 +5,8 @@ SAVE_DPI = 300
 
 BLUE = "#0072B2"
 VERMILLION = "#FF7003"
+GREEN = "#009E73"
+PURPLE = "#CC79A7"
 
 
 def apply_academic_style() -> None:
