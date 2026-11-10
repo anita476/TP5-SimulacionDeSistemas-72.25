@@ -9,38 +9,10 @@ import matplotlib
 
 from anim import GIF_DPI, LEFT, RIGHT, make_figure
 from plot_style import SAVE_DPI
-from traj import Position
+from traj import read_sim
 
 MP4_DPI = 120
 TARGET_FPS = 15
-
-
-def read_sim(path: Path) -> dict[int, tuple[list[float], list[Position | None]]]:
-    """Read 'particle_id time x y vx vy' rows. Returns {id: (times, positions)}."""
-    rows: dict[int, tuple[list[float], list[Position | None]]] = {}
-    with open(path, encoding="utf-8") as file:
-        header = file.readline().split()
-        if header[:4] != ["particle_id", "time", "x", "y"]:
-            raise ValueError(f"{path}: unexpected header {header}")
-        for number, line in enumerate(file, start=2):
-            if not line.strip() or line.startswith("#"):
-                continue
-            fields = line.split()
-            if len(fields) < 4:
-                raise ValueError(f"{path}:{number}: expected at least 4 columns")
-            try:
-                particle = int(fields[0])
-                time, x, y = (float(value) for value in fields[1:4])
-            except ValueError:
-                raise ValueError(f"{path}:{number}: invalid values in {line.strip()!r}") from None
-            times, positions = rows.setdefault(particle, ([], []))
-            times.append(time)
-            positions.append((x, y))
-    if len(rows) != 2:
-        raise ValueError(f"{path}: expected exactly 2 particles, found {len(rows)}")
-    if len({len(times) for times, _ in rows.values()}) != 1:
-        raise ValueError(f"{path}: particles have different numbers of steps")
-    return rows
 
 
 def guess_trial(path: Path) -> int:

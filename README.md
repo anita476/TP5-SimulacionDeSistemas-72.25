@@ -70,6 +70,15 @@ python scripts/animate.py --trial 1 --mp4 data/anim/prueba1.mp4   # requiere ffm
 python scripts/animate.py --trial 1 --png data/anim/prueba1.png --frame 80
 ```
 
+Experimental y simulada en la misma animación (`--data` el cruce real, `--sim` el
+dump). Reales en línea continua, simuladas en punteado.
+
+```bash
+python scripts/animate_compare.py --data data/cruces/prueba1.txt --sim data/sim/prueba1.txt --show
+python scripts/animate_compare.py --data data/cruces/prueba1.txt --sim data/sim/prueba1.txt --out data/anim/prueba1_compare.gif
+python scripts/animate_compare.py --data data/cruces/prueba3.txt --sim data/sim/prueba6.txt --png data/anim/compare.png --frame 40
+```
+
 Tramo semihorizontal de cada prueba (sin la llegada a la posición inicial ni lo
 posterior al destino), un `data/cruces/pruebaN.txt` por prueba con el mismo
 formato que los datos, y su animación en `data/cruces/gif/pruebaN.gif`:
