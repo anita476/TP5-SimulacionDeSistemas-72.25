@@ -105,3 +105,4 @@ docs/results/1.2/**/*.txt
 docs/presentation/main.pdf
 docs/presentation/main.vrb
 data/sim/
+data/experiments/

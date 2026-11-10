@@ -59,9 +59,29 @@ Ejemplo de ejecución:
   --out-path data/sim/prueba3_NEW.txt --dt 0.00001 \
 ```
 
+### Ejecución de experimentos
+
+Para ejecutar todas las pruebas con cada combinación de `r_min` y
+`action_distance`, pasando las listas separadas por coma:
+
+```bash
+scripts/experiment_runner.sh \
+  --r-mins 0.3,0.4 \
+  --action-distances 5,6
+```
+
+El runner usa las pruebas de `data/cruces_postprocess/`. Organiza los resultados
+por prueba y luego por `action_distance`; dentro de cada carpeta guarda un TXT
+por valor de `r_min` y ejecuta las comparaciones de trayectoria para cada
+simulación. Las métricas se guardan en `comparisons_radio_<r_min>` junto con
+sus gráficos. Por ejemplo:
+`data/experiments/prueba1/action_distance_5/prueba1_action_distance_5_radio_0.3.txt`.
+Los datos reales se toman de `data/cruces_postprocess/`. Se pueden cambiar los
+directorios, el ejecutable, Python y los archivos de entrada mediante las
+variables de entorno `TRAJ_DIR`, `OUTPUT_DIR`, `SIM`, `PYTHON`, `SPEEDS_PATH`,
+`TIMES_PATH` y `INITIAL_SPEEDS_PATH`.
+
 ### Animación de trayectorias experimentales
-
-
 
 ```bash
 python scripts/animate.py --trial 1 --show
