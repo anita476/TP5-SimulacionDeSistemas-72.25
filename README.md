@@ -47,6 +47,20 @@ source .venv/bin/activate
 pip install -r scripts/requirements.txt
 ```
 
+### Esquema del sistema
+
+Para generar el PNG con las dos partículas, sus trayectorias parabólicas, la
+distancia de acción y `r_min`:
+
+```bash
+python scripts/plot_elusion.py
+```
+
+El archivo se guarda por defecto en
+`docs/presentation/images/cuadro_inicial.png`. La ruta puede cambiarse con
+`--out archivo.png`. El esquema es ilustrativo: no muestra valores numéricos en
+los ejes ni en las cotas.
+
 ### Ejecución del motor 
 
 Ejemplo de ejecución:

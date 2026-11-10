@@ -1,0 +1,52 @@
+\documentclass[aspectratio=169,10pt]{beamer}
+\input{estilo}
+\title[TP4]{Trabajo Práctico Nro. 5: Dinámica Temporal}
+\subtitle{Capa de elusión con trayectorias experimentales}
+\author[Grupo 03]{Matías Leporini \and Camila Lee \and Ana Negre}
+\institute{
+Instituto Tecnológico de Buenos Aires (ITBA)\\
+72.25 - Simulación de Sistemas
+}
+\date{16 de noviembre de 2026}
+
+\newif\ifshowvideo 
+\showvideotrue
+
+\begin{document}
+
+\begin{frame}[plain,noframenumbering]
+  \titlepage
+\end{frame}
+
+
+\section{Introducción}
+\input{secciones/introduccion}
+
+\section{Implementación}
+\input{secciones/implementacion}
+
+\section{Simulaciones}
+\input{secciones/simulaciones}
+
+\section{Resultados}
+\input{secciones/results_1}
+\input{secciones/results_2}
+\input{secciones/results_3}
+
+\section{Conclusiones}
+\input{secciones/conclusiones}
+
+\begin{frame}[plain,noframenumbering]
+  \vfill\centering{\Huge\usebeamercolor[fg]{structure}Muchas gracias}\vfill
+\end{frame}
+
+\input{secciones/ia}
+
+\appendix
+\section*{Anexo}
+\begin{frame}[plain,noframenumbering]
+\vfill\centering{\Huge\usebeamercolor[fg]{structure}Anexo}\vfill
+\end{frame}
+\input{secciones/anexo}
+
+\end{document}

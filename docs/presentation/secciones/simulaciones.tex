@@ -1,0 +1,77 @@
+\begin{frame}{Sistema}
+  \begin{cols}
+    \begin{column}{0.66\textwidth}
+      \siimagen{cuadro_inicial.png}{%
+        \makebox[\linewidth][c]{\includegraphics[width=\linewidth,height=0.88\textheight,keepaspectratio]{cuadro_inicial.png}}%
+      }{%
+        \makebox[\linewidth][c]{\framebox[\linewidth][c]{\rule{0pt}{5cm}\textit{falta la figura}}}%
+      }
+    \end{column}
+    \begin{column}{0.30\textwidth}
+      \begin{parametros}[Parámetros fijos]
+        \item $R = 0.51\uni{m}$
+        \item $r = 0.0175\uni{m}$
+        \item $m = 0.025\uni{kg}$
+        \item $|v_0| = 1\uni{m/s}$
+        \item $k = 10^{4}\uni{N/m}$
+      \end{parametros}
+      \vspace{4pt}
+      \begin{parametros}[Parámetros variables]
+        \item $N$
+        \item $x_o$
+      \end{parametros}
+      \vspace{6pt}
+      {\small Densidad: $\phi = N(r/R)^2$}
+    \end{column}
+  \end{cols}
+\end{frame}
+
+\begin{frame}{Observables}
+  \begin{columns}[T]
+    \begin{column}{0.48\textwidth}
+      \small
+      \begin{itemize}\setlength{\itemsep}{12pt}
+        \item $F_u(t) = N_u(t)/N$
+        \item $t_{90} = \min\{t : F_u(t) \geq 0.9\}$
+        \item $t_{100} = \min\{t : N_u(t) = N\}$
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.50\textwidth}
+      \small
+      \begin{itemize}\setlength{\itemsep}{12pt}
+        \item Deriva: $\max_t |E(t) - E(0)|/|E(0)|$
+        \item $f(v) = N_i/(N\,\Delta v)$, con $v = |\vv{v}|$
+        \item $\displaystyle f_{MB}(v) = \frac{m v}{k_B T}\exp\!\left(-\frac{m v^2}{2 k_B T}\right)$
+      \end{itemize}
+    \end{column}
+  \end{columns}
+  \vspace{14pt}
+  \small
+  Sobre $M$ realizaciones, para $X = t_{90},\, t_{100},\, F_u(t),\, f(v)$:
+  \[
+    \langle X\rangle = \frac{1}{M}\sum_{k=1}^{M} X^{(k)},
+    \qquad
+    \sigma_X = \sqrt{\frac{1}{M-1}\sum_{k=1}^{M}\big(X^{(k)} - \langle X\rangle\big)^2}
+  \]
+\end{frame}
+
+\begin{frame}{Simulaciones realizadas}
+  \begin{columns}
+    \begin{column}{0.80\textwidth}
+      \centering
+      \small
+      \begin{tabular}{lllll}
+        \hline
+        Punto & $N$ & $x_o$ & Duración & $M$ \\
+        \hline
+        2.1a & $300$ & sin obstáculos & $30\uni{s}$ & $1$ \\
+        2.1b & $10$ a $650$ & $r$ & $30\uni{s}$ & $10$ \\
+        2.2 & $20$ y $100$ & $9$ valores de $r$ a $R - r$ & $100\uni{s}$ & $30$ \\
+        2.3 & $100$ & sin obstáculos & $10\uni{s}$ & $10$ \\
+        2.4a & $10$ a $650$ & $r$ & hasta $N_u = N$ & $10$ \\
+        2.4b & $20$ a $400$ & $9$ valores de $r$ a $R - r$ & hasta $N_u = N$ & $30$ \\
+        \hline
+      \end{tabular}
+    \end{column}
+  \end{columns}
+\end{frame}
