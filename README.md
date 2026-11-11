@@ -147,6 +147,22 @@ la derecha:
 ```bash
 python scripts/get_initial_speeds.py
 ```
+
+### Análisis de comportamiento
+
+Lado y magnitud del desvío lateral en las pasadas reales. Para cada peatón, 
+delta es la distancia con signo a la cuerda inicio-fin, positiva hacia su 
+derecha (normal rx = uy, ry = -ux). Si |delta| < 0.10 m, cuenta como que 
+no elude.
+
+```bash
+python scripts/analyze_behavior.py
+```
+
+Escribe en `data/behavior/` la tabla `elusion_behavior.txt` (una fila por
+peatón, un bloque por prueba y el resumen) y las figuras
+`desvios_por_prueba.png`, `trayectorias_reales.png` y `resumen_lados.png`.
+
 ### Comparaciones de trayectorias 
 
 Inicio común del evento. Los dos peatones entran al recorte en cuadros distintos; el evento empieza en `f0 = max` de los primeros cuadros (el primer cuadro en que ambos tienen dato), que es el "instante inicial" del enunciado. `trim_to_common_start.py` escribe en `data/cruces_evento/` una copia de cada `pruebaN.txt` de `cruces_postprocess/` sin las filas anteriores a `f0`, con la línea `# inicio comun: cuadro f0` en la cabecera (los originales no se tocan). El motor, los runners y los tres auxiliares usan esa carpeta:

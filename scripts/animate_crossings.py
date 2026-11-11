@@ -24,6 +24,7 @@ def main() -> None:
     )
     parser.add_argument("--out-dir", type=Path, default=None, help="output directory (default: <in-dir>/gif)")
     parser.add_argument("--r", type=float, default=0.10, help="drawn pedestrian radius in m (default: 0.10)")
+    parser.add_argument("--trial", type=int, action="append", help="only these trial numbers (default: all)")
     args = parser.parse_args()
     if args.r <= 0:
         sys.exit("--r must be > 0")
@@ -33,6 +34,13 @@ def main() -> None:
         trials = read_trials(args.trials_file)
     except (OSError, ValueError) as error:
         sys.exit(str(error))
+    if args.trial:
+        known = {number for number, _left, _right, _start, _final in trials}
+        missing = [number for number in args.trial if number not in known]
+        if missing:
+            sys.exit(f"trial not in {args.trials_file}: {', '.join(str(number) for number in missing)}")
+        wanted = set(args.trial)
+        trials = [row for row in trials if row[0] in wanted]
     out_dir.mkdir(parents=True, exist_ok=True)
 
     for trial, left, right, _start, _final in trials:
