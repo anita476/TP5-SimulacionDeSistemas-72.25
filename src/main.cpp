@@ -106,34 +106,35 @@ int main(int argc, char *argv[]) {
     const bool use_exp_v = program.get("--initial_velocity") == "experimental";
     Particle left = {
         .id = vdata.particle_left,
-        .m = MASS,
-        .r = program.get<double>("--r"),
         .type = FIXED,
-        .v0 = vdata.particle_left_speed,
-        .vx = use_exp_v ? speeds.particle_left_x : 0.0,
-        .vy = use_exp_v ? speeds.particle_left_y : 0.0,
         .x = positions.particle_left_x,
         .y = positions.particle_left_y,
+        .r = program.get<double>("--r"),
+        .vx = use_exp_v ? speeds.particle_left_x : 0.0,
+        .vy = use_exp_v ? speeds.particle_left_y : 0.0,
+        .v0 = vdata.particle_left_speed,
+        .m = MASS,
     };
     Particle right = {
         .id = vdata.particle_right,
-        .m = MASS,
-        .r = program.get<double>("--r"),
         .type = FIXED,
-        .v0 = vdata.particle_right_speed,
-        .vx = use_exp_v ? speeds.particle_right_x : 0.0,
-        .vy = use_exp_v ? speeds.particle_right_y : 0.0,
         .x = positions.particle_right_x,
         .y = positions.particle_right_y,
+        .r = program.get<double>("--r"),
+        .vx = use_exp_v ? speeds.particle_right_x : 0.0,
+        .vy = use_exp_v ? speeds.particle_right_y : 0.0,
+        .v0 = vdata.particle_right_speed,
+        .m = MASS,
     };
-    FSMPair pair = {.kn = program.get<double>("--kn"),
-                    .kt = program.get<double>("--kt"),
-                    .left = left,
-                    .right = right,
-                    .tau = TAU,
-                    .r_min = program.get<double>("--r_min"),
-                    .action_distance =
-                        program.get<double>("--action_distance")};
+    FSMPair pair = {
+        .left = left,
+        .right = right,
+        .kn = program.get<double>("--kn"),
+        .kt = program.get<double>("--kt"),
+        .tau = TAU,
+        .r_min = program.get<double>("--r_min"),
+        .action_distance = program.get<double>("--action_distance"),
+    };
     // dump header
     std::ofstream out(out_path);
     if (!out.is_open()) {

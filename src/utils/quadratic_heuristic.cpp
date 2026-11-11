@@ -1,4 +1,5 @@
 #include "include/quadratic_heuristic.hpp"
+#include <cmath>
 
 namespace {
 // por las dudas

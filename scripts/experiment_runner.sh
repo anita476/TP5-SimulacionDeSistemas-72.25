@@ -31,6 +31,7 @@ Opciones:
 
 Variables de entorno opcionales:
   SIM, PYTHON, TRAJ_DIR, OUTPUT_DIR, SPEEDS_PATH, TIMES_PATH, INITIAL_SPEEDS_PATH
+  SKIP_COMPARISONS=1  no escribe los txt de métrica por simulación (collect_errors.py las recalcula)
 EOF
 }
 
@@ -145,19 +146,22 @@ for traj in "${trajs[@]}"; do
         --v_path "$SPEEDS_PATH" \
         --time_path "$TIMES_PATH" \
         --initial_speeds_path "$INITIAL_SPEEDS_PATH" \
+        --initial_velocity experimental \
         --out-path "$output"
 
-      mkdir -p "$comparison_dir"
-      echo "Comparando $name (r_min=$r_min, action_distance=$action_distance)"
-      "$PYTHON" "$NEAREST_POINT_SCRIPT" \
-        --traj "$traj" \
-        --sim "$output" \
-        --out "$metric"
+      if [[ "${SKIP_COMPARISONS:-0}" != "1" ]]; then
+        mkdir -p "$comparison_dir"
+        echo "Comparando $name (r_min=$r_min, action_distance=$action_distance)"
+        "$PYTHON" "$NEAREST_POINT_SCRIPT" \
+          --traj "$traj" \
+          --sim "$output" \
+          --out "$metric"
 
-      "$PYTHON" "$EQUAL_TIME_SCRIPT" \
-        --traj "$traj" \
-        --sim "$output" \
-        --out "$comparison_dir/${output_stem}_equal_time.txt"
+        "$PYTHON" "$EQUAL_TIME_SCRIPT" \
+          --traj "$traj" \
+          --sim "$output" \
+          --out "$comparison_dir/${output_stem}_equal_time.txt"
+      fi
 
 
       ##"$PYTHON" "$DIFF_PLOT_SCRIPT" \
