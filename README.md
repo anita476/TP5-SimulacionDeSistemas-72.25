@@ -185,6 +185,28 @@ Y para graficar las trayectorias (png):
 python scripts/plot_traj.py --traj data/cruces/prueba1.txt data/cruces/prueba1.txt --sim data/sim/prueba1_sim.txt data/sim/prueba1_sim.txt --outdir data/comparisons
 ```
 
+### Calibración (puntos b, c y d)
+
+A partir del barrido de `experiment_runner.sh` -> `scripts/run_calibration.sh`;
+
+```bash
+python scripts/collect_errors.py          # E[m, i, j] -> data/calibration/errors.txt (metric prueba r_min action_distance E_left E_right E_event)
+python scripts/calibrate.py --partitions 20 --train-fraction 0.7 --seed 0
+python scripts/plot_calibration.py        # figuras en data/calibration/figures/
+```
+
+`collect_errors.py` recalcula las dos métricas de cada simulación con las mismas funciones de `calculate_equal_time.py` y
+`calculate_nearest_point.py`. 
+`calibrate.py` escribe por métrica:
+
+- `population_mK.txt`: `<E>` y su error estándar en cada punto de la grilla, con el óptimo el header (`# optimum r_min action_distance mean sem`). El óptimo se busca sólo entre los puntos que tienen todos los eventos.
+- `individual_mK.txt`: óptimo de cada evento, su `E_m` con esos parámetros y con los poblacionales.
+- `crossval_mK.txt`: una fila por partición aleatoria (óptimo sobre entrenamiento, error sobre entrenamiento y validación, eventos de validación); promedio y desvío en la cabecera.
+- `summary.txt` y `summary.tex` (tabla lista para la presentación).
+
+`plot_calibration.py` genera, por métrica: `EK_superficie.png`, `EK_corte_rmin.png`, `EK_corte_action_distance.png` (b),
+`EK_optimos_individuales.png`, `EK_error_por_evento.png` (c) y `EK_validacion_cruzada.png` (d).
+
 ### Referencias
 
 [CPP Reference](https://cppreference.com/)

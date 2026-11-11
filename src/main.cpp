@@ -7,6 +7,7 @@
 const double MASS = 10;
 const double TAU = 0.5;
 const int PRECISION = 8;
+const double DT2 = 1.0 / 15.0192;
 
 int main(int argc, char *argv[]) {
   argparse::ArgumentParser program("Elusion-TP5", "0.1",
@@ -69,6 +70,11 @@ int main(int argc, char *argv[]) {
     std::string initial_speeds_path = program.get("--initial_speeds_path");
 
     double dt = program.get<double>("--dt");
+    if (dt <= 0 || dt > DT2) {
+        throw std::invalid_argument("--dt must be in (0, DT2]");
+    }
+    const int n = static_cast<int>(std::lround(DT2 / dt));
+    dt = DT2 / n;  // n integration steps land exactly on each output frame
 
     std::cout << "Model SFM\n";
 
@@ -143,11 +149,14 @@ int main(int argc, char *argv[]) {
     // for right, the target is left initial position
     std::pair<double, double> target_right = {pair.left.x, pair.left.y};
 
-    const int frames = static_cast<int>(std::lround(tf / dt)) + 1;
+    const int frames = static_cast<int>(std::lround(tf / DT2)) + 1;
     write_sfm_traj_step(out, pair, 0.0);
     for (int k = 1; k < frames; ++k) {
-      sfm_step(pair, dt, (k - 1) * dt, target_left, target_right);
-      write_sfm_traj_step(out, pair, k * dt);
+        const double t0 = (k-1) * DT2;
+        for (int s=0; s< n; ++s) {
+            sfm_step(pair, dt, t0 + s * dt, target_left, target_right);
+        }
+      write_sfm_traj_step(out, pair, k * DT2);
     }
 
   } catch (const std::exception &err) {
