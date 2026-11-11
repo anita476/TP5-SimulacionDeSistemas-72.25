@@ -80,6 +80,7 @@ __pycache__
 data/**
 !data/**/
 !data/**/*.txt
+!data/behavior/*.png
 !python/requirements.txt
 !configs/*.txt
 *.gif

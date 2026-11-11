@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from lib.plot_style import (
     BLUE,
+    GREEN,
     MARKERS,
     VERMILLION,
     new_figure,
@@ -438,6 +439,46 @@ def plot_deviations(trials: list[Trial], out_path: Path) -> None:
     save_figure(fig, out_path)
 
 
+def plot_histogram(trials: list[Trial], out_path: Path) -> None:
+    groups = (
+        ("a su derecha", "derecha", BLUE),
+        ("a su izquierda", "izquierda", VERMILLION),
+        ("no elude", "no_elude", GREEN),
+    )
+    labels: list[str] = []
+    means: list[float] = []
+    stds: list[float] = []
+    colors: list[str] = []
+    for title, key, color in groups:
+        values = [
+            abs(walker.delta_peak)
+            for trial in trials
+            for walker in (trial.left, trial.right)
+            if walker.lado_propio == key
+        ]
+        if not values:
+            raise ValueError(f"no pedestrians classified as {key}")
+        labels.append(title)
+        means.append(statistics.fmean(values))
+        stds.append(statistics.stdev(values) if len(values) >= 2 else 0.0)
+        colors.append(color)
+    fig, ax = new_figure()
+    ax.bar(
+        labels,
+        means,
+        color=colors,
+        edgecolor="black",
+        linewidth=0.6,
+        yerr=stds,
+        capsize=4.5,
+        error_kw={"ecolor": "black", "elinewidth": 1.2},
+        zorder=3,
+    )
+    ax.set_ylim(0.0, max(mean + std for mean, std in zip(means, stds)) * 1.15)
+    style_axes(ax, "lado de elusión", r"$|\delta|$ (m)")
+    save_figure(fig, out_path)
+
+
 def plot_trajectories(trials: list[Trial], out_path: Path) -> None:
     fig, ax = new_figure()
     for index, trial in enumerate(trials):
@@ -530,6 +571,7 @@ def main() -> None:
 
     try:
         plot_deviations(trials, args.out_dir / "desvios_por_prueba.png")
+        plot_histogram(trials, args.out_dir / "desvios_histograma.png")
         plot_trajectories(trials, args.out_dir / "trayectorias_reales.png")
         plot_summary(trials, args.out_dir / "resumen_lados.png")
     except OSError as error:

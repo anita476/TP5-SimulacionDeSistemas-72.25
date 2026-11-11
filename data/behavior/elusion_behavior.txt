@@ -1,0 +1,87 @@
+# umbral |delta| < 0.10 m => no elude
+# delta > 0: desvio a su derecha (rx = uy, ry = -ux)
+# prueba id lado delta_pico_m lado_propio lado_lab elude delta_ca_m
+1 3 izquierda 0.427426 derecha -y 1 0.423369
+1 36 derecha 0.476445 derecha +y 1 0.453470
+3 43 izquierda 0.570433 derecha -y 1 0.484135
+3 1 derecha 0.278918 derecha +y 1 0.243585
+4 10 izquierda 0.376158 derecha -y 1 0.354565
+4 5 derecha 0.103586 derecha +y 1 0.087025
+5 4 izquierda 0.130185 derecha -y 1 0.129208
+5 12 derecha 0.354613 derecha +y 1 0.280493
+6 9 izquierda -0.525035 izquierda +y 1 -0.472536
+6 6 derecha -0.233402 izquierda -y 1 -0.210886
+7 20 izquierda 0.465833 derecha -y 1 0.453835
+7 44 derecha 0.106548 derecha +y 1 0.081459
+8 27 izquierda -0.565137 izquierda +y 1 -0.563806
+8 37 derecha -0.252828 izquierda -y 1 -0.185341
+9 16 izquierda 0.447881 derecha -y 1 0.390031
+9 39 derecha 0.393475 derecha +y 1 0.392211
+10 17 izquierda -0.139015 izquierda +y 1 -0.139015
+10 42 derecha -0.440962 izquierda -y 1 -0.440962
+11 23 izquierda 0.295776 derecha -y 1 0.248942
+11 24 derecha 0.732937 derecha +y 1 0.660280
+12 22 izquierda -0.643865 izquierda +y 1 -0.595222
+12 18 derecha 0.057655 no_elude +y 0 0.025611
+13 15 izquierda 0.608405 derecha -y 1 0.604398
+13 35 derecha 0.263358 derecha +y 1 0.240580
+14 30 izquierda -0.445449 izquierda +y 1 -0.438817
+14 28 derecha -0.524957 izquierda -y 1 -0.515351
+15 46 izquierda 0.436285 derecha -y 1 0.412836
+15 34 derecha 0.310942 derecha +y 1 0.295471
+16 47 izquierda 0.333523 derecha -y 1 0.289854
+16 48 derecha 0.527492 derecha +y 1 0.510966
+17 2 izquierda 0.411849 derecha -y 1 0.401259
+17 45 derecha 0.220186 derecha +y 1 0.209731
+18 26 izquierda 0.474767 derecha -y 1 0.423140
+18 21 derecha 0.083837 no_elude +y 0 0.034839
+19 29 izquierda 0.334586 derecha -y 1 0.323290
+19 38 derecha 0.346902 derecha +y 1 0.315873
+
+# prueba d_min_m y_mayor cesion acuerdo_modelo delta_izq_m delta_der_m
+1 0.913615 derecha ambos ambos_derecha 0.427426 0.476445
+3 0.602610 derecha ambos ambos_derecha 0.570433 0.278918
+4 0.540020 derecha ambos ambos_derecha 0.376158 0.103586
+5 0.489473 derecha ambos ambos_derecha 0.130185 0.354613
+6 0.800429 izquierda ambos ambos_izquierda -0.525035 -0.233402
+7 0.559338 derecha ambos ambos_derecha 0.465833 0.106548
+8 0.828044 izquierda ambos ambos_izquierda -0.565137 -0.252828
+9 0.778230 derecha ambos ambos_derecha 0.447881 0.393475
+10 0.627488 izquierda ambos ambos_izquierda -0.139015 -0.440962
+11 0.914109 derecha ambos ambos_derecha 0.295776 0.732937
+12 0.635505 izquierda solo_izquierda uno_solo -0.643865 0.057655
+13 0.869084 derecha ambos ambos_derecha 0.608405 0.263358
+14 0.916936 izquierda ambos ambos_izquierda -0.445449 -0.524957
+15 0.755043 derecha ambos ambos_derecha 0.436285 0.310942
+16 0.681215 derecha ambos ambos_derecha 0.333523 0.527492
+17 0.568451 derecha ambos ambos_derecha 0.411849 0.220186
+18 0.573980 derecha solo_izquierda uno_solo 0.474767 0.083837
+19 0.609335 derecha ambos ambos_derecha 0.334586 0.346902
+
+# resumen
+# umbral_no_elude_m 0.10
+# n_pruebas 18
+# n_peatones 36
+# |delta_pico| todos media=0.3706 m  std=0.1682 m  n=36
+# |delta_pico| elusores media=0.3882 m  std=0.1557 m  n=34
+# |delta_pico| izquierda media=0.4240 m  std=0.1418 m  n=18
+# |delta_pico| derecha media=0.3172 m  std=0.1792 m  n=18
+# lado a_su_derecha 25
+# lado a_su_izquierda 9
+# lado no_elude 2
+# cesion ambos 16
+# cesion solo_izquierda 2
+# cesion solo_derecha 0
+# cesion ninguno 0
+# acuerdo ambos_derecha 12
+# acuerdo ambos_izquierda 4
+# acuerdo mixto 0
+# acuerdo uno_solo 2
+# acuerdo ninguno 0
+# y_mayor izquierda 5
+# y_mayor derecha 13
+# y_mayor empate 0
+# ambiguos |delta| en [0.08, 0.12] m: prueba id |delta_pico|
+# 4 5 0.103586
+# 7 44 0.106548
+# 18 21 0.083837
