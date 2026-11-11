@@ -68,9 +68,9 @@ Ejemplo de ejecución:
 ```bash 
 ./build/ElusionSIM \
   --traj_path data/cruces/prueba3.txt \
-  --r_min 0.4 --action_distance 60.0 \
+  --r_min 0.4 --action_distance 6.0 \
   --v_path data/pruebas_speeds.txt \
-  --out-path data/sim/prueba3_NEW.txt --dt 0.00001 \
+  --out-path data/sim/prueba3_NEW.txt
 ```
 
 ### Ejecución de experimentos
@@ -84,13 +84,13 @@ scripts/experiment_runner.sh \
   --action-distances 5,6
 ```
 
-El runner usa las pruebas de `data/cruces_postprocess/`. Organiza los resultados
+El runner usa las pruebas de `data/cruces_evento/` (recortadas al inicio común, ver más abajo). Organiza los resultados
 por prueba y luego por `action_distance`; dentro de cada carpeta guarda un TXT
 por valor de `r_min` y ejecuta las comparaciones de trayectoria para cada
 simulación. Las métricas se guardan en `comparisons_radio_<r_min>` junto con
 sus gráficos. Por ejemplo:
 `data/experiments/prueba1/action_distance_5/prueba1_action_distance_5_radio_0.3.txt`.
-Los datos reales se toman de `data/cruces_postprocess/`. Se pueden cambiar los
+Los datos reales se toman de `data/cruces_evento/`. Se pueden cambiar los
 directorios, el ejecutable, Python y los archivos de entrada mediante las
 variables de entorno `TRAJ_DIR`, `OUTPUT_DIR`, `SIM`, `PYTHON`, `SPEEDS_PATH`,
 `TIMES_PATH` y `INITIAL_SPEEDS_PATH`.
@@ -149,7 +149,18 @@ python scripts/get_initial_speeds.py
 ```
 ### Comparaciones de trayectorias 
 
-Para obtener la comparación trayectoria - simulación de un cruce acorde a la métrica 1 (nearest point):
+Inicio común del evento. Los dos peatones entran al recorte en cuadros distintos; el evento empieza en `f0 = max` de los primeros cuadros (el primer cuadro en que ambos tienen dato), que es el "instante inicial" del enunciado. `trim_to_common_start.py` escribe en `data/cruces_evento/` una copia de cada `pruebaN.txt` de `cruces_postprocess/` sin las filas anteriores a `f0`, con la línea `# inicio comun: cuadro f0` en la cabecera (los originales no se tocan). El motor, los runners y los tres auxiliares usan esa carpeta:
+
+```bash
+python scripts/trim_to_common_start.py --in-dir data/cruces_postprocess --out-dir data/cruces_evento
+python scripts/calculate_speeds.py --in-dir data/cruces_evento
+python scripts/get_timestep.py --in-dir data/cruces_evento --out data/tiempos_totales.txt
+python scripts/get_initial_speeds.py --in-dir data/cruces_evento --out data/velocidades_iniciales.txt
+```
+
+Con eso el motor escribe la fila `k` en `t = k·dt` (fila 0 = estado inicial, con la velocidad experimental) y la fila `k` es el cuadro `f0 + k`. Se integra con un paso igual a `dt` (un paso por cuadro).
+
+Para obtener la comparación trayectoria - simulación de un cruce acorde a la métrica 2 del enunciado (punto más cercano, ecuación 2):
 
 ```
 python scripts/calculate_nearest_point.py --traj data/cruces/prueba3.txt --sim data/sim/prueba3_sim.txt -o data/comparisons/prueba3_compare.txt 
@@ -158,6 +169,15 @@ python scripts/calculate_nearest_point.py --traj data/cruces/prueba3.txt --sim d
 Luego para graficar esa diferencia: 
 ```bash
 python scripts/plot_nearest_point_diff.py --diff data/comparisons/prueba3_compare.txt --outdir data/comparisons
+```
+
+Métrica 1 del enunciado (iguales tiempos, ecuación 1): compara el cuadro `f` del experimento con la fila `k = f − f0` de la simulación. 
+
+`run_comparisons.sh` y `experiment_runner.sh` calculan las dos.
+
+```bash
+python scripts/calculate_equal_time.py --traj data/cruces_evento/prueba3.txt --sim data/sim/prueba3_sim.txt -o data/comparisons/prueba3_equal_time.txt
+python scripts/plot_nearest_point_diff.py --diff data/comparisons/prueba3_equal_time.txt --traj data/cruces_evento/prueba3.txt --outdir data/comparisons/equal_time
 ```
 Y para graficar las trayectorias (png):
 

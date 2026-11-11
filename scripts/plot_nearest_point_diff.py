@@ -53,7 +53,8 @@ def leer_diff(ruta):
                 pid = int(m.group(1))
                 pruebas[prueba][pid] = {"frames": [], "x": [], "d2": [], "prom": None}
                 continue
-            m = re.match(r"Promedio E2 part[ií]cula\s+(\d+).*:\s*([-+\d.eE]+)\s*$", s)
+            # archivos de ambas métricas: "Promedio E1 ..." (iguales tiempos) y "Promedio E2 ..." (punto más cercano)
+            m = re.match(r"Promedio E[12] part[ií]cula\s+(\d+).*:\s*([-+\d.eE]+)\s*$", s)
             if m and prueba:
                 pruebas[prueba][int(m.group(1))]["prom"] = float(m.group(2))
                 continue
@@ -66,7 +67,13 @@ def leer_diff(ruta):
     return pruebas
 
 
-def graficar(prueba, particulas, fps, outdir):
+def leer_metrica(ruta):
+    """1 si el archivo es de la Métrica 1 (cabecera "# Métrica E(1)"), 2 en cualquier otro caso."""
+    with open(ruta) as f:
+        return 1 if "E(1)" in f.readline() else 2
+
+
+def graficar(prueba, particulas, fps, outdir, metrica=2):
     ids = sorted(particulas, key=lambda p: particulas[p]["x"][0])  # menor x inicial -> izquierda
     estilo = dict(zip(ids, [("izquierda", VIOLET), ("derecha", RED)]))
     t0 = min(particulas[p]["frames"][0] for p in ids)
@@ -81,7 +88,7 @@ def graficar(prueba, particulas, fps, outdir):
         (left_in / width, bottom_in / height,
          (width - left_in - right_in) / width, (height - bottom_in - top_in) / height)
     )
-    style_axes(ax, r"tiempo $t$ (s)", r"$d^2_{\min}$ (m$^2$)")
+    style_axes(ax, r"tiempo $t$ (s)", r"$d^2$ (m$^2$)" if metrica == 1 else r"$d^2_{\min}$ (m$^2$)")
 
     for pid in ids:
         nombre, color = estilo[pid]
@@ -90,7 +97,7 @@ def graficar(prueba, particulas, fps, outdir):
         ax.plot(t, d["d2"], color=color, lw=2.0, zorder=3, label=nombre)
         if d["prom"] is not None:
             ax.axhline(d["prom"], color=color, ls="--", lw=1.4, alpha=0.8, zorder=2)
-    ax.plot([], [], color="0.3", ls="--", lw=1.4, label="promedio $E^{(2)}$")
+    ax.plot([], [], color="0.3", ls="--", lw=1.4, label=rf"promedio $E^{{({metrica})}}$")
     ax.set_xlim(left=0)
     ax.set_ylim(bottom=0)
 
@@ -117,8 +124,9 @@ def main():
     pruebas = leer_diff(args.diff)
     if not pruebas:
         raise SystemExit(f"No se encontraron datos en {args.diff}")
+    metrica = leer_metrica(args.diff)
     for prueba, particulas in pruebas.items():
-        graficar(prueba, particulas, fps, args.outdir)
+        graficar(prueba, particulas, fps, args.outdir, metrica)
 
 
 if __name__ == "__main__":

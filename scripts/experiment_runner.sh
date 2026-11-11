@@ -6,12 +6,13 @@ cd "$ROOT_DIR"
 
 SIM="${SIM:-./build/ElusionSIM}"
 PYTHON="${PYTHON:-python3}"
-TRAJ_DIR="${TRAJ_DIR:-data/cruces_postprocess}"
+TRAJ_DIR="${TRAJ_DIR:-data/cruces_evento}"   # cruces recortados al inicio común f0 (trim_to_common_start.py)
 OUTPUT_DIR="${OUTPUT_DIR:-data/experiments}"
 SPEEDS_PATH="${SPEEDS_PATH:-data/pruebas_speeds.txt}"
 TIMES_PATH="${TIMES_PATH:-data/tiempos_totales.txt}"
 INITIAL_SPEEDS_PATH="${INITIAL_SPEEDS_PATH:-data/velocidades_iniciales.txt}"
 NEAREST_POINT_SCRIPT="scripts/calculate_nearest_point.py"
+EQUAL_TIME_SCRIPT="scripts/calculate_equal_time.py"
 DIFF_PLOT_SCRIPT="scripts/plot_nearest_point_diff.py"
 TRAJ_PLOT_SCRIPT="scripts/plot_traj.py"
 
@@ -103,7 +104,7 @@ if ! command -v "$PYTHON" >/dev/null 2>&1; then
   exit 1
 fi
 
-for script in "$NEAREST_POINT_SCRIPT" "$DIFF_PLOT_SCRIPT" "$TRAJ_PLOT_SCRIPT"; do
+for script in "$NEAREST_POINT_SCRIPT" "$EQUAL_TIME_SCRIPT" "$DIFF_PLOT_SCRIPT" "$TRAJ_PLOT_SCRIPT"; do
   if [[ ! -f "$script" ]]; then
     echo "No se encontró el script de comparación requerido: $script" >&2
     exit 1
@@ -152,6 +153,11 @@ for traj in "${trajs[@]}"; do
         --traj "$traj" \
         --sim "$output" \
         --out "$metric"
+
+      "$PYTHON" "$EQUAL_TIME_SCRIPT" \
+        --traj "$traj" \
+        --sim "$output" \
+        --out "$comparison_dir/${output_stem}_equal_time.txt"
 
 
       ##"$PYTHON" "$DIFF_PLOT_SCRIPT" \

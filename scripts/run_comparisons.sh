@@ -15,10 +15,10 @@ if ! command -v "$PYTHON" >/dev/null 2>&1; then
 fi
 
 shopt -s nullglob
-trajs=(data/cruces_postprocess/prueba*.txt)
+trajs=(data/cruces_evento/prueba*.txt)   # cruces recortados al inicio común f0 (trim_to_common_start.py)
 
 if ((${#trajs[@]} == 0)); then
-  echo "No se encontraron pruebas en data/cruces_postprocess/." >&2
+  echo "No se encontraron pruebas en data/cruces_evento/ (correr scripts/trim_to_common_start.py)." >&2
   exit 1
 fi
 
@@ -50,4 +50,16 @@ for traj in "${trajs[@]}"; do
     --traj "$traj" \
     --sim "$sim" \
     --outdir "$TRAJ_DIR"
+
+  # Métrica 1 (iguales tiempos): mismo formato de salida, mismo graficador
+  metric_e1="$METRIC_DIR/${name}_equal_time.txt"
+  "$PYTHON" scripts/calculate_equal_time.py \
+    --traj "$traj" \
+    --sim "$sim" \
+    --out "$metric_e1"
+
+  "$PYTHON" scripts/plot_nearest_point_diff.py \
+    --diff "$metric_e1" \
+    --traj "$traj" \
+    --outdir "$DIFF_DIR/equal_time"
 done

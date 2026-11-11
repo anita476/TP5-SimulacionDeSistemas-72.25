@@ -21,7 +21,7 @@ fi
 mkdir -p data/sim
 found=false
 
-for traj in data/cruces_postprocess/prueba*.txt; do
+for traj in data/cruces_evento/prueba*.txt; do   # cruces recortados al inicio común f0 (trim_to_common_start.py)
   [[ -f "$traj" ]] || continue
   found=true
 
@@ -44,6 +44,6 @@ for traj in data/cruces_postprocess/prueba*.txt; do
 done
 
 if [[ "$found" == false ]]; then
-  echo "No se encontraron pruebas en data/cruces/." >&2
+  echo "No se encontraron pruebas en data/cruces_evento/ (correr scripts/trim_to_common_start.py)." >&2
   exit 1
 fi

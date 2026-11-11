@@ -2,6 +2,7 @@
 #include "utils/include/file_parser.h"
 #include "utils/include/sfm.hpp"
 #include <argparse/argparse.hpp>
+#include <cmath>
 
 const double MASS = 10;
 const double TAU = 0.5;
@@ -47,6 +48,11 @@ int main(int argc, char *argv[]) {
       .scan<'g', double>()
       .help("Distance to obstacle since which particle begins to act for "
             "elusion");
+  program.add_argument("--initial_velocity", "--initial-velocity")
+      .default_value(std::string("zero"))
+      .choices("zero", "experimental")
+      .help("Initial velocity of both pedestrians: zero, or the experimental "
+            "one from --initial_speeds_path");
 
   try {
     program.parse_args(argc, argv);
@@ -90,17 +96,16 @@ int main(int argc, char *argv[]) {
     InitialSpeeds speeds = parse_initial_speeds(
         initial_speeds_path, vdata.particle_left, vdata.particle_right, num);
 
-    // create the two particles with the initial speed 0
+    // initial velocity: zero (experiment) or the experimental one at the first frame
+    const bool use_exp_v = program.get("--initial_velocity") == "experimental";
     Particle left = {
         .id = vdata.particle_left,
         .m = MASS,
         .r = program.get<double>("--r"),
         .type = FIXED,
         .v0 = vdata.particle_left_speed,
-        //.vx = speeds.particle_left_x,
-        //.vy = speeds.particle_left_y,
-        .vx = 0.0,
-        .vy = 0.0,
+        .vx = use_exp_v ? speeds.particle_left_x : 0.0,
+        .vy = use_exp_v ? speeds.particle_left_y : 0.0,
         .x = positions.particle_left_x,
         .y = positions.particle_left_y,
     };
@@ -110,10 +115,8 @@ int main(int argc, char *argv[]) {
         .r = program.get<double>("--r"),
         .type = FIXED,
         .v0 = vdata.particle_right_speed,
-        //.vx = speeds.particle_right_x,
-        //.vy = speeds.particle_right_y,
-        .vx = 0.0,
-        .vy = 0.0,
+        .vx = use_exp_v ? speeds.particle_right_x : 0.0,
+        .vy = use_exp_v ? speeds.particle_right_y : 0.0,
         .x = positions.particle_right_x,
         .y = positions.particle_right_y,
     };
@@ -133,16 +136,18 @@ int main(int argc, char *argv[]) {
     out << std::setprecision(PRECISION);
     write_sfm_traj_header(out);
 
-    // untill they reach the desired tf, step and dump
+    // until they reach the desired tf, step and dump
     // for left, the target is right initial position
     std::pair<double, double> target_left = {pair.right.x, pair.right.y};
 
     // for right, the target is left initial position
     std::pair<double, double> target_right = {pair.left.x, pair.left.y};
 
-    for (double i = 0.0; i < tf; i += dt) {
-      Step step = sfm_step(pair, dt, i, target_left, target_right);
-      write_sfm_traj_step(out, pair, i);
+    const int frames = static_cast<int>(std::lround(tf / dt)) + 1;
+    write_sfm_traj_step(out, pair, 0.0);
+    for (int k = 1; k < frames; ++k) {
+      sfm_step(pair, dt, (k - 1) * dt, target_left, target_right);
+      write_sfm_traj_step(out, pair, k * dt);
     }
 
   } catch (const std::exception &err) {
