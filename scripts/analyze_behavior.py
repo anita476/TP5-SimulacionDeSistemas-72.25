@@ -479,6 +479,50 @@ def plot_histogram(trials: list[Trial], out_path: Path) -> None:
     save_figure(fig, out_path)
 
 
+def plot_deviation_distribution(trials: list[Trial], out_path: Path) -> None:
+    values = [
+        abs(walker.delta_peak)
+        for trial in trials
+        for walker in (trial.left, trial.right)
+    ]
+    if not values:
+        raise ValueError("no deviations to bin")
+    # Coarsest width that puts 0.10 m on a bin edge and keeps the empty gap
+    # (0.15 m, 0.20 m) as its own bin. Scott (~0.18 m) and Freedman-Diaconis
+    # (~0.13 m) would swallow the threshold and that gap.
+    width = 0.05
+    n_bins = math.ceil(max(values) / width - 1e-9)
+    edges = [round(index * width, 10) for index in range(n_bins + 1)]
+    right = round(edges[-1] + width, 10)
+
+    fig, ax = new_figure()
+    ax.axvspan(0.0, NO_EVADE_M, color=GREEN, alpha=0.22, zorder=0, label="no elude")
+    counts, _, _ = ax.hist(
+        values,
+        bins=edges,
+        color=BLUE,
+        edgecolor="black",
+        linewidth=0.6,
+        zorder=2,
+    )
+    ax.vlines(values, 0.0, 0.4, colors="black", linewidth=0.7, zorder=3)
+    ax.axvline(
+        NO_EVADE_M,
+        color="0.35",
+        linestyle="--",
+        zorder=4,
+        label=rf"umbral ${NO_EVADE_M:.2f}$ m",
+    )
+    top = int(max(counts))
+    style_axes(ax, r"$|\delta|$ (m)", "peatones")
+    ax.set_xlim(0.0, right)
+    ax.set_ylim(0.0, top + 1.5)
+    ax.set_xticks([round(tick * 0.1, 1) for tick in range(int(round(right / 0.1)) + 1)])
+    ax.set_yticks(range(0, top + 2))
+    place_legend_below(ax, ncol=2)
+    save_figure(fig, out_path)
+
+
 def plot_trajectories(trials: list[Trial], out_path: Path) -> None:
     fig, ax = new_figure()
     for index, trial in enumerate(trials):
@@ -571,6 +615,7 @@ def main() -> None:
 
     try:
         plot_deviations(trials, args.out_dir / "desvios_por_prueba.png")
+        plot_deviation_distribution(trials, args.out_dir / "desvios_distribucion.png")
         plot_histogram(trials, args.out_dir / "desvios_histograma.png")
         plot_trajectories(trials, args.out_dir / "trayectorias_reales.png")
         plot_summary(trials, args.out_dir / "resumen_lados.png")

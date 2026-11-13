@@ -163,7 +163,7 @@ python scripts/analyze_behavior.py
 
 Escribe en `data/behavior/` la tabla `elusion_behavior.txt` (una fila por
 peatón, un bloque por prueba y el resumen) y las figuras
-`desvios_por_prueba.png`, `desvios_histograma.png`, `trayectorias_reales.png`
+`desvios_por_prueba.png`, `desvios_distribucion.png`, `desvios_histograma.png`, `trayectorias_reales.png`
 y `resumen_lados.png`.
 
 ### Comparaciones de trayectorias 

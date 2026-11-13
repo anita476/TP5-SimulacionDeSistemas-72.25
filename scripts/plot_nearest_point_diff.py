@@ -4,7 +4,7 @@ Grafica las 2 curvas de diferencia (distancia^2 mínima al punto simulado más c
 en función del tiempo, a partir del archivo generado por metrica_punto_cercano.py.
 Las líneas punteadas horizontales marcan el promedio E2 de cada partícula.
 
-Color: izquierda = VIOLET, derecha = RED. La partícula de la izquierda es la que
+Color: izquierda = BLUE, derecha = VERMILLION (como en plot_traj.py). La partícula de la izquierda es la que
 empieza con menor x_exp. El tiempo es (frame - frame inicial común) / fps.
 
 Uso:
@@ -15,15 +15,15 @@ Si se quiere tomar el fps del archivo experimental: agregar --traj prueba6.txt.
 Requiere plot_style.py en la misma carpeta.
 """
 import argparse
-import os
 import re
+from pathlib import Path
 
 import matplotlib
 import numpy as np
 
 matplotlib.use("Agg")
 
-from lib.plot_style import VIOLET, RED, apply_academic_style, style_axes
+from lib.plot_style import BLUE, VERMILLION, new_figure, place_legend_below, save_figure, style_axes
 
 FPS_DEFECTO = 15.0192
 
@@ -75,20 +75,11 @@ def leer_metrica(ruta):
 
 def graficar(prueba, particulas, fps, outdir, metrica=2):
     ids = sorted(particulas, key=lambda p: particulas[p]["x"][0])  # menor x inicial -> izquierda
-    estilo = dict(zip(ids, [("izquierda", VIOLET), ("derecha", RED)]))
+    estilo = dict(zip(ids, [("izquierda", BLUE), ("derecha", VERMILLION)]))
     t0 = min(particulas[p]["frames"][0] for p in ids)
 
-    apply_academic_style()
-    import matplotlib.pyplot as plt
-
-    width, height = 12.0, 7.0
-    left_in, right_in, top_in, bottom_in = 1.5, 0.3, 0.3, 2.4
-    fig = plt.figure(figsize=(width, height))
-    ax = fig.add_axes(
-        (left_in / width, bottom_in / height,
-         (width - left_in - right_in) / width, (height - bottom_in - top_in) / height)
-    )
-    style_axes(ax, r"tiempo $t$ (s)", r"$d^2$ (m$^2$)" if metrica == 1 else r"$d^2_{\min}$ (m$^2$)")
+    fig, ax = new_figure()
+    style_axes(ax, "Tiempo (s)", "Distancia cuadrática (m$^2$)" if metrica == 1 else "Distancia cuadrática mínima (m$^2$)")
 
     for pid in ids:
         nombre, color = estilo[pid]
@@ -97,19 +88,12 @@ def graficar(prueba, particulas, fps, outdir, metrica=2):
         ax.plot(t, d["d2"], color=color, lw=2.0, zorder=3, label=nombre)
         if d["prom"] is not None:
             ax.axhline(d["prom"], color=color, ls="--", lw=1.4, alpha=0.8, zorder=2)
-    ax.plot([], [], color="0.3", ls="--", lw=1.4, label=rf"promedio $E^{{({metrica})}}$")
+    ax.plot([], [], color="0.3", ls="--", lw=1.4, label=rf"promedio $E^{{({metrica})}}_i$")
     ax.set_xlim(left=0)
     ax.set_ylim(bottom=0)
 
-    handles, labels = ax.get_legend_handles_labels()
-    fig.legend(handles, labels, loc="lower center", ncol=2, frameon=True, fancybox=False)
-
-    os.makedirs(outdir, exist_ok=True)
-    
-    ruta = os.path.join(outdir, f"diferencias_{prueba}.png")
-    fig.savefig(ruta)
-    print(f"Guardado: {ruta}")
-    plt.close(fig)
+    place_legend_below(ax, ncol=3)
+    save_figure(fig, Path(outdir) / f"diferencias_{prueba}.png")
 
 
 def main():
