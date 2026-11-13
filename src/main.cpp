@@ -4,7 +4,7 @@
 #include <argparse/argparse.hpp>
 #include <cmath>
 
-const double MASS = 10;
+const double MASS = 80;
 const double TAU = 0.5;
 const int PRECISION = 8;
 const double EXPERIMENTAL_FPS = 15.0192; // TODO: should be taken from experiment
