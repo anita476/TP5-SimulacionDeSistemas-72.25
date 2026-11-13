@@ -10,128 +10,83 @@ matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib.lines import Line2D
 from matplotlib.patches import Circle
 
-from lib.plot_style import BLUE, VERMILLION, apply_academic_style, style_axes
+from lib.plot_style import BLUE, VERMILLION, apply_academic_style
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT = REPO_ROOT / "docs/presentation/images/cuadro_inicial.png"
 
 
 def create_figure(action_distance: float, r_min: float, radius: float):
+    """Esquema del sistema: dos peatones enfrentados a la distancia de acción.
+
+    Cada uno esquiva por su derecha. Al cruzarse, el centro de uno queda a r_min
+    del borde del otro, o sea a r + r_min entre centros, que es a lo que apunta
+    la capa de elusión (R = r_min + r_j en quadratic_heuristic.cpp).
+    """
     half_distance = action_distance / 2
-    clearance = radius + r_min
+    separation = radius + r_min           # distancia entre centros al cruzarse
+    amplitude = separation / 2            # desvío lateral de cada peatón
     x = np.linspace(-half_distance, half_distance, 400)
     progress = (x + half_distance) / action_distance
-    offset = clearance * 4 * progress * (1 - progress)
+    offset = amplitude * 4 * progress * (1 - progress)
 
     apply_academic_style()
-    fig, ax = plt.subplots(figsize=(11, 5))
+    fig, ax = plt.subplots(figsize=(11, 4.2))
 
     ax.plot(x, np.zeros_like(x), color="0.45", linestyle="--", linewidth=1.5,
             label="trayectoria directa")
-    ax.plot(x, offset, color=BLUE, linewidth=2.5, label="trayectoria partícula 1")
-    ax.plot(x, -offset, color=VERMILLION, linewidth=2.5,
-            label="trayectoria partícula 2")
-    ax.add_patch(
-        Circle(
-            (0, 0),
-            radius,
-            fill=False,
-            edgecolor="0.35",
-            linestyle=":",
-            linewidth=1.4,
-            label="borde del obstáculo",
-            zorder=2,
-        )
-    )
-
-    arrow_index = 180
-    ax.annotate(
-        "",
-        xy=(x[arrow_index + 12], offset[arrow_index + 12]),
-        xytext=(x[arrow_index], offset[arrow_index]),
-        arrowprops={"arrowstyle": "->", "color": BLUE, "lw": 2},
-    )
-    ax.annotate(
-        "",
-        xy=(x[220], -offset[220]),
-        xytext=(x[232], -offset[232]),
-        arrowprops={"arrowstyle": "->", "color": VERMILLION, "lw": 2},
-    )
+    # peatón 1 (azul) camina hacia +x y esquiva por su derecha (abajo); el 2, al revés
+    ax.plot(x, -offset, color=BLUE, linewidth=2.5)
+    ax.plot(x, offset, color=VERMILLION, linewidth=2.5)
+    ax.annotate("", xy=(x[112], -offset[112]), xytext=(x[100], -offset[100]),
+                arrowprops={"arrowstyle": "->", "color": BLUE, "lw": 2})
+    ax.annotate("", xy=(x[288], offset[288]), xytext=(x[300], offset[300]),
+                arrowprops={"arrowstyle": "->", "color": VERMILLION, "lw": 2})
 
     for center_x, color in ((-half_distance, BLUE), (half_distance, VERMILLION)):
         ax.add_patch(Circle((center_x, 0), radius, facecolor=color, edgecolor="black",
                             linewidth=1.2, zorder=5))
+    # posiciones al cruzarse
+    for center_y, color in ((-amplitude, BLUE), (amplitude, VERMILLION)):
+        ax.add_patch(Circle((0, center_y), radius, facecolor=color, edgecolor="black",
+                            linewidth=1.2, linestyle="--", alpha=0.35, zorder=4))
 
-    dimension_y = 2.8 * clearance
+    dimension_y = amplitude + radius + 0.45
     for center_x in (-half_distance, half_distance):
-        ax.plot([center_x, center_x], [0, dimension_y], color="0.4",
+        ax.plot([center_x, center_x], [radius, dimension_y], color="0.4",
                 linestyle=":", linewidth=1)
-    ax.annotate(
-        "",
-        xy=(half_distance, dimension_y),
-        xytext=(-half_distance, dimension_y),
-        arrowprops={"arrowstyle": "<->", "color": "black", "lw": 1.4},
-    )
-    ax.text(
-        0,
-        dimension_y + 0.12 * clearance,
-        r"$\mathrm{action\ distance}$",
-        ha="center",
-        va="bottom",
-    )
+    ax.annotate("", xy=(half_distance, dimension_y), xytext=(-half_distance, dimension_y),
+                arrowprops={"arrowstyle": "<->", "color": "black", "lw": 1.4})
+    ax.text(0, dimension_y + 0.06, r"activación de la elusión: distancia $d_a$", ha="center", va="bottom")
 
     if r_min > 0:
-        ax.add_patch(
-            Circle((0, 0), clearance, fill=False, edgecolor="0.35",
-                   linestyle=":", linewidth=1.4, zorder=2)
-        )
-        dimension_x = clearance + 0.12 * radius
-        ax.plot([0, dimension_x], [radius, radius], color="0.25",
-                linestyle=":", linewidth=1.4)
-        ax.plot([0, dimension_x], [clearance, clearance], color="0.25",
-                linestyle=":", linewidth=1.4)
-        ax.annotate(
-            "",
-            xy=(dimension_x, clearance),
-            xytext=(dimension_x, radius),
-            arrowprops={
-                "arrowstyle": "<->",
-                "color": "black",
-                "lw": 1.8,
-                "mutation_scale": 9,
-            },
-            zorder=8,
-        )
-        ax.annotate(
-            r"$r_{\min}$",
-            xy=(dimension_x, (radius + clearance) / 2),
-            xytext=(dimension_x + 0.15 * action_distance,
-                    clearance + 0.12 * action_distance),
-            fontsize=22,
-            ha="left",
-            va="center",
-            arrowprops={"arrowstyle": "-", "color": "0.25", "lw": 1.2},
-        )
-    else:
-        ax.text(0.18 * action_distance, 1.5 * clearance, r"$r_{\min}$",
-                ha="left", va="center")
+        # r_min: del centro del peatón 1 al borde del peatón 2, al cruzarse
+        y_from, y_to = -amplitude, amplitude - radius
+        ax.plot([0, 0], [y_from, y_to], color="black", linewidth=1.8, zorder=8)
+        for y_tick in (y_from, y_to):
+            ax.plot([-0.06, 0.06], [y_tick, y_tick], color="black", linewidth=1.8, zorder=8)
+        ax.annotate(r"$r_{\min}$", xy=(0.03, (y_from + y_to) / 2),
+                    xytext=(0.16 * action_distance, -amplitude - radius - 0.22),
+                    fontsize=22, ha="left", va="center",
+                    arrowprops={"arrowstyle": "-", "color": "0.25", "lw": 1.2}, zorder=9)
 
-    ax.text(-half_distance, -1.35 * clearance, "Partícula 1", color=BLUE,
-            ha="center", va="top")
-    ax.text(half_distance, -1.35 * clearance, "Partícula 2", color=VERMILLION,
-            ha="center", va="top")
+    ax.text(-half_distance, -radius - 0.12, "Peatón 1", color=BLUE, ha="center", va="top")
+    ax.text(half_distance, -radius - 0.12, "Peatón 2", color=VERMILLION, ha="center", va="top")
 
-    x_margin = max(radius, 0.08 * action_distance)
+    x_margin = max(2.4 * radius, 0.1 * action_distance)
     ax.set_xlim(-half_distance - x_margin, half_distance + x_margin)
-    ax.set_ylim(-1.8 * clearance, 3.5 * clearance)
+    ax.set_ylim(-amplitude - radius - 0.5, dimension_y + 0.4)
     ax.set_aspect("equal", adjustable="box")
-    style_axes(ax, r"posición $x$ (m)", r"posición $y$ (m)")
-    ax.set_xticks([])
-    ax.set_yticks([])
-    ax.tick_params(axis="both", which="both", length=0)
-    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.22), ncol=3, frameon=False)
+    ax.axis("off")
+    handles, labels = ax.get_legend_handles_labels()
+    handles.append(Line2D([], [], marker="o", linestyle="none", markersize=16, markerfacecolor="0.75",
+                          markeredgecolor="black"))
+    labels.append("posiciones al cruzarse")
+    ax.legend(handles, labels, loc="upper center", bbox_to_anchor=(0.5, 0.02), ncol=2,
+              frameon=False, columnspacing=2.0, handlelength=2.2)
     fig.tight_layout()
     return fig
 

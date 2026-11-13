@@ -1,77 +1,92 @@
-\begin{frame}{Sistema}
-  \begin{cols}
-    \begin{column}{0.66\textwidth}
-      \siimagen{cuadro_inicial.png}{%
-        \makebox[\linewidth][c]{\includegraphics[width=\linewidth,height=0.88\textheight,keepaspectratio]{cuadro_inicial.png}}%
-      }{%
-        \makebox[\linewidth][c]{\framebox[\linewidth][c]{\rule{0pt}{5cm}\textit{falta la figura}}}%
-      }
+\begin{frame}{Simulaciones}
+  \framesubtitle{Sistema: dos peatones en curso de colisión}
+  \begin{columns}[c]
+    \begin{column}{0.64\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.72\textheight,keepaspectratio]{cuadro_inicial.png}
     \end{column}
-    \begin{column}{0.30\textwidth}
-      \begin{parametros}[Parámetros fijos]
-        \item $R = 0.51\uni{m}$
-        \item $r = 0.0175\uni{m}$
-        \item $m = 0.025\uni{kg}$
-        \item $|v_0| = 1\uni{m/s}$
-        \item $k = 10^{4}\uni{N/m}$
-      \end{parametros}
-      \vspace{4pt}
-      \begin{parametros}[Parámetros variables]
-        \item $N$
-        \item $x_o$
-      \end{parametros}
-      \vspace{6pt}
-      {\small Densidad: $\phi = N(r/R)^2$}
-    \end{column}
-  \end{cols}
-\end{frame}
-
-\begin{frame}{Observables}
-  \begin{columns}[T]
-    \begin{column}{0.48\textwidth}
-      \small
-      \begin{itemize}\setlength{\itemsep}{12pt}
-        \item $F_u(t) = N_u(t)/N$
-        \item $t_{90} = \min\{t : F_u(t) \geq 0.9\}$
-        \item $t_{100} = \min\{t : N_u(t) = N\}$
-      \end{itemize}
-    \end{column}
-    \begin{column}{0.50\textwidth}
-      \small
-      \begin{itemize}\setlength{\itemsep}{12pt}
-        \item Deriva: $\max_t |E(t) - E(0)|/|E(0)|$
-        \item $f(v) = N_i/(N\,\Delta v)$, con $v = |\vv{v}|$
-        \item $\displaystyle f_{MB}(v) = \frac{m v}{k_B T}\exp\!\left(-\frac{m v^2}{2 k_B T}\right)$
-      \end{itemize}
+    \begin{column}{0.33\textwidth}
+      \begin{beamercolorbox}[wd=\linewidth,sep=8pt,rounded=true]{block body alerted}
+        \small\textbf{Parámetros a calibrar}\par\vspace{6pt}
+        $p_1 = r_{min}$: separación lateral de referencia\par\vspace{6pt}
+        $p_2 = d_a$: distancia de activación de la elusión
+      \end{beamercolorbox}
     \end{column}
   \end{columns}
-  \vspace{14pt}
-  \small
-  Sobre $M$ realizaciones, para $X = t_{90},\, t_{100},\, F_u(t),\, f(v)$:
+\end{frame}
+
+\begin{frame}{Simulaciones}
+  \framesubtitle{Eventos experimentales y parámetros fijos}
+  \begin{columns}[c]
+    \begin{column}{0.54\textwidth}
+      \begin{beamercolorbox}[wd=\linewidth,sep=8pt,rounded=true]{block body}
+        \small\textbf{Eventos experimentales}\par\vspace{4pt}
+        \begin{itemize}\setlength{\itemsep}{6pt}
+          \item $M = 18$ eventos, intervalo de muestreo $\Delta t_{exp} \approx 0.0666\uni{s}$
+          \item Por evento: $\vv{r}_i(0)$, $\vv{v}_i(0)$, $v_{di}$ y $t_f$
+          \item Target final: posición inicial del otro peatón
+          \item $5$ eventos espejados: $y' = 2\,y_0 - y$
+        \end{itemize}
+      \end{beamercolorbox}
+    \end{column}
+    \begin{column}{0.38\textwidth}
+      \begin{beamercolorbox}[wd=\linewidth,sep=8pt,rounded=true]{block body}
+        \small\textbf{Parámetros fijos}\par\vspace{6pt}
+        \renewcommand{\arraystretch}{1.25}
+        \begin{tabular}{@{}l@{\qquad}l@{}}
+          Radio $r_i$ & $0.25\uni{m}$ \\
+          Masa $m_i$ & $80\uni{kg}$ \\
+          $\tau_i$ & $0.5\uni{s}$ \\
+          $k_n$ & $1.2\ten{5}\uni{N/m}$ \\
+          $k_t$ & $2.4\ten{5}\uni{kg/(m\,s)}$ \\
+        \end{tabular}\par\vspace{4pt}
+        {\footnotesize Helbing et al. (2000)}
+      \end{beamercolorbox}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Simulaciones}
+  \framesubtitle{Observables}
+  Error del peatón $i$ del evento $m$ \ ($N_m$ instantes $t_k = k\,\Delta t_{exp}$):
   \[
-    \langle X\rangle = \frac{1}{M}\sum_{k=1}^{M} X^{(k)},
-    \qquad
-    \sigma_X = \sqrt{\frac{1}{M-1}\sum_{k=1}^{M}\big(X^{(k)} - \langle X\rangle\big)^2}
+    E^{(1)}_i = \frac{1}{N_m}\sum_{k}\big|\vv{r}^{\,exp}_i(t_k) - \vv{r}^{\,sim}_i(t_k)\big|^2
+    \qquad\quad
+    E^{(2)}_i = \frac{1}{N_m}\sum_{k}\min_{j}\big|\vv{r}^{\,exp}_i(t_k) - \vv{r}^{\,sim}_i(t_j)\big|^2
+  \]
+  \vspace{2pt}
+  Error del evento y error poblacional:
+  \[
+    E_m = \frac{E_1 + E_2}{2}
+    \qquad\quad
+    \langle E\rangle(r_{min},\,d_a) = \frac{1}{M}\sum_{m=1}^{M} E_m(r_{min},\,d_a)
+  \]
+  \vspace{2pt}
+  Error estándar de $\langle E\rangle$:
+  \[
+    \sigma_{\langle E\rangle} = \frac{1}{\sqrt{M}}\sqrt{\frac{1}{M-1}\sum_{m=1}^{M}\big(E_m - \langle E\rangle\big)^2}
   \]
 \end{frame}
 
-\begin{frame}{Simulaciones realizadas}
-  \begin{columns}
-    \begin{column}{0.80\textwidth}
-      \centering
-      \small
-      \begin{tabular}{lllll}
-        \hline
-        Punto & $N$ & $x_o$ & Duración & $M$ \\
-        \hline
-        2.1a & $300$ & sin obstáculos & $30\uni{s}$ & $1$ \\
-        2.1b & $10$ a $650$ & $r$ & $30\uni{s}$ & $10$ \\
-        2.2 & $20$ y $100$ & $9$ valores de $r$ a $R - r$ & $100\uni{s}$ & $30$ \\
-        2.3 & $100$ & sin obstáculos & $10\uni{s}$ & $10$ \\
-        2.4a & $10$ a $650$ & $r$ & hasta $N_u = N$ & $10$ \\
-        2.4b & $20$ a $400$ & $9$ valores de $r$ a $R - r$ & hasta $N_u = N$ & $30$ \\
-        \hline
-      \end{tabular}
-    \end{column}
-  \end{columns}
+\begin{frame}{Simulaciones}
+  \framesubtitle{Simulaciones realizadas}
+  \textbf{Grilla de parámetros}
+  \begin{itemize}\setlength{\itemsep}{3pt}
+    \item $r_{min}$: $0.10$ a $0.50\uni{m}$, paso $0.05\uni{m}$ \ ($9$ valores)
+    \item $d_a$: $2.5$ a $7\uni{m}$, paso $0.5\uni{m}$ \ ($10$ valores)
+    \item $90$ puntos de grilla $\times$ $18$ eventos $= 1620$ simulaciones
+    \item Duración: $t_f$ de cada evento \ ($5.3$ a $8.9\uni{s}$)
+  \end{itemize}
+  \vspace{8pt}
+  \textbf{Estudios} (por métrica)
+  \vspace{3pt}
+
+  \centering
+  \begin{tabular}{ll}
+    \hline
+    Calibración poblacional & mínimo de $\langle E\rangle$ en la grilla, $18$ eventos \\
+    Calibración individual  & mínimo de $E_m$ en la grilla, por evento \\
+    Validación cruzada      & $20$ particiones al azar: $13$ de entrenamiento, $5$ de validación \\
+    \hline
+  \end{tabular}
 \end{frame}
