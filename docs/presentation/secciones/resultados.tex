@@ -169,20 +169,36 @@
   \framesubtitle{Calibración individual: error de cada evento}
   \begin{columns}[T]
     \begin{column}{0.49\textwidth}
-      \centering
-      \includegraphics[width=\linewidth,height=0.58\textheight,keepaspectratio]{E1_error_por_evento.png}
+      \centering{\small Métrica 1}\par
+      \includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{E1_error_por_evento.png}
     \end{column}
     \begin{column}{0.49\textwidth}
-      \centering
-      \includegraphics[width=\linewidth,height=0.58\textheight,keepaspectratio]{E2_error_por_evento.png}
+      \centering{\small Métrica 2}\par
+      \includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{E2_error_por_evento.png}
     \end{column}
   \end{columns}
-  \vspace{4pt}
+\end{frame}
+
+\begin{frame}{Resultados}
+  \framesubtitle{Calibración individual: ganancia al individualizar}
+  \centering
+  \renewcommand{\arraystretch}{1.5}
+  \begin{tabular}{lccc}
+    \hline
+    Métrica & $\langle E\rangle$ poblacional (m$^2$) & $\langle E\rangle$ individual (m$^2$) & Ganancia \\
+    \hline
+    1: iguales tiempos & $0.384$ & $0.381$ & $0.7$\,\% \\
+    2: punto más cercano & $2.05\ten{-2}$ & $1.69\ten{-2}$ & $18$\,\% \\
+    \hline
+  \end{tabular}
+
+  \vspace{16pt}
   \begin{columns}
-    \begin{column}{0.70\textwidth}
-      \begin{resultado}[Ganancia al individualizar]
-        \item Métrica 1: $0.7$\,\%, \ $\sqrt{\langle E\rangle}$: $62.0 \to 61.8\uni{cm}$, \ 10 de 18 eventos en el óptimo poblacional
-        \item Métrica 2: $18$\,\%, \ $\sqrt{\langle E\rangle}$: $14.3 \to 13.0\uni{cm}$, \ 0 de 18
+    \begin{column}{0.62\textwidth}
+      \begin{resultado}
+        \item Ganancia $= \big(\langle E\rangle_{\mathrm{pob}} - \langle E\rangle_{\mathrm{ind}}\big) / \langle E\rangle_{\mathrm{pob}}$
+        \item $\sqrt{\langle E\rangle}$, métrica 1: $0.620 \to 0.618\uni{m}$
+        \item $\sqrt{\langle E\rangle}$, métrica 2: $0.143 \to 0.130\uni{m}$
       \end{resultado}
     \end{column}
   \end{columns}

@@ -165,7 +165,7 @@ def plot_individual(metric: int, indir: Path, outdir: Path) -> None:
     ax.set_xticks(x)
     ax.set_xticklabels([str(p) for p in pruebas], fontsize=15)
     style_axes(ax, "Evento", elabel(metric, mean=False))
-    ax.legend(fontsize=15)
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol=2, fontsize=15, frameon=False)
     save(fig, outdir / f"E{metric}_error_por_evento.png")
 
 
