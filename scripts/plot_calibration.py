@@ -26,7 +26,6 @@ from matplotlib.colors import LogNorm  # noqa: E402
 from matplotlib.ticker import ScalarFormatter  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "lib"))
-from calib import format_pm  # noqa: E402
 from plot_style import BLUE, D_ACT_COLOR, D_LAT_COLOR, VERMILLION, apply_academic_style, style_axes  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
@@ -142,7 +141,7 @@ def plot_individual(metric: int, indir: Path, outdir: Path) -> None:
         if c > 1:
             radius_pt = np.sqrt(90 * c / np.pi)
             ax.annotate(str(c), (x, y), textcoords="offset points", xytext=(radius_pt + 5, 0), ha="left",
-                        va="center", fontsize=17, zorder=4)
+                        va="center", fontsize=20, zorder=4)
     ax.plot(r_opt, a_opt, marker="*", markersize=22, color=BLUE, markeredgecolor="black", linestyle="none",
             label="óptimo poblacional", zorder=3)
     ax.set_xticks(np.unique(grid[:, 0]))
@@ -152,7 +151,7 @@ def plot_individual(metric: int, indir: Path, outdir: Path) -> None:
     ax.set_xlim(grid[:, 0].min() - pad_x, grid[:, 0].max() + pad_x)
     ax.set_ylim(grid[:, 1].min() - pad_y, grid[:, 1].max() + 1.2 * pad_y)
     style_axes(ax, XLABEL, YLABEL)
-    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol=2, fontsize=15, frameon=False)
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol=1, fontsize=20, frameon=False)  # 20 pt: guía 1.8
     save(fig, outdir / f"E{metric}_optimos_individuales.png")
 
     # per-event errors, population vs individual parameters
@@ -164,9 +163,9 @@ def plot_individual(metric: int, indir: Path, outdir: Path) -> None:
     ax.axhline(E_pop.mean(), color=BLUE, linestyle="--", linewidth=1.5, label="promedio poblacional")
     ax.axhline(E_ind.mean(), color=VERMILLION, linestyle="--", linewidth=1.5, label="promedio individual")
     ax.set_xticks(x)
-    ax.set_xticklabels([str(p) for p in pruebas], fontsize=15)
+    ax.set_xticklabels([str(p) for p in pruebas])
     style_axes(ax, "Evento", elabel(metric, mean=False))
-    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol=2, fontsize=15, frameon=False)
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol=2, fontsize=20, frameon=False)  # 20 pt: guía 1.8
     save(fig, outdir / f"E{metric}_error_por_evento.png")
 
 
@@ -179,30 +178,28 @@ def plot_crossval(metric: int, indir: Path, outdir: Path) -> None:
     E_tr = np.array([float(r[3]) for r in rows])
     E_va = np.array([float(r[4]) for r in rows])
 
-    # one point per set: mean over the partitions, error bar = sample sd between partitions, value written beside it.
+    # one point per set: mean over the partitions, error bar = sample sd between partitions; the values are written
+    # beside the figure on the slide, with their units (guía 1.7, 1.9).
     # Points, not bars: a bar has to start at zero and then the spread, which is the result, takes a sliver of the axis
     # (the partition index carries no information, so it is not an axis)
     order = int(np.floor(np.log10(E_pop)))  # same power of ten on the axis and in the written values
     order = order if order < -1 else 0
-    fig, ax = plt.subplots(figsize=(8, 6))
+    fig, ax = plt.subplots(figsize=(6.5, 5.6))  # small canvas: the 20 pt text stays readable at slide size (guía 1.8)
     for x, vals, color in ((0, E_tr, BLUE), (1, E_va, VERMILLION)):
         mean, sd = vals.mean(), vals.std(ddof=1)
         ax.errorbar(x, mean, yerr=sd, fmt="o", markersize=13, color=color, ecolor=color, capsize=9, capthick=2.2,
                     elinewidth=2.2, zorder=3)
-        value, error = format_pm(mean / 10**order, sd / 10**order)
-        ax.annotate(rf"${value} \pm {error}$", (x, mean), textcoords="offset points", xytext=(16, 0), ha="left",
-                    va="center", fontsize=18, zorder=4, bbox=dict(facecolor="white", edgecolor="none", pad=2.5))
     ax.axhline(E_pop, color="black", linestyle=":", linewidth=1.8, label="calibración poblacional (18 eventos)", zorder=1)
     ax.set_xticks([0, 1])
     ax.set_xticklabels(["Entrenamiento\n(13 eventos)", "Validación\n(5 eventos)"])
-    ax.set_xlim(-0.5, 1.75)
+    ax.set_xlim(-0.6, 1.6)
     ax.margins(y=0.12)
     if order:
         ax.ticklabel_format(axis="y", style="sci", scilimits=(order, order))
     else:
         ax.ticklabel_format(axis="y", style="plain")
-    style_axes(ax, "", rf"$\langle E^{{({metric})}}\rangle$ (m$^2$)")
-    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.2), fontsize=15, ncol=2, frameon=False)
+    style_axes(ax, "Conjunto de eventos", f"Error medio, métrica {metric} (m$^2$)")  # words, not symbols (guía 1.8)
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.32), fontsize=20, ncol=1, frameon=False)
     save(fig, outdir / f"E{metric}_validacion_cruzada.png")
 
 

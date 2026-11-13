@@ -20,3 +20,26 @@
     \vv{e}_0 = \frac{\vv{x}^{\,temp}_i - \vv{r}_i}{|\vv{x}^{\,temp}_i - \vv{r}_i|}
   \]
 \end{frame}
+
+\begin{frame}{Anexo}
+  \framesubtitle{Validación cruzada: valores de error medio}
+  \centering
+  \renewcommand{\arraystretch}{1.5}
+  \begin{tabular}{lccc}
+    \hline
+    Métrica & Poblacional (m$^2$) & Entrenamiento (m$^2$) & Validación (m$^2$) \\
+    \hline
+    1: iguales tiempos & $0.384$ & $0.39 \pm 0.04$ & $0.4 \pm 0.1$ \\
+    2: punto más cercano & $2.05\ten{-2}$ & $(2.0 \pm 0.2)\ten{-2}$ & $(2.1 \pm 0.6)\ten{-2}$ \\
+    \hline
+  \end{tabular}
+
+  \vspace{16pt}
+  \begin{columns}
+    \begin{column}{0.62\textwidth}
+      \begin{parametros}
+        \item 20 particiones aleatorias: 13 eventos de entrenamiento, 5 de validación
+      \end{parametros}
+    \end{column}
+  \end{columns}
+\end{frame}
