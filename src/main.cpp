@@ -7,7 +7,8 @@
 const double MASS = 10;
 const double TAU = 0.5;
 const int PRECISION = 8;
-const double DT2 = 1.0 / 15.0192;
+const double EXPERIMENTAL_FPS = 15.0192; // TODO: should be taken from experiment
+const double DT2 = 1.0 / EXPERIMENTAL_FPS;
 
 int main(int argc, char *argv[]) {
   argparse::ArgumentParser program("Elusion-TP5", "0.1",
@@ -15,9 +16,9 @@ int main(int argc, char *argv[]) {
   program.add_argument("--r").default_value(0.25).scan<'g', double>().help(
       "Radius of particles");
   program.add_argument("--dt")
-      .default_value(0.066581442)
+      .default_value(0.001)
       .scan<'g', double>()
-      .help("Time step, should be taken from experimental data");
+      .help("Maximum integration time step in seconds. Output is saved at the experimental frame rate.");
   program.add_argument("--kn").default_value(1.2e5).scan<'g', double>().help(
       "Compression: Normal k");
   program.add_argument("--kt").default_value(2.4e5).scan<'g', double>().help(
@@ -50,7 +51,7 @@ int main(int argc, char *argv[]) {
       .help("Distance to obstacle since which particle begins to act for "
             "elusion");
   program.add_argument("--initial_velocity", "--initial-velocity")
-      .default_value(std::string("zero"))
+      .default_value(std::string("experimental"))
       .choices("zero", "experimental")
       .help("Initial velocity of both pedestrians: zero, or the experimental "
             "one from --initial_speeds_path");
@@ -69,12 +70,13 @@ int main(int argc, char *argv[]) {
     std::string out_path = program.get("--out_path");
     std::string initial_speeds_path = program.get("--initial_speeds_path");
 
-    double dt = program.get<double>("--dt");
-    if (dt <= 0 || dt > DT2) {
+    double requested_dt = program.get<double>("--dt");
+
+    if (!std::isfinite(requested_dt) || requested_dt <= 0 || requested_dt > DT2) {
         throw std::invalid_argument("--dt must be in (0, DT2]");
     }
-    const int n = static_cast<int>(std::lround(DT2 / dt));
-    dt = DT2 / n;  // n integration steps land exactly on each output frame
+    const int n = static_cast<int>(std::lround(DT2 / requested_dt));
+    const double dt = DT2 / n;
 
     std::cout << "Model SFM\n";
 

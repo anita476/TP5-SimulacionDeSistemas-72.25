@@ -81,7 +81,9 @@ Para ejecutar todas las pruebas con cada combinación de `r_min` y
 ```bash
 scripts/experiment_runner.sh \
   --r-mins 0.3,0.4 \
-  --action-distances 5,6
+  --action-distances 5,6 \
+  --dt 0.001 \
+  --initial-velocity experimental
 ```
 
 El runner usa las pruebas de `data/cruces_evento/` (recortadas al inicio común, ver más abajo). Organiza los resultados

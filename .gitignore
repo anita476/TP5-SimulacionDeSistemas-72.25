@@ -108,3 +108,6 @@ docs/presentation/main.vrb
 data/sim/
 data/experiments/
 data/calibration/
+CLAUDE.md
+.claude/
+docs/superpowers/

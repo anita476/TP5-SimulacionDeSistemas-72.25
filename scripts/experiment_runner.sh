@@ -11,6 +11,8 @@ OUTPUT_DIR="${OUTPUT_DIR:-data/experiments}"
 SPEEDS_PATH="${SPEEDS_PATH:-data/pruebas_speeds.txt}"
 TIMES_PATH="${TIMES_PATH:-data/tiempos_totales.txt}"
 INITIAL_SPEEDS_PATH="${INITIAL_SPEEDS_PATH:-data/velocidades_iniciales.txt}"
+DT="${DT:-0.001}"
+INITIAL_VELOCITY="${INITIAL_VELOCITY:-experimental}" # zero | experimental
 NEAREST_POINT_SCRIPT="scripts/calculate_nearest_point.py"
 EQUAL_TIME_SCRIPT="scripts/calculate_equal_time.py"
 DIFF_PLOT_SCRIPT="scripts/plot_nearest_point_diff.py"
@@ -31,6 +33,8 @@ Opciones:
 
 Variables de entorno opcionales:
   SIM, PYTHON, TRAJ_DIR, OUTPUT_DIR, SPEEDS_PATH, TIMES_PATH, INITIAL_SPEEDS_PATH
+  DT=0.001
+  INITIAL_VELOCITY=experimental
   SKIP_COMPARISONS=1  no escribe los txt de métrica por simulación (collect_errors.py las recalcula)
 EOF
 }
@@ -146,7 +150,8 @@ for traj in "${trajs[@]}"; do
         --v_path "$SPEEDS_PATH" \
         --time_path "$TIMES_PATH" \
         --initial_speeds_path "$INITIAL_SPEEDS_PATH" \
-        --initial_velocity experimental \
+        --dt "$DT" \
+        --initial_velocity "$INITIAL_VELOCITY" \
         --out-path "$output"
 
       if [[ "${SKIP_COMPARISONS:-0}" != "1" ]]; then
