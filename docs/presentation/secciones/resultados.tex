@@ -1,0 +1,153 @@
+\begin{frame}{Resultados}
+  \framesubtitle{Animaciones: experimento y simulación}
+  \begin{columns}[T]
+    \begin{column}{0.49\textwidth}
+      \centering{\small Evento 15 (menor $E^{(2)}_m$)}\par\smallskip
+      \includegraphics[width=\linewidth,height=0.52\textheight,keepaspectratio]{anim_a.png}
+      \par\smallskip{\scriptsize\url{https://youtu.be/PENDIENTE}}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \centering{\small Evento 11 (mayor $E^{(2)}_m$)}\par\smallskip
+      \includegraphics[width=\linewidth,height=0.52\textheight,keepaspectratio]{anim_b.png}
+      \par\smallskip{\scriptsize\url{https://youtu.be/PENDIENTE}}
+    \end{column}
+  \end{columns}
+  \vspace{6pt}
+  \centering{\small $r_{min} = 0.25\uni{m}$, \quad $d_a = 5\uni{m}$}
+\end{frame}
+
+\begin{frame}{Resultados}
+  \framesubtitle{Trayectorias: experimento y simulación}
+  \centering
+  {\small Evento 15}\par
+  \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{tray_a.png}\par
+  \vspace{2pt}
+  {\small Evento 11}\par
+  \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{tray_b.png}
+\end{frame}
+
+\begin{frame}{Resultados}
+  \framesubtitle{Calibración poblacional: métrica 1}
+  \begin{cols}
+    \begin{column}{0.62\textwidth}
+      \figura{E1_superficie.png}
+    \end{column}
+    \begin{column}{0.34\textwidth}
+      \begin{resultado}[Óptimo]
+        \item $r_{min} = 0.20\uni{m}$
+        \item $d_a = 4\uni{m}$
+        \item $\langle E^{(1)}\rangle = 0.384 \pm 0.061\uni{m^2}$
+      \end{resultado}
+    \end{column}
+  \end{cols}
+\end{frame}
+
+\begin{frame}{Resultados}
+  \framesubtitle{Calibración poblacional: métrica 1, cortes por el óptimo}
+  \begin{columns}[T]
+    \begin{column}{0.49\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.66\textheight,keepaspectratio]{E1_corte_rmin.png}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.66\textheight,keepaspectratio]{E1_corte_action_distance.png}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Resultados}
+  \framesubtitle{Calibración poblacional: métrica 2}
+  \begin{cols}
+    \begin{column}{0.62\textwidth}
+      \figura{E2_superficie.png}
+    \end{column}
+    \begin{column}{0.34\textwidth}
+      \begin{resultado}[Óptimo]
+        \item $r_{min} = 0.25\uni{m}$
+        \item $d_a = 5\uni{m}$
+        \item $\langle E^{(2)}\rangle = (2.05 \pm 0.34)\ten{-2}\uni{m^2}$
+      \end{resultado}
+    \end{column}
+  \end{cols}
+\end{frame}
+
+\begin{frame}{Resultados}
+  \framesubtitle{Calibración poblacional: métrica 2, cortes por el óptimo}
+  \begin{columns}[T]
+    \begin{column}{0.49\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.66\textheight,keepaspectratio]{E2_corte_rmin.png}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.66\textheight,keepaspectratio]{E2_corte_action_distance.png}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Resultados}
+  \framesubtitle{Calibración poblacional: comparación de los óptimos}
+  \centering
+  \renewcommand{\arraystretch}{1.5}
+  \begin{tabular}{lccc}
+    \hline
+    Métrica & $r_{min}$ (m) & $d_a$ (m) & $\langle E\rangle$ (m$^2$) \\
+    \hline
+    1: iguales tiempos & $0.20$ & $4$ & $0.384 \pm 0.061$ \\
+    2: punto más cercano & $0.25$ & $5$ & $(2.05 \pm 0.34)\ten{-2}$ \\
+    \hline
+  \end{tabular}
+
+  \vspace{16pt}
+  \begin{columns}
+    \begin{column}{0.62\textwidth}
+      \begin{resultado}
+        \item Óptimos a un paso de grilla entre sí
+        \item $\langle E^{(1)}\rangle \approx 19\,\langle E^{(2)}\rangle$
+        \item $\sqrt{\langle E\rangle}$: $0.62\uni{m}$ (métrica 1), $0.14\uni{m}$ (métrica 2)
+      \end{resultado}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Resultados}
+  \framesubtitle{Calibración individual: óptimos de cada evento}
+  \begin{columns}[T]
+    \begin{column}{0.49\textwidth}
+      \centering{\small Métrica 1}\par
+      \includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{E1_optimos_individuales.png}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \centering{\small Métrica 2}\par
+      \includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{E2_optimos_individuales.png}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Resultados}
+  \framesubtitle{Calibración individual: error de cada evento}
+  \begin{columns}[T]
+    \begin{column}{0.49\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.58\textheight,keepaspectratio]{E1_error_por_evento.png}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.58\textheight,keepaspectratio]{E2_error_por_evento.png}
+    \end{column}
+  \end{columns}
+  \vspace{4pt}
+  \begin{columns}
+    \begin{column}{0.70\textwidth}
+      \begin{resultado}[Ganancia al individualizar]
+        \item Métrica 1: $0.384 \to 0.381\uni{m^2}$ \ ($0.7$\,\%)
+        \item Métrica 2: $2.05\ten{-2} \to 1.69\ten{-2}\uni{m^2}$ \ ($17.8$\,\%)
+      \end{resultado}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Resultados}
+  \framesubtitle{Validación cruzada}
+\end{frame}

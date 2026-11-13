@@ -51,6 +51,7 @@ def make_figure(
     dots: bool = False,
     linestyles: list[str] | None = None,
     caption: str | None = None,
+    show_title: bool = True,
 ):
     """pedestrians: (label, color, positions) in drawing order.
 
@@ -125,15 +126,18 @@ def make_figure(
         color=UNTRACKED,
         markeredgecolor="black",
         alpha=UNTRACKED_ALPHA,
-        label="sin registro",
+        # entrada de leyenda solo si algún peatón pierde el registro en algún cuadro
+        label="sin registro" if any(p is None for _l, _c, positions in pedestrians for p in positions) else "_nolegend_",
     )
     if dots:
         untracked.set_markersize(DOT_SIZE)
     handles, labels = ax.get_legend_handles_labels()
+    n_legend = len(labels)
     ncol = 2 if n_legend > 3 else n_legend
     fig.legend(handles, labels, loc="lower center", ncol=ncol, frameon=True, fancybox=False)
     head = caption if caption is not None else rf"prueba {trial}"
     stats = fig.text(0.5, 1.0 - 0.15 / height, _stats_line(head, 0.0), ha="center", va="top", fontsize=FONT_SIZE)
+    stats.set_visible(show_title)  # las figuras de las diapositivas no llevan título adentro
 
     # NaN breaks the trail where the tracker lost the person instead of bridging the gap.
     trail_xs = [[p[0] if p is not None else math.nan for p in positions] for _l, _c, positions in pedestrians]

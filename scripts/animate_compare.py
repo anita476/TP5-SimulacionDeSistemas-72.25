@@ -88,6 +88,7 @@ def main() -> None:
     parser.add_argument("--mp4", help="output MP4 (requires ffmpeg)")
     parser.add_argument("--png", help="PNG of one frame")
     parser.add_argument("--frame", type=int, default=None, help="PNG frame index (default: last; 0 = initial)")
+    parser.add_argument("--no-title", action="store_true", help="hide the 'prueba N  t = ...' line (slide figures carry no title)")
     parser.add_argument("--show", action="store_true", help="open a window")
     parser.add_argument("--fps", type=int, default=None, help="video frames per second (default: experimental frame rate rounded, ~real time)")
     args = parser.parse_args()
@@ -162,6 +163,7 @@ def main() -> None:
         dots=True,
         linestyles=["-", "-", "--", "--"],
         caption=caption,
+        show_title=not args.no_title,
     )
 
     if args.png:

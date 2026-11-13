@@ -23,17 +23,19 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 from matplotlib.colors import LogNorm  # noqa: E402
+from matplotlib.ticker import ScalarFormatter  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "lib"))
-from plot_style import BLUE, GREEN, RED, VERMILLION, apply_academic_style, style_axes  # noqa: E402
+from plot_style import BLUE, VERMILLION, apply_academic_style, style_axes  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
-XLABEL = r"$r_{\min}$ [m]"
-YLABEL = r"$d_a$ [m]"
+XLABEL = r"Separación de referencia $r_{min}$ (m)"
+YLABEL = r"Distancia de activación $d_a$ (m)"
 
 
 def elabel(metric: int, mean: bool = True) -> str:
-    return rf"$\langle E^{{({metric})}} \rangle$ [m$^2$]" if mean else rf"$E^{{({metric})}}_m$ [m$^2$]"
+    """Rótulo de eje en palabras, con la unidad entre paréntesis (guía de presentaciones, 1.8)."""
+    return f"Error poblacional, métrica {metric} (m$^2$)" if mean else f"Error del evento, métrica {metric} (m$^2$)"
 
 
 def read_table(path: Path):
@@ -81,6 +83,11 @@ def plot_population(metric: int, indir: Path, outdir: Path) -> None:
     norm = LogNorm(vmin=zmin, vmax=zmax) if zmin > 0 and zmax / zmin > 20 else None
     mesh = ax.pcolormesh(r_mins, ads, Z, shading="nearest", cmap="viridis", norm=norm)
     cbar = fig.colorbar(mesh, ax=ax, pad=0.02)
+    if norm is None:
+        formatter = ScalarFormatter(useMathText=True)
+        formatter.set_powerlimits((-2, 4))
+        cbar.formatter = formatter
+        cbar.update_ticks()
     cbar.set_label(elabel(metric), labelpad=12)
     ax.plot(r_opt, a_opt, marker="*", markersize=22, color="white", markeredgecolor="black", markeredgewidth=1.2, linestyle="none")
     ax.set_xticks(r_mins)
@@ -118,12 +125,16 @@ def plot_individual(metric: int, indir: Path, outdir: Path) -> None:
 
     # optima on the grid
     fig, ax = plt.subplots(figsize=(8, 6))
-    ax.plot(grid[:, 0], grid[:, 1], linestyle="none", marker="o", color="0.8", markersize=5, label="grilla", zorder=1)
+    ax.plot(grid[:, 0], grid[:, 1], linestyle="none", marker="o", color="0.8", markersize=5, zorder=1)
     pts, counts = np.unique(opt, axis=0, return_counts=True)
     ax.scatter(pts[:, 0], pts[:, 1], s=90 * counts, color=VERMILLION, alpha=0.75, edgecolor="black", zorder=2,
-               label="óptimos individuales")
+               label="óptimos individuales (número de eventos)")
+    # cantidad de eventos a la derecha de cada círculo, solo donde coincide más de uno
     for (x, y), c in zip(pts, counts):
-        ax.annotate(str(c), (x, y), textcoords="offset points", xytext=(0, 14), ha="center", fontsize=14)
+        if c > 1:
+            radius_pt = np.sqrt(90 * c / np.pi)
+            ax.annotate(str(c), (x, y), textcoords="offset points", xytext=(radius_pt + 5, 0), ha="left",
+                        va="center", fontsize=17, zorder=4)
     ax.plot(r_opt, a_opt, marker="*", markersize=22, color=BLUE, markeredgecolor="black", linestyle="none",
             label="óptimo poblacional", zorder=3)
     ax.set_xticks(np.unique(grid[:, 0]))
@@ -133,7 +144,7 @@ def plot_individual(metric: int, indir: Path, outdir: Path) -> None:
     ax.set_xlim(grid[:, 0].min() - pad_x, grid[:, 0].max() + pad_x)
     ax.set_ylim(grid[:, 1].min() - pad_y, grid[:, 1].max() + 1.2 * pad_y)
     style_axes(ax, XLABEL, YLABEL)
-    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.18), ncol=3, fontsize=15, frameon=False)
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.2), ncol=2, fontsize=15, frameon=False)
     save(fig, outdir / f"E{metric}_optimos_individuales.png")
 
     # per-event errors, population vs individual parameters
@@ -146,7 +157,7 @@ def plot_individual(metric: int, indir: Path, outdir: Path) -> None:
     ax.axhline(E_ind.mean(), color=VERMILLION, linestyle="--", linewidth=1.5)
     ax.set_xticks(x)
     ax.set_xticklabels([str(p) for p in pruebas], fontsize=15)
-    style_axes(ax, "evento", elabel(metric, mean=False))
+    style_axes(ax, "Evento", elabel(metric, mean=False))
     ax.legend(fontsize=15)
     save(fig, outdir / f"E{metric}_error_por_evento.png")
 
@@ -162,13 +173,13 @@ def plot_crossval(metric: int, indir: Path, outdir: Path) -> None:
 
     fig, ax = plt.subplots(figsize=(9, 6))
     ax.axhspan(val_mean - val_sd, val_mean + val_sd, color=VERMILLION, alpha=0.15, linewidth=0)
-    ax.axhline(val_mean, color=VERMILLION, linestyle="--", linewidth=1.5, label=r"$\langle E \rangle$ validación")
-    ax.axhline(E_pop, color="black", linestyle=":", linewidth=1.8, label=r"$\langle E \rangle$ poblacional (b)")
+    ax.axhline(val_mean, color=VERMILLION, linestyle="--", linewidth=1.5, label="media de validación")
+    ax.axhline(E_pop, color="black", linestyle=":", linewidth=1.8, label="error poblacional")
     ax.plot(k, E_va, linestyle="none", marker="o", color=VERMILLION, label="validación")
     ax.plot(k, E_tr, linestyle="none", marker="s", color=BLUE, markersize=6.5, label="entrenamiento")
     ax.set_xticks(k[:: max(1, len(k) // 10)])
-    style_axes(ax, "partición", elabel(metric))
-    ax.legend(fontsize=14, ncol=2)
+    style_axes(ax, "Partición", elabel(metric))
+    ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.2), fontsize=15, ncol=2, frameon=False)
     save(fig, outdir / f"E{metric}_validacion_cruzada.png")
 
 
