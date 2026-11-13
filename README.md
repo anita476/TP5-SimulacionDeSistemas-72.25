@@ -154,7 +154,7 @@ python scripts/get_initial_speeds.py
 
 Lado y magnitud del desvío lateral en las pasadas reales. Para cada peatón, 
 delta es la distancia con signo a la cuerda inicio-fin, positiva hacia su 
-derecha (normal rx = uy, ry = -ux). Si |delta| < 0.10 m, cuenta como que 
+derecha (normal rx = uy, ry = -ux). Si |delta| < 0.15 m, cuenta como que 
 no elude.
 
 ```bash

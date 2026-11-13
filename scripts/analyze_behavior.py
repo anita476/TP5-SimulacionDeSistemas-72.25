@@ -23,9 +23,9 @@ from lib.plot_style import (
 )
 from lib.traj import DEFAULT_CROSSINGS_DIR, DEFAULT_TRIALS_PATH, Position, read_experiment, read_trials
 
-NO_EVADE_M = 0.10
-AMBIGUOUS_LO_M = 0.08
-AMBIGUOUS_HI_M = 0.12
+NO_EVADE_M = 0.15
+AMBIGUOUS_LO_M = NO_EVADE_M - 0.02
+AMBIGUOUS_HI_M = NO_EVADE_M + 0.02
 
 _SIDE_HEADER = re.compile(r"#\s*(izquierda|derecha):\s*id\s+([^,\s]+)", re.IGNORECASE)
 
@@ -359,11 +359,15 @@ def write_table(path: Path, trials: list[Trial]) -> None:
         ]
     )
     if ambiguous:
-        lines.append("# ambiguos |delta| en [0.08, 0.12] m: prueba id |delta_pico|")
+        lines.append(
+            f"# ambiguos |delta| en [{AMBIGUOUS_LO_M:.2f}, {AMBIGUOUS_HI_M:.2f}] m: prueba id |delta_pico|"
+        )
         for number, person, value in ambiguous:
             lines.append(f"# {number} {person} {value:.6f}")
     else:
-        lines.append("# ambiguos |delta| en [0.08, 0.12] m: ninguno")
+        lines.append(
+            f"# ambiguos |delta| en [{AMBIGUOUS_LO_M:.2f}, {AMBIGUOUS_HI_M:.2f}] m: ninguno"
+        )
 
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
@@ -487,8 +491,8 @@ def plot_deviation_distribution(trials: list[Trial], out_path: Path) -> None:
     ]
     if not values:
         raise ValueError("no deviations to bin")
-    # Coarsest width that puts 0.10 m on a bin edge and keeps the empty gap
-    # (0.15 m, 0.20 m) as its own bin. Scott (~0.18 m) and Freedman-Diaconis
+    # 0.05 m puts the 0.15 m cut on a bin edge and leaves the empty gap
+    # (0.15 m, 0.20 m) as the next bin. Scott (~0.18 m) and Freedman-Diaconis
     # (~0.13 m) would swallow the threshold and that gap.
     width = 0.05
     n_bins = math.ceil(max(values) / width - 1e-9)

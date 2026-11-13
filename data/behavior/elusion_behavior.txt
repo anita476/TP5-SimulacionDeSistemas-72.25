@@ -1,4 +1,4 @@
-# umbral |delta| < 0.10 m => no elude
+# umbral |delta| < 0.15 m => no elude
 # delta > 0: desvio a su derecha (rx = uy, ry = -ux)
 # prueba id lado delta_pico_m lado_propio lado_lab elude delta_ca_m
 1 3 izquierda 0.427426 derecha -y 1 0.423369
@@ -6,18 +6,18 @@
 3 43 izquierda 0.570433 derecha -y 1 0.484135
 3 1 derecha 0.278918 derecha +y 1 0.243585
 4 10 izquierda 0.376158 derecha -y 1 0.354565
-4 5 derecha 0.103586 derecha +y 1 0.087025
-5 4 izquierda 0.130185 derecha -y 1 0.129208
+4 5 derecha 0.103586 no_elude +y 0 0.087025
+5 4 izquierda 0.130185 no_elude -y 0 0.129208
 5 12 derecha 0.354613 derecha +y 1 0.280493
 6 9 izquierda -0.525035 izquierda +y 1 -0.472536
 6 6 derecha -0.233402 izquierda -y 1 -0.210886
 7 20 izquierda 0.465833 derecha -y 1 0.453835
-7 44 derecha 0.106548 derecha +y 1 0.081459
+7 44 derecha 0.106548 no_elude +y 0 0.081459
 8 27 izquierda -0.565137 izquierda +y 1 -0.563806
 8 37 derecha -0.252828 izquierda -y 1 -0.185341
 9 16 izquierda 0.447881 derecha -y 1 0.390031
 9 39 derecha 0.393475 derecha +y 1 0.392211
-10 17 izquierda -0.139015 izquierda +y 1 -0.139015
+10 17 izquierda -0.139015 no_elude +y 0 -0.139015
 10 42 derecha -0.440962 izquierda -y 1 -0.440962
 11 23 izquierda 0.295776 derecha -y 1 0.248942
 11 24 derecha 0.732937 derecha +y 1 0.660280
@@ -41,13 +41,13 @@
 # prueba d_min_m y_mayor cesion acuerdo_modelo delta_izq_m delta_der_m
 1 0.913615 derecha ambos ambos_derecha 0.427426 0.476445
 3 0.602610 derecha ambos ambos_derecha 0.570433 0.278918
-4 0.540020 derecha ambos ambos_derecha 0.376158 0.103586
-5 0.489473 derecha ambos ambos_derecha 0.130185 0.354613
+4 0.540020 derecha solo_izquierda uno_solo 0.376158 0.103586
+5 0.489473 derecha solo_derecha uno_solo 0.130185 0.354613
 6 0.800429 izquierda ambos ambos_izquierda -0.525035 -0.233402
-7 0.559338 derecha ambos ambos_derecha 0.465833 0.106548
+7 0.559338 derecha solo_izquierda uno_solo 0.465833 0.106548
 8 0.828044 izquierda ambos ambos_izquierda -0.565137 -0.252828
 9 0.778230 derecha ambos ambos_derecha 0.447881 0.393475
-10 0.627488 izquierda ambos ambos_izquierda -0.139015 -0.440962
+10 0.627488 izquierda solo_derecha uno_solo -0.139015 -0.440962
 11 0.914109 derecha ambos ambos_derecha 0.295776 0.732937
 12 0.635505 izquierda solo_izquierda uno_solo -0.643865 0.057655
 13 0.869084 derecha ambos ambos_derecha 0.608405 0.263358
@@ -59,29 +59,28 @@
 19 0.609335 derecha ambos ambos_derecha 0.334586 0.346902
 
 # resumen
-# umbral_no_elude_m 0.10
+# umbral_no_elude_m 0.15
 # n_pruebas 18
 # n_peatones 36
 # |delta_pico| todos media=0.3706 m  std=0.1682 m  n=36
-# |delta_pico| elusores media=0.3882 m  std=0.1557 m  n=34
+# |delta_pico| elusores media=0.4240 m  std=0.1276 m  n=30
 # |delta_pico| izquierda media=0.4240 m  std=0.1418 m  n=18
 # |delta_pico| derecha media=0.3172 m  std=0.1792 m  n=18
-# lado a_su_derecha 25
-# lado a_su_izquierda 9
-# lado no_elude 2
-# cesion ambos 16
-# cesion solo_izquierda 2
-# cesion solo_derecha 0
+# lado a_su_derecha 22
+# lado a_su_izquierda 8
+# lado no_elude 6
+# cesion ambos 12
+# cesion solo_izquierda 4
+# cesion solo_derecha 2
 # cesion ninguno 0
-# acuerdo ambos_derecha 12
-# acuerdo ambos_izquierda 4
+# acuerdo ambos_derecha 9
+# acuerdo ambos_izquierda 3
 # acuerdo mixto 0
-# acuerdo uno_solo 2
+# acuerdo uno_solo 6
 # acuerdo ninguno 0
 # y_mayor izquierda 5
 # y_mayor derecha 13
 # y_mayor empate 0
-# ambiguos |delta| en [0.08, 0.12] m: prueba id |delta_pico|
-# 4 5 0.103586
-# 7 44 0.106548
-# 18 21 0.083837
+# ambiguos |delta| en [0.13, 0.17] m: prueba id |delta_pico|
+# 5 4 0.130185
+# 10 17 0.139015
