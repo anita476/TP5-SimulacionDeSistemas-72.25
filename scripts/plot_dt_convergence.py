@@ -31,7 +31,7 @@ from plot_style import MARKERS, SERIES, apply_academic_style, save_figure, style
 
 REPO = Path(__file__).resolve().parents[1]
 DT2 = 1.0 / 15.0192  # paso de impresión del motor (s), igual al muestreo experimental
-DEFAULT_STEPS = [1, 2, 3, 4, 5, 6, 7, 8, 10, 14, 20, 40, 67]
+DEFAULT_STEPS = [1, 2, 3, 4, 5, 6, 7, 8, 10, 14, 20, 40, 67, 133, 266]
 DEFAULT_CASES = ["6,0.2,2.5", "7,0.1,7", "19,0.3,5"]
 
 
@@ -108,7 +108,7 @@ def main():
                     color=SERIES[k % len(SERIES)], linestyle="-", linewidth=1.0, label=label)
         ax.set_xscale("log")
         ax.set_yscale("log")
-        style_axes(ax, "Paso de integración (s)", ylabel)
+        style_axes(ax, "Paso de simulación (s)", ylabel)
         # el eje y va en décadas enteras, así siempre hay al menos dos potencias de 10 rotuladas
         ax.set_xlim(dts.min() * 0.7, 10.0 ** np.ceil(np.log10(dts.max())))
         values = np.concatenate([results[case][:, column] for case in args.cases])
