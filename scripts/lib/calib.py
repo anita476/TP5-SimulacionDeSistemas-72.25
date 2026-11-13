@@ -114,6 +114,18 @@ class ErrorTable:
         return sorted({g[1] for g in self.grid})
 
 
+def format_pm(value: float, error: float) -> tuple[str, str]:
+    """Value and error as strings in the format of Teórica 0 (slide 62): the error with one significant figure and the
+    value rounded to that same decimal place, e.g. (45.423457, 0.323428) -> ("45.4", "0.3")."""
+    if not (np.isfinite(value) and np.isfinite(error)) or error <= 0:
+        return f"{value:.3g}", f"{error:.1g}"
+    exponent = int(np.floor(np.log10(error)))
+    error = round(error, -exponent)
+    exponent = int(np.floor(np.log10(error)))  # 0.096 rounds up to 0.1: one decimal less
+    decimals = max(0, -exponent)
+    return f"{round(value, -exponent):.{decimals}f}", f"{error:.{decimals}f}"
+
+
 # --- (b) population calibration -----------------------------------------------------------------
 
 
@@ -121,7 +133,7 @@ class ErrorTable:
 class PopulationResult:
     grid: list[GridPoint]
     mean: np.ndarray  # <E>(j) over the events that have that grid point
-    sem: np.ndarray  # standard error of that mean (std ddof=1 / sqrt(n)); NaN when n < 2
+    sd: np.ndarray  # sample standard deviation between events (ddof=1): the error bar, mu ± sigma of Teórica 0; NaN when n < 2
     n: np.ndarray  # number of events behind each mean
     optimum_index: int
 
@@ -134,28 +146,27 @@ class PopulationResult:
         return float(self.mean[self.optimum_index])
 
     @property
-    def optimum_sem(self) -> float:
-        return float(self.sem[self.optimum_index])
+    def optimum_sd(self) -> float:
+        return float(self.sd[self.optimum_index])
 
 
-def _mean_sem(E: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+def _mean_sd(E: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     n = np.sum(~np.isnan(E), axis=0)
     with np.errstate(invalid="ignore"):
         mean = np.nanmean(E, axis=0)
         sd = np.nanstd(E, axis=0, ddof=1)
-    sem = np.where(n > 1, sd / np.sqrt(np.maximum(n, 1)), np.nan)
-    return mean, sem, n
+    return mean, np.where(n > 1, sd, np.nan), n
 
 
 def population(table: ErrorTable) -> PopulationResult:
     """Grid search of <E>(p1, p2) = mean over events (eq. 3). The optimum is the grid point with the lowest mean,
     considering only grid points that every event has (an incomplete column cannot be compared fairly)."""
-    mean, sem, n = _mean_sem(table.E)
+    mean, sd, n = _mean_sd(table.E)
     complete = n == len(table.events)
     if not complete.any():
         raise ValueError("no grid point is simulated for every event; complete the sweep first")
     candidate = np.where(complete, mean, np.inf)
-    return PopulationResult(table.grid, mean, sem, n, int(np.argmin(candidate)))
+    return PopulationResult(table.grid, mean, sd, n, int(np.argmin(candidate)))
 
 
 # --- (c) individual calibration -----------------------------------------------------------------

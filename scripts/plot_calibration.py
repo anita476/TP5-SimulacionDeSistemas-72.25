@@ -69,7 +69,7 @@ def save(fig, path: Path) -> None:
 def plot_population(metric: int, indir: Path, outdir: Path) -> None:
     comments, rows = read_table(indir / f"population_m{metric}.txt")
     r_opt, a_opt, _, _ = header_value(comments, "optimum")
-    data = np.array([[float(v) for v in r[:4]] for r in rows])  # d_lat ad mean sem
+    data = np.array([[float(v) for v in r[:4]] for r in rows])  # d_lat ad mean sd
     d_lats, ads = np.unique(data[:, 0]), np.unique(data[:, 1])
     Z = np.full((len(ads), len(d_lats)), np.nan)
     S = np.full_like(Z, np.nan)
@@ -77,10 +77,10 @@ def plot_population(metric: int, indir: Path, outdir: Path) -> None:
         Z[np.searchsorted(ads, a), np.searchsorted(d_lats, r)] = m
         S[np.searchsorted(ads, a), np.searchsorted(d_lats, r)] = s
 
-    # surface; log colour scale when the grid spans more than a decade (a diverging run would flatten everything else)
+    # surface; log colour scale, so the contrast is not spent on the bad corners and the valley around the optimum shows
     fig, ax = plt.subplots(figsize=(8.5, 6.5))
     zmin, zmax = np.nanmin(Z), np.nanmax(Z)
-    norm = LogNorm(vmin=zmin, vmax=zmax) if zmin > 0 and zmax / zmin > 20 else None
+    norm = LogNorm(vmin=zmin, vmax=zmax) if zmin > 0 else None
     mesh = ax.pcolormesh(d_lats, ads, Z, shading="nearest", cmap="viridis", norm=norm)
     cbar = fig.colorbar(mesh, ax=ax, pad=0.02)
     if norm is None:
@@ -164,7 +164,7 @@ def plot_individual(metric: int, indir: Path, outdir: Path) -> None:
 
 def plot_crossval(metric: int, indir: Path, outdir: Path) -> None:
     pcom, _ = read_table(indir / f"population_m{metric}.txt")
-    _, _, E_pop, sem_pop = header_value(pcom, "optimum")
+    _, _, E_pop, _ = header_value(pcom, "optimum")
     ccom, rows = read_table(indir / f"crossval_m{metric}.txt")
     val_mean, val_sd = header_value(ccom, "validation")
     k = np.array([int(r[0]) for r in rows])

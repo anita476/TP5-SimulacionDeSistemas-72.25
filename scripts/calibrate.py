@@ -2,7 +2,7 @@
 """
 Calibración de la capa de elusión a partir de la tabla E[m, i, j] (collect_errors.py), por métrica:
 
-  (b) poblacional:  <E>(d_lat, d_act) = promedio sobre eventos, con su error estándar; óptimo = mínimo de la grilla
+  (b) poblacional:  <E>(d_lat, d_act) = promedio sobre eventos, con su desvío estándar muestral; óptimo = mínimo de la grilla
   (c) individual:   óptimo de cada evento y su error con los parámetros poblacionales
   (d) validación cruzada: particiones aleatorias entrenamiento/validación; óptimo sobre entrenamiento, error sobre validación
 
@@ -24,14 +24,20 @@ REPO = Path(__file__).resolve().parents[1]
 GAIN_NOTE = "ganancia = (E_pop - E_ind) / E_pop, promedios sobre eventos"
 
 
+def pm(value: float, error: float, tex: bool = False) -> str:
+    """'valor ± desvío' con el formato de la Teórica 0 (diap. 62): el error con una cifra significativa."""
+    v, e = calib.format_pm(value, error)
+    return f"{v} \\pm {e}" if tex else f"{v} ± {e}"
+
+
 def write_population(path: Path, metric: int, table: calib.ErrorTable, pop: calib.PopulationResult) -> None:
     L = [
         f"# Métrica {metric}: calibración poblacional, <E> = promedio de E_m sobre {len(table.events)} eventos (m^2)",
-        "# sem = desvío estándar (ddof=1) / sqrt(n); el óptimo se busca entre los puntos de grilla que tienen todos los eventos",
-        f"# optimum {pop.optimum[0]:g} {pop.optimum[1]:g} {pop.optimum_mean:.8e} {pop.optimum_sem:.8e}",
-        "# d_lat d_act mean sem n",
+        "# sd = desvío estándar muestral entre eventos (ddof=1), mu ± sigma de la Teórica 0; el óptimo se busca entre los puntos de grilla que tienen todos los eventos",
+        f"# optimum {pop.optimum[0]:g} {pop.optimum[1]:g} {pop.optimum_mean:.8e} {pop.optimum_sd:.8e}",
+        "# d_lat d_act mean sd n",
     ]
-    for g, m, s, n in zip(pop.grid, pop.mean, pop.sem, pop.n):
+    for g, m, s, n in zip(pop.grid, pop.mean, pop.sd, pop.n):
         L.append(f"{g[0]:g} {g[1]:g} {m:.8e} {s:.8e} {int(n)}")
     path.write_text("\n".join(L) + "\n", encoding="utf-8")
 
@@ -99,20 +105,20 @@ def main() -> None:
 
     L = [
         "# Resumen de la calibración (m^2). " + GAIN_NOTE,
-        "# metric M grid d_lat_opt d_act_opt E_pop sem_pop E_ind gain cv_partitions cv_val_mean cv_val_sd cv_train_mean cv_train_sd",
+        "# metric M grid d_lat_opt d_act_opt E_pop sd_pop E_ind gain cv_partitions cv_val_mean cv_val_sd cv_train_mean cv_train_sd",
     ]
     T = ["% generado por scripts/calibrate.py; unidades m^2", "\\begin{tabular}{lcccccc}", "\\hline",
          "Métrica & $(d_{\\mathrm{lat}}, d_{\\mathrm{act}})^*$ & $\\langle E\\rangle$ poblacional & $\\langle E_m\\rangle$ individual & Ganancia & "
          "$\\langle E\\rangle$ validación & $\\langle E\\rangle$ entrenamiento \\\\", "\\hline"]
     for metric, pop, M, J, E_ind, gain, summ in summary_rows:
         L.append(
-            f"{metric} {M} {J} {pop.optimum[0]:g} {pop.optimum[1]:g} {pop.optimum_mean:.6e} {pop.optimum_sem:.6e} {E_ind:.6e} {gain:.4f} "
+            f"{metric} {M} {J} {pop.optimum[0]:g} {pop.optimum[1]:g} {pop.optimum_mean:.6e} {pop.optimum_sd:.6e} {E_ind:.6e} {gain:.4f} "
             f"{summ.partitions} {summ.E_validation_mean:.6e} {summ.E_validation_sd:.6e} {summ.E_train_mean:.6e} {summ.E_train_sd:.6e}"
         )
         T.append(
-            f"$E^{{({metric})}}$ & $({pop.optimum[0]:g},\\ {pop.optimum[1]:g})$ & ${pop.optimum_mean:.3g} \\pm {pop.optimum_sem:.2g}$ & "
-            f"${E_ind:.3g}$ & ${100 * gain:.0f}\\,\\%$ & ${summ.E_validation_mean:.3g} \\pm {summ.E_validation_sd:.2g}$ & "
-            f"${summ.E_train_mean:.3g} \\pm {summ.E_train_sd:.2g}$ \\\\"
+            f"$E^{{({metric})}}$ & $({pop.optimum[0]:g},\\ {pop.optimum[1]:g})$ & ${pm(pop.optimum_mean, pop.optimum_sd, tex=True)}$ & "
+            f"${E_ind:.3g}$ & ${100 * gain:.0f}\\,\\%$ & ${pm(summ.E_validation_mean, summ.E_validation_sd, tex=True)}$ & "
+            f"${pm(summ.E_train_mean, summ.E_train_sd, tex=True)}$ \\\\"
         )
     T += ["\\hline", "\\end{tabular}"]
     (outdir / "summary.txt").write_text("\n".join(L) + "\n", encoding="utf-8")
@@ -121,8 +127,8 @@ def main() -> None:
     for metric, pop, M, J, E_ind, gain, summ in summary_rows:
         print(
             f"Métrica {metric} ({M} eventos, {J} puntos de grilla): óptimo d_lat={pop.optimum[0]:g}, d_act={pop.optimum[1]:g}, "
-            f"<E>={pop.optimum_mean:.4g} ± {pop.optimum_sem:.2g} | individual <E_m>={E_ind:.4g} (ganancia {100 * gain:.1f} %) | "
-            f"validación {summ.E_validation_mean:.4g} ± {summ.E_validation_sd:.2g} ({summ.partitions} particiones)"
+            f"<E>={pm(pop.optimum_mean, pop.optimum_sd)} | individual <E_m>={E_ind:.4g} (ganancia {100 * gain:.1f} %) | "
+            f"validación {pm(summ.E_validation_mean, summ.E_validation_sd)} ({summ.partitions} particiones)"
         )
     print(f"escrito en {outdir}: population_m*.txt, individual_m*.txt, crossval_m*.txt, summary.txt, summary.tex")
 
