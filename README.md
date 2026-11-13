@@ -49,7 +49,8 @@ pip install -r scripts/requirements.txt
 
 ### Esquema del sistema
 
-Para generar el PNG con los dos peatones enfrentados y sus velocidades deseadas
+Para generar el PNG del sistema, con los dos peatones enfrentados y los dos
+parámetros de la capa (`d_act` entre centros, `d_lat` del borde del otro al punto auxiliar)
 (`docs/presentation/images/cuadro_inicial.png`, o `--out archivo.png`):
 
 ```bash
