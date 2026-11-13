@@ -97,7 +97,7 @@ def main():
     # dirección deseada e0: tangente a la parábola en la partícula
     tip = page(*(1.25 * e0))
     ax.annotate("", xy=tip, xytext=(0.0, 0.0), arrowprops=dict(color=BLUE, **arrow), zorder=8)
-    ax.text(tip[0] + 0.05, tip[1] - 0.05, r"$\mathbf{e}_0$", ha="left", va="top", color=BLUE, fontsize=font)
+    ax.text(tip[0] + 0.05, tip[1] - 0.05, r"$\mathbf{e}^{target}_i$", ha="left", va="top", color=BLUE, fontsize=font)
 
     # cotas de s y de R
     dim = dict(arrowstyle="<->", color="black", linewidth=1.2, shrinkA=0, shrinkB=0)

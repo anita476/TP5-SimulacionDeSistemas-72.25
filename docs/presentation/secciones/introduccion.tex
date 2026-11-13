@@ -1,37 +1,55 @@
-\begin{frame}{Modelo Sistema de Contacto Elástico}
-
-  \textbf{Ecuación de movimiento partícula $i$}:
+\begin{frame}{Fundamentos}
+  \framesubtitle{Social Force Model sin fuerza social}
+  \large
+  Ecuación de Newton para cada peatón $i$:
   \[
-    m_i\,\ddot{\vv{r}}_i = \sum_{j\neq i} \vv{F}_{ij}
+    m_i\,\ddot{\vv{r}}_i = \vv{F}_{Gi} + \vv{F}_{Di}
   \]
-
-  \textbf{Fuerza de contacto partícula $j$ sobre $i$}:
+  \vspace{6pt}
+  Fuerza de autopropulsión:
   \[
-    \vv{F}_{ij} = k\,[\xi_{ij}]_{+}\,\frac{\vv{r}_{ij}}{|\vv{r}_{ij}|},
-    \qquad
-    \xi_{ij} = r_i + r_j - |\vv{r}_{ij}|
+    \vv{F}_{Di} = m_i\,\frac{v_{di}\,\vv{e}^{\,target}_i - \vv{v}_i}{\tau_i}
   \]
-
-  \begin{columns}[T]
-    \begin{column}{0.45\textwidth}
-      \begin{itemize}
-        \item $m_i$: masa partícula $i$
-        \item $r_i$: radio partícula $i$
-      \end{itemize}
-    \end{column}
-    \begin{column}{0.45\textwidth}
-      \begin{itemize}
-        \item $k$: constante elástica
-        \item $\xi_{ij}$: superposición entre $i$ y $j$
-      \end{itemize}
-    \end{column}
-  \end{columns}
-
-  \vspace{10pt}
-  \textbf{Energía del sistema:}
+  \vspace{6pt}
+  Fuerza de contacto, con $\varepsilon_{ij} = r_{ij} - (r_i + r_j)$:
   \[
-   E_{total} = \sum_{i=1}^{N} \frac{1}{2}\,m_i\,|\vv{v}_i|^{2}
-    + \sum_{i=1}^{N-1}\sum_{j=i+1}^{N} E^{pot}_{ij}
-    \qquad E^{pot}_{ij} = \frac{k}{2}\,[\xi_{ij}]_{+}^{2},
+    \vv{F}_{Gi} = \sum_{j\neq i}\Big[\big(-\varepsilon_{ij}\,k_n\big)\,\vv{e}^{\,n}_{ij}
+      + \big(v^{t}_{ij}\,\varepsilon_{ij}\,k_t\big)\,\vv{e}^{\,t}_{ij}\Big]\,g(\varepsilon_{ij})
+  \]
+\end{frame}
+
+\begin{frame}{Fundamentos}
+  \framesubtitle{Capa de elusión: detección del conflicto}
+  \centering
+  \includegraphics[width=\linewidth,height=0.42\textheight,keepaspectratio]{esquema_elusion.png}
+  \vspace{4pt}
+
+  \large
+  Hay conflicto entre $i$ y $j$ si
+  \[
+    r_{ij} \leq d_a, \qquad 0 < s < D, \qquad |\ell| < R = r_{min} + r_j
+  \]
+  con \quad $s = (\vv{r}_j - \vv{r}_i)\cdot\hat{\vv{u}}$, \qquad $\ell = (\vv{r}_j - \vv{r}_i)\cdot\hat{\vv{n}}$, \qquad $\hat{\vv{n}} = (u_y,\,-u_x)$
+\end{frame}
+
+\begin{frame}{Fundamentos}
+  \framesubtitle{Capa de elusión: target temporal}
+  \large
+  Parábola por $i$, el punto de paso $P = (s,\ \ell + R)$ y el target final:
+  \[
+    y(x) = (\ell + R)\,\frac{x\,(D - x)}{s\,(D - s)}
+    \qquad\Rightarrow\qquad
+    y'(0) = \frac{(\ell + R)\,D}{s\,(D - s)}
+  \]
+  \vspace{4pt}
+  Target temporal, sobre la tangente a la parábola en $i$:
+  \[
+    \vv{x}^{\,temp}_i = \vv{r}_i + s\,\hat{\vv{u}} + s\,y'(0)\,\hat{\vv{n}}
+  \]
+  \vspace{4pt}
+  Dirección deseada:
+  \[
+    \vv{e}^{\,target}_i = \frac{\vv{x}^{\,temp}_i - \vv{r}_i}{|\vv{x}^{\,temp}_i - \vv{r}_i|}
+      = \frac{\hat{\vv{u}} + y'(0)\,\hat{\vv{n}}}{\sqrt{1 + y'(0)^2}}
   \]
 \end{frame}
