@@ -26,6 +26,7 @@ from matplotlib.colors import LogNorm  # noqa: E402
 from matplotlib.ticker import ScalarFormatter  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "lib"))
+from calib import format_pm  # noqa: E402
 from plot_style import BLUE, D_ACT_COLOR, D_LAT_COLOR, VERMILLION, apply_academic_style, style_axes  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
@@ -178,17 +179,28 @@ def plot_crossval(metric: int, indir: Path, outdir: Path) -> None:
     E_tr = np.array([float(r[3]) for r in rows])
     E_va = np.array([float(r[4]) for r in rows])
 
-    # one bar per set: mean over the partitions, error bar = sample sd between partitions (said on the slide)
+    # one point per set: mean over the partitions, error bar = sample sd between partitions, value written beside it.
+    # Points, not bars: a bar has to start at zero and then the spread, which is the result, takes a sliver of the axis
     # (the partition index carries no information, so it is not an axis)
+    order = int(np.floor(np.log10(E_pop)))  # same power of ten on the axis and in the written values
+    order = order if order < -1 else 0
     fig, ax = plt.subplots(figsize=(8, 6))
     for x, vals, color in ((0, E_tr, BLUE), (1, E_va, VERMILLION)):
-        ax.bar(x, vals.mean(), 0.55, color=color)
-        ax.errorbar(x, vals.mean(), yerr=vals.std(ddof=1), color="black", capsize=7, linewidth=1.8, zorder=4)
-    ax.axhline(E_pop, color="black", linestyle=":", linewidth=1.8, label="calibración poblacional (18 eventos)")
+        mean, sd = vals.mean(), vals.std(ddof=1)
+        ax.errorbar(x, mean, yerr=sd, fmt="o", markersize=13, color=color, ecolor=color, capsize=9, capthick=2.2,
+                    elinewidth=2.2, zorder=3)
+        value, error = format_pm(mean / 10**order, sd / 10**order)
+        ax.annotate(rf"${value} \pm {error}$", (x, mean), textcoords="offset points", xytext=(16, 0), ha="left",
+                    va="center", fontsize=18, zorder=4, bbox=dict(facecolor="white", edgecolor="none", pad=2.5))
+    ax.axhline(E_pop, color="black", linestyle=":", linewidth=1.8, label="calibración poblacional (18 eventos)", zorder=1)
     ax.set_xticks([0, 1])
     ax.set_xticklabels(["Entrenamiento\n(13 eventos)", "Validación\n(5 eventos)"])
-    ax.set_xlim(-0.6, 1.6)
-    ax.set_ylim(0, None)
+    ax.set_xlim(-0.5, 1.75)
+    ax.margins(y=0.12)
+    if order:
+        ax.ticklabel_format(axis="y", style="sci", scilimits=(order, order))
+    else:
+        ax.ticklabel_format(axis="y", style="plain")
     style_axes(ax, "", rf"$\langle E^{{({metric})}}\rangle$ (m$^2$)")
     ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.2), fontsize=15, ncol=2, frameon=False)
     save(fig, outdir / f"E{metric}_validacion_cruzada.png")
