@@ -2,9 +2,9 @@
 """
 Figuras de la calibración a partir de los archivos de calibrate.py. Por métrica m:
 
-  E{m}_superficie.png               <E>(r_min, action_distance) como mapa de color, óptimo marcado           (b)
-  E{m}_corte_rmin.png               <E> vs r_min con barras de error, a action_distance óptima                (b)
-  E{m}_corte_action_distance.png    <E> vs action_distance con barras de error, a r_min óptimo                (b)
+  E{m}_superficie.png               <E>(d_lat, d_act) como mapa de color, óptimo marcado           (b)
+  E{m}_corte_rmin.png               <E> vs d_lat con barras de error, a d_act óptima                (b)
+  E{m}_corte_action_distance.png    <E> vs d_act con barras de error, a d_lat óptimo                (b)
   E{m}_optimos_individuales.png     distribución de los óptimos individuales sobre la grilla + poblacional   (c)
   E{m}_error_por_evento.png         E_m de cada evento con parámetros poblacionales vs individuales           (c)
   E{m}_validacion_cruzada.png       error de validación y entrenamiento por partición vs <E> poblacional      (d)
@@ -29,8 +29,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / "lib"))
 from plot_style import BLUE, VERMILLION, apply_academic_style, style_axes  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
-XLABEL = r"Separación de referencia $r_{min}$ (m)"
-YLABEL = r"Distancia de activación $d_a$ (m)"
+XLABEL = r"Margen lateral de referencia $d_{\mathrm{lat}}$ (m)"
+YLABEL = r"Distancia de activación $d_{\mathrm{act}}$ (m)"
 
 
 def elabel(metric: int, mean: bool = True) -> str:
@@ -69,19 +69,19 @@ def save(fig, path: Path) -> None:
 def plot_population(metric: int, indir: Path, outdir: Path) -> None:
     comments, rows = read_table(indir / f"population_m{metric}.txt")
     r_opt, a_opt, _, _ = header_value(comments, "optimum")
-    data = np.array([[float(v) for v in r[:4]] for r in rows])  # r_min ad mean sem
-    r_mins, ads = np.unique(data[:, 0]), np.unique(data[:, 1])
-    Z = np.full((len(ads), len(r_mins)), np.nan)
+    data = np.array([[float(v) for v in r[:4]] for r in rows])  # d_lat ad mean sem
+    d_lats, ads = np.unique(data[:, 0]), np.unique(data[:, 1])
+    Z = np.full((len(ads), len(d_lats)), np.nan)
     S = np.full_like(Z, np.nan)
     for r, a, m, s in data:
-        Z[np.searchsorted(ads, a), np.searchsorted(r_mins, r)] = m
-        S[np.searchsorted(ads, a), np.searchsorted(r_mins, r)] = s
+        Z[np.searchsorted(ads, a), np.searchsorted(d_lats, r)] = m
+        S[np.searchsorted(ads, a), np.searchsorted(d_lats, r)] = s
 
     # surface; log colour scale when the grid spans more than a decade (a diverging run would flatten everything else)
     fig, ax = plt.subplots(figsize=(8.5, 6.5))
     zmin, zmax = np.nanmin(Z), np.nanmax(Z)
     norm = LogNorm(vmin=zmin, vmax=zmax) if zmin > 0 and zmax / zmin > 20 else None
-    mesh = ax.pcolormesh(r_mins, ads, Z, shading="nearest", cmap="viridis", norm=norm)
+    mesh = ax.pcolormesh(d_lats, ads, Z, shading="nearest", cmap="viridis", norm=norm)
     cbar = fig.colorbar(mesh, ax=ax, pad=0.02)
     if norm is None:
         formatter = ScalarFormatter(useMathText=True)
@@ -90,16 +90,16 @@ def plot_population(metric: int, indir: Path, outdir: Path) -> None:
         cbar.update_ticks()
     cbar.set_label(elabel(metric), labelpad=12)
     ax.plot(r_opt, a_opt, marker="*", markersize=22, color="white", markeredgecolor="black", markeredgewidth=1.2, linestyle="none")
-    ax.set_xticks(r_mins)
+    ax.set_xticks(d_lats)
     ax.set_yticks(ads)
     style_axes(ax, XLABEL, YLABEL)
     save(fig, outdir / f"E{metric}_superficie.png")
 
     # 1D cuts through the optimum
-    ia, ir = np.searchsorted(ads, a_opt), np.searchsorted(r_mins, r_opt)
+    ia, ir = np.searchsorted(ads, a_opt), np.searchsorted(d_lats, r_opt)
     for xs, ys, es, xlabel, fixed, name in (
-        (r_mins, Z[ia], S[ia], XLABEL, rf"$d_a = {a_opt:g}$ m", "corte_rmin"),
-        (ads, Z[:, ir], S[:, ir], YLABEL, rf"$r_{{\min}} = {r_opt:g}$ m", "corte_action_distance"),
+        (d_lats, Z[ia], S[ia], XLABEL, rf"$d_{{\mathrm{{act}}}} = {a_opt:g}$ m", "corte_rmin"),
+        (ads, Z[:, ir], S[:, ir], YLABEL, rf"$d_{{\mathrm{{lat}}}} = {r_opt:g}$ m", "corte_action_distance"),
     ):
         if len(xs) < 2:
             continue

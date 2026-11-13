@@ -1,6 +1,6 @@
 """Calibration of the elusion layer: the error collector E[m, i, j] and points b, c, d.
 
-Indices: m = metric (1 equal times, 2 nearest point), i = event (prueba), j = grid point (r_min, action_distance).
+Indices: m = metric (1 equal times, 2 nearest point), i = event (prueba), j = grid point (d_lat, d_act).
 """
 from __future__ import annotations
 
@@ -10,7 +10,7 @@ from pathlib import Path
 
 import numpy as np
 
-GridPoint = tuple[float, float]  # (r_min, action_distance)
+GridPoint = tuple[float, float]  # (d_lat, d_act)
 
 _EXPERIMENT_NAME = re.compile(
     r"^prueba(\d+)_action_distance_([0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)_radio_([0-9]+(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?)$"
@@ -18,26 +18,26 @@ _EXPERIMENT_NAME = re.compile(
 
 
 def parse_experiment_name(stem: str) -> tuple[int, float, float] | None:
-    """'prueba12_action_distance_5_radio_0.3' -> (12, r_min=0.3, action_distance=5.0); None if it is not a sim stem."""
+    """'prueba12_action_distance_5_radio_0.3' -> (12, d_lat=0.3, d_act=5.0); None if it is not a sim stem."""
     match = _EXPERIMENT_NAME.match(stem)
     if match is None:
         return None
-    prueba, action_distance, r_min = match.groups()
-    return int(prueba), float(r_min), float(action_distance)
+    prueba, d_act, d_lat = match.groups()
+    return int(prueba), float(d_lat), float(d_act)
 
 
 @dataclass(frozen=True)
 class ErrorRecord:
     metric: int
     prueba: int
-    r_min: float
-    action_distance: float
+    d_lat: float
+    d_act: float
     E_left: float
     E_right: float
 
     @property
     def grid_point(self) -> GridPoint:
-        return (self.r_min, self.action_distance)
+        return (self.d_lat, self.d_act)
 
     @property
     def E_event(self) -> float:
@@ -45,18 +45,18 @@ class ErrorRecord:
         return 0.5 * (self.E_left + self.E_right)
 
 
-ERRORS_COLUMNS = "metric prueba r_min action_distance E_left E_right E_event"
+ERRORS_COLUMNS = "metric prueba d_lat d_act E_left E_right E_event"
 
 
 def write_errors(path: str | Path, records: list[ErrorRecord], source: str) -> None:
     lines = [
-        "# E[m, i, j]: error de cada peaton y del evento, por metrica m, evento i y punto de grilla j = (r_min, action_distance)",
+        "# E[m, i, j]: error de cada peaton y del evento, por metrica m, evento i y punto de grilla j = (d_lat, d_act)",
         f"# fuente: {source}",
         "# unidades: m^2. E_event = (E_left + E_right) / 2",
         f"# {ERRORS_COLUMNS}",
     ]
-    for r in sorted(records, key=lambda r: (r.metric, r.prueba, r.r_min, r.action_distance)):
-        lines.append(f"{r.metric} {r.prueba} {r.r_min:g} {r.action_distance:g} {r.E_left:.8e} {r.E_right:.8e} {r.E_event:.8e}")
+    for r in sorted(records, key=lambda r: (r.metric, r.prueba, r.d_lat, r.d_act)):
+        lines.append(f"{r.metric} {r.prueba} {r.d_lat:g} {r.d_act:g} {r.E_left:.8e} {r.E_right:.8e} {r.E_event:.8e}")
     Path(path).write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
@@ -80,7 +80,7 @@ def read_errors(path: str | Path) -> list[ErrorRecord]:
 
 @dataclass
 class ErrorTable:
-    """E[i, j] for one metric: rows = events (sorted), columns = grid points (sorted by r_min then action_distance)."""
+    """E[i, j] for one metric: rows = events (sorted), columns = grid points (sorted by d_lat then d_act)."""
 
     metric: int
     events: list[int]
@@ -107,10 +107,10 @@ class ErrorTable:
             out.append((self.events[i], self.grid[j]))
         return out
 
-    def r_mins(self) -> list[float]:
+    def d_lats(self) -> list[float]:
         return sorted({g[0] for g in self.grid})
 
-    def action_distances(self) -> list[float]:
+    def d_acts(self) -> list[float]:
         return sorted({g[1] for g in self.grid})
 
 

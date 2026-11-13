@@ -49,17 +49,21 @@ pip install -r scripts/requirements.txt
 
 ### Esquema del sistema
 
-Para generar el PNG con las dos partículas, sus trayectorias parabólicas, la
-distancia de acción y `r_min`:
+Para generar el PNG con los dos peatones enfrentados y sus velocidades deseadas
+(`docs/presentation/images/cuadro_inicial.png`, o `--out archivo.png`):
 
 ```bash
 python scripts/plot_elusion.py
 ```
 
-El archivo se guarda por defecto en
-`docs/presentation/images/cuadro_inicial.png`. La ruta puede cambiarse con
-`--out archivo.png`. El esquema es ilustrativo: no muestra valores numéricos en
-los ejes ni en las cotas.
+Los dos esquemas de la capa de elusión (`elusion_deteccion` y
+`elusion_activacion`, en SVG y PNG, misma escena y escala) salen de:
+
+```bash
+python scripts/plot_elusion_pasos.py   # opcional: carpeta de salida como argumento
+```
+
+Son ilustrativos: usan unidades arbitrarias con las relaciones geométricas exactas.
 
 ### Ejecución del motor 
 
@@ -68,28 +72,28 @@ Ejemplo de ejecución:
 ```bash 
 ./build/ElusionSIM \
   --traj_path data/cruces/prueba3.txt \
-  --r_min 0.4 --action_distance 6.0 \
+  --d_lat 0.4 --d_act 6.0 \
   --v_path data/pruebas_speeds.txt \
   --out-path data/sim/prueba3_NEW.txt
 ```
 
 ### Ejecución de experimentos
 
-Para ejecutar todas las pruebas con cada combinación de `r_min` y
-`action_distance`, pasando las listas separadas por coma:
+Para ejecutar todas las pruebas con cada combinación de `d_lat` y
+`d_act`, pasando las listas separadas por coma:
 
 ```bash
 scripts/experiment_runner.sh \
-  --r-mins 0.3,0.4 \
-  --action-distances 5,6 \
+  --d-lats 0.3,0.4 \
+  --d-acts 5,6 \
   --dt 0.001 \
   --initial-velocity experimental
 ```
 
 El runner usa las pruebas de `data/cruces_evento/` (recortadas al inicio común, ver más abajo). Organiza los resultados
-por prueba y luego por `action_distance`; dentro de cada carpeta guarda un TXT
-por valor de `r_min` y ejecuta las comparaciones de trayectoria para cada
-simulación. Las métricas se guardan en `comparisons_radio_<r_min>` junto con
+por prueba y luego por `d_act`; dentro de cada carpeta guarda un TXT
+por valor de `d_lat` y ejecuta las comparaciones de trayectoria para cada
+simulación. Las métricas se guardan en `comparisons_radio_<d_lat>` junto con
 sus gráficos. Por ejemplo:
 `data/experiments/prueba1/action_distance_5/prueba1_action_distance_5_radio_0.3.txt`.
 Los datos reales se toman de `data/cruces_evento/`. Se pueden cambiar los
@@ -209,7 +213,7 @@ python scripts/plot_traj.py --traj data/cruces/prueba1.txt data/cruces/prueba1.t
 A partir del barrido de `experiment_runner.sh` -> `scripts/run_calibration.sh`;
 
 ```bash
-python scripts/collect_errors.py          # E[m, i, j] -> data/calibration/errors.txt (metric prueba r_min action_distance E_left E_right E_event)
+python scripts/collect_errors.py          # E[m, i, j] -> data/calibration/errors.txt (metric prueba d_lat d_act E_left E_right E_event)
 python scripts/calibrate.py --partitions 20 --train-fraction 0.7 --seed 0
 python scripts/plot_calibration.py        # figuras en data/calibration/figures/
 ```
@@ -218,7 +222,7 @@ python scripts/plot_calibration.py        # figuras en data/calibration/figures/
 `calculate_nearest_point.py`. 
 `calibrate.py` escribe por métrica:
 
-- `population_mK.txt`: `<E>` y su error estándar en cada punto de la grilla, con el óptimo el header (`# optimum r_min action_distance mean sem`). El óptimo se busca sólo entre los puntos que tienen todos los eventos.
+- `population_mK.txt`: `<E>` y su error estándar en cada punto de la grilla, con el óptimo el header (`# optimum d_lat d_act mean sem`). El óptimo se busca sólo entre los puntos que tienen todos los eventos.
 - `individual_mK.txt`: óptimo de cada evento, su `E_m` con esos parámetros y con los poblacionales.
 - `crossval_mK.txt`: una fila por partición aleatoria (óptimo sobre entrenamiento, error sobre entrenamiento y validación, eventos de validación); promedio y desvío en la cabecera.
 - `summary.txt` y `summary.tex` (tabla lista para la presentación).

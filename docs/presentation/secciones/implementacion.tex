@@ -6,7 +6,7 @@
     \For{$k = 1,\, 2,\, \dots,\, t_f/dt_2$}
       \For{$n$ pasos de integración}
         \For{cada peatón $i$}
-          \State $\vv{e}^{\,target}_i \gets$ hacia target temporal si hay conflicto; si no, hacia target final
+          \State $\vv{e}_0 \gets$ hacia target temporal si hay conflicto; si no, hacia target final
           \State $\vv{F}_i \gets \vv{F}_{Di} + \vv{F}_{Gi}$
         \EndFor
         \State $\vv{v}_i \gets \vv{v}_i + (\vv{F}_i/m_i)\,dt$

@@ -22,8 +22,8 @@ double lagrange_2nd_order_derivative(double x0, double x1, double x2, double y0,
 // obtenemos por interpolación de lagrange !!
 std::pair<double, double>
 new_desired_direction(Particle particle, Particle obstacle,
-                      std::pair<double, double> target, double r_min) {
-  double obstacle_y = obstacle.y + r_min; // actual tangent
+                      std::pair<double, double> target, double d_lat) {
+  double obstacle_y = obstacle.y + d_lat; // actual tangent
   const double dx = target.first - particle.x;
   const double dy = target.second - particle.y;
   const double dist_to_target = std::hypot(dx, dy);
@@ -38,7 +38,7 @@ new_desired_direction(Particle particle, Particle obstacle,
       obs_x * ux + obs_y * uy; // distacnai de la particula al obstaculo;
   const double obs_edge =
       obs_x * rx + obs_y * ry +
-      (r_min +
+      (d_lat +
        obstacle.r); // distancia del centro del obs al borde "imaginario"
 
   // la pendiente se calcula como si la linea recta particula -> target fuera el
@@ -51,7 +51,7 @@ new_desired_direction(Particle particle, Particle obstacle,
 }
 
 bool is_conflicting(Particle particle, Particle pot_obstacle,
-                    std::pair<double, double> target, double r_min) {
+                    std::pair<double, double> target, double d_lat) {
   const double dx = target.first - particle.x;
   const double dy = target.second - particle.y;
   const double dist_to_target = std::hypot(dx, dy);
@@ -66,7 +66,7 @@ bool is_conflicting(Particle particle, Particle pot_obstacle,
   const double along = obs_x * ux + obs_y * uy; // distance along the line
   const double lateral = obs_x * rx + obs_y * ry;
 
-  const double R = r_min + pot_obstacle.r;
+  const double R = d_lat + pot_obstacle.r;
 
   /* particle isnt on the target, obstacle is in front of the target, and iits
    * inside the circle*/

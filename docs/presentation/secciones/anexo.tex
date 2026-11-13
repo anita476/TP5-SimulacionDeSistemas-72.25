@@ -1,0 +1,22 @@
+\begin{frame}{Anexo}
+  \framesubtitle{Capa de elusión: geometría completa}
+  \large
+  Marco local de $i$, con $\hat{\vv{u}}$ hacia el target final y $\hat{\vv{n}} = (u_y,\,-u_x)$:
+  \[
+    s = (\vv{r}_j - \vv{r}_i)\cdot\hat{\vv{u}}, \qquad \ell = (\vv{r}_j - \vv{r}_i)\cdot\hat{\vv{n}}
+  \]
+  \vspace{2pt}
+  Parábola por $i$, punto de paso $P = (s,\ \ell + R)$ y target final:
+  \[
+    y(x) = (\ell + R)\,\frac{x\,(D - x)}{s\,(D - s)}
+    \qquad\Rightarrow\qquad
+    y'(0) = \frac{(\ell + R)\,D}{s\,(D - s)}
+  \]
+  \vspace{2pt}
+  Target temporal, sobre tangente a parábola en $i$:
+  \[
+    \vv{x}^{\,temp}_i = \vv{r}_i + s\,\hat{\vv{u}} + s\,y'(0)\,\hat{\vv{n}},
+    \qquad
+    \vv{e}_0 = \frac{\vv{x}^{\,temp}_i - \vv{r}_i}{|\vv{x}^{\,temp}_i - \vv{r}_i|}
+  \]
+\end{frame}

@@ -38,14 +38,14 @@ int main(int argc, char *argv[]) {
   program.add_argument("--v_path", "--v-path", "--vpath")
       .default_value("data/pruebas_speeds.txt")
       .help("Path to the median velocity file");
-  program.add_argument("--r_min", "--r-min", "--rmin")
+  program.add_argument("--d_lat", "--d-lat", "--dlat")
       .default_value(0.30)
       .scan<'g', double>()
       .help("Minimum radius from the othr particle that particles are willing "
             "to go near (used for heuristic)");
   program
-      .add_argument("--action_distance", "--action-distance",
-                    "--actiondistance")
+      .add_argument("--d_act", "--d-act",
+                    "--dact")
       .default_value(5.0)
       .scan<'g', double>()
       .help("Distance to obstacle since which particle begins to act for "
@@ -134,8 +134,8 @@ int main(int argc, char *argv[]) {
         .kn = program.get<double>("--kn"),
         .kt = program.get<double>("--kt"),
         .tau = TAU,
-        .r_min = program.get<double>("--r_min"),
-        .action_distance = program.get<double>("--action_distance"),
+        .d_lat = program.get<double>("--d_lat"),
+        .d_act = program.get<double>("--d_act"),
     };
     // dump header
     std::ofstream out(out_path);

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Convergencia en el paso de integración dt.
 
-Para cada caso (prueba, r_min, action_distance) corre el motor con dt = DT2/n,
+Para cada caso (prueba, d_lat, d_act) corre el motor con dt = DT2/n,
 n pasos de integración por cuadro impreso, y calcula las dos métricas con las
 mismas funciones `procesar` que usa la calibración. Grafica E1 y E2 en función
 de dt en escala log-log e imprime la tabla.
@@ -36,18 +36,18 @@ DEFAULT_CASES = ["6,0.2,2.5", "7,0.1,7", "19,0.3,5"]
 
 
 def parse_case(text):
-    trial, r_min, d_a = text.split(",")
-    return int(trial), r_min, d_a
+    trial, d_lat, d_act = text.split(",")
+    return int(trial), d_lat, d_act
 
 
-def run_case(sim, trial, r_min, d_a, n, initial_velocity, out):
+def run_case(sim, trial, d_lat, d_act, n, initial_velocity, out):
     """Corre el motor con n pasos por cuadro; devuelve (E1, E2, rapidez máxima)."""
     traj = REPO / "data" / "cruces_evento" / f"prueba{trial}.txt"
     cmd = [
         str(sim),
         "--traj_path", str(traj),
-        "--r_min", r_min,
-        "--action_distance", d_a,
+        "--d_lat", d_lat,
+        "--d_act", d_act,
         "--initial_velocity", initial_velocity,
         "--dt", repr(DT2 / n),
         "--out-path", str(out),
@@ -64,7 +64,7 @@ def run_case(sim, trial, r_min, d_a, n, initial_velocity, out):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--cases", nargs="+", default=DEFAULT_CASES, metavar="PRUEBA,R_MIN,D_A")
+    parser.add_argument("--cases", nargs="+", default=DEFAULT_CASES, metavar="PRUEBA,D_LAT,D_ACT")
     parser.add_argument("--steps", nargs="+", type=int, default=DEFAULT_STEPS, metavar="N",
                         help="pasos de integración por cuadro impreso (dt = DT2/N)")
     parser.add_argument("--initial-velocity", default="experimental", choices=["zero", "experimental"])
@@ -78,12 +78,12 @@ def main():
     with tempfile.TemporaryDirectory() as tmp:
         out = Path(tmp) / "sim.txt"
         for case in args.cases:
-            trial, r_min, d_a = parse_case(case)
-            print(f"# prueba {trial}, r_min = {r_min} m, d_a = {d_a} m")
+            trial, d_lat, d_act = parse_case(case)
+            print(f"# prueba {trial}, d_lat = {d_lat} m, d_act = {d_act} m")
             print("# n dt_s E1_m2 E2_m2 vmax_m_s")
             rows = []
             for n in steps:
-                e1, e2, vmax = run_case(args.sim, trial, r_min, d_a, n, args.initial_velocity, out)
+                e1, e2, vmax = run_case(args.sim, trial, d_lat, d_act, n, args.initial_velocity, out)
                 rows.append((e1, e2, vmax))
                 print(f"{n} {DT2 / n:.6f} {e1:.6e} {e2:.6e} {vmax:.3f}")
             results[case] = np.array(rows)
@@ -102,8 +102,8 @@ def main():
     fig.get_layout_engine().set(h_pad=0.2, w_pad=0.2)
     for column, (ax, ylabel) in enumerate(zip(axes, ("Error métrica 1 (m$^2$)", "Error métrica 2 (m$^2$)"))):
         for k, case in enumerate(args.cases):
-            trial, r_min, d_a = parse_case(case)
-            label = f"Evento {trial}: $r_{{min}}$ = {r_min} m, $d_a$ = {d_a} m"
+            trial, d_lat, d_act = parse_case(case)
+            label = rf"Evento {trial}: $d_{{\mathrm{{lat}}}}$ = {d_lat} m, $d_{{\mathrm{{act}}}}$ = {d_act} m"
             ax.plot(dts, results[case][:, column], marker=MARKERS[k % len(MARKERS)],
                     color=SERIES[k % len(SERIES)], linestyle="-", linewidth=1.0, label=label)
         ax.set_xscale("log")

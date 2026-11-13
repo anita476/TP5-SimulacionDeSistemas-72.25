@@ -2,7 +2,7 @@
 """
 Calibración de la capa de elusión a partir de la tabla E[m, i, j] (collect_errors.py), por métrica:
 
-  (b) poblacional:  <E>(r_min, action_distance) = promedio sobre eventos, con su error estándar; óptimo = mínimo de la grilla
+  (b) poblacional:  <E>(d_lat, d_act) = promedio sobre eventos, con su error estándar; óptimo = mínimo de la grilla
   (c) individual:   óptimo de cada evento y su error con los parámetros poblacionales
   (d) validación cruzada: particiones aleatorias entrenamiento/validación; óptimo sobre entrenamiento, error sobre validación
 
@@ -29,7 +29,7 @@ def write_population(path: Path, metric: int, table: calib.ErrorTable, pop: cali
         f"# Métrica {metric}: calibración poblacional, <E> = promedio de E_m sobre {len(table.events)} eventos (m^2)",
         "# sem = desvío estándar (ddof=1) / sqrt(n); el óptimo se busca entre los puntos de grilla que tienen todos los eventos",
         f"# optimum {pop.optimum[0]:g} {pop.optimum[1]:g} {pop.optimum_mean:.8e} {pop.optimum_sem:.8e}",
-        "# r_min action_distance mean sem n",
+        "# d_lat d_act mean sem n",
     ]
     for g, m, s, n in zip(pop.grid, pop.mean, pop.sem, pop.n):
         L.append(f"{g[0]:g} {g[1]:g} {m:.8e} {s:.8e} {int(n)}")
@@ -39,8 +39,8 @@ def write_population(path: Path, metric: int, table: calib.ErrorTable, pop: cali
 def write_individual(path: Path, metric: int, pop: calib.PopulationResult, ind: list[calib.IndividualResult]) -> None:
     L = [
         f"# Métrica {metric}: calibración individual (m^2). E_population = E_m con el óptimo poblacional "
-        f"(r_min={pop.optimum[0]:g}, action_distance={pop.optimum[1]:g})",
-        "# prueba r_min_opt action_distance_opt E_individual E_population",
+        f"(d_lat={pop.optimum[0]:g}, d_act={pop.optimum[1]:g})",
+        "# prueba d_lat_opt d_act_opt E_individual E_population",
     ]
     for r in ind:
         L.append(f"{r.prueba} {r.optimum[0]:g} {r.optimum[1]:g} {r.E_individual:.8e} {r.E_population:.8e}")
@@ -54,7 +54,7 @@ def write_crossval(path: Path, metric: int, folds: list[calib.Fold], summ: calib
         f"# validation {summ.E_validation_mean:.8e} {summ.E_validation_sd:.8e}",
         f"# train {summ.E_train_mean:.8e} {summ.E_train_sd:.8e}",
         "# optimos: " + ", ".join(f"({g[0]:g}, {g[1]:g}) x{c}" for g, c in sorted(summ.optimum_counts.items(), key=lambda kv: -kv[1])),
-        "# partition r_min_opt action_distance_opt E_train E_validation n_train n_validation validation_pruebas",
+        "# partition d_lat_opt d_act_opt E_train E_validation n_train n_validation validation_pruebas",
     ]
     for f in folds:
         L.append(
@@ -99,10 +99,10 @@ def main() -> None:
 
     L = [
         "# Resumen de la calibración (m^2). " + GAIN_NOTE,
-        "# metric M grid r_min_opt action_distance_opt E_pop sem_pop E_ind gain cv_partitions cv_val_mean cv_val_sd cv_train_mean cv_train_sd",
+        "# metric M grid d_lat_opt d_act_opt E_pop sem_pop E_ind gain cv_partitions cv_val_mean cv_val_sd cv_train_mean cv_train_sd",
     ]
     T = ["% generado por scripts/calibrate.py; unidades m^2", "\\begin{tabular}{lcccccc}", "\\hline",
-         "Métrica & $(r_{\\min}, d_a)^*$ & $\\langle E\\rangle$ poblacional & $\\langle E_m\\rangle$ individual & Ganancia & "
+         "Métrica & $(d_{\\mathrm{lat}}, d_{\\mathrm{act}})^*$ & $\\langle E\\rangle$ poblacional & $\\langle E_m\\rangle$ individual & Ganancia & "
          "$\\langle E\\rangle$ validación & $\\langle E\\rangle$ entrenamiento \\\\", "\\hline"]
     for metric, pop, M, J, E_ind, gain, summ in summary_rows:
         L.append(
@@ -120,7 +120,7 @@ def main() -> None:
 
     for metric, pop, M, J, E_ind, gain, summ in summary_rows:
         print(
-            f"Métrica {metric} ({M} eventos, {J} puntos de grilla): óptimo r_min={pop.optimum[0]:g}, action_distance={pop.optimum[1]:g}, "
+            f"Métrica {metric} ({M} eventos, {J} puntos de grilla): óptimo d_lat={pop.optimum[0]:g}, d_act={pop.optimum[1]:g}, "
             f"<E>={pop.optimum_mean:.4g} ± {pop.optimum_sem:.2g} | individual <E_m>={E_ind:.4g} (ganancia {100 * gain:.1f} %) | "
             f"validación {summ.E_validation_mean:.4g} ± {summ.E_validation_sd:.2g} ({summ.partitions} particiones)"
         )

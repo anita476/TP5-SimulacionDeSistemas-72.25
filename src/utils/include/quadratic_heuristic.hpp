@@ -10,8 +10,8 @@ use `is_conflicting()` first to check.
 */
 std::pair<double, double>
 new_desired_direction(Particle particle, Particle obstacle,
-                      std::pair<double, double> target, double r_min);
+                      std::pair<double, double> target, double d_lat);
 
 // check if theres a conflict from one particle to the other
 bool is_conflicting(Particle particle, Particle pot_obstacle,
-                    std::pair<double, double> target, double r_min);
+                    std::pair<double, double> target, double d_lat);

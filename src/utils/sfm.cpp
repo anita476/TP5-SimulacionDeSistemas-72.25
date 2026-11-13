@@ -50,10 +50,10 @@ driving_force_particle(FSMPair pair, std::pair<double, double> target,
   // are they conflicting ?
   double dist_between_particles =
       std::hypot((particle.x - obstacle.x), (particle.y - obstacle.y));
-  if ((dist_between_particles <= pair.action_distance &&
-       is_conflicting(particle, obstacle, target, pair.r_min))) {
+  if ((dist_between_particles <= pair.d_act &&
+       is_conflicting(particle, obstacle, target, pair.d_lat))) {
     const auto dir =
-        new_desired_direction(particle, obstacle, target, pair.r_min);
+        new_desired_direction(particle, obstacle, target, pair.d_lat);
     e0x = dir.first;
     e0y = dir.second;
   } else {

@@ -8,8 +8,8 @@
     \begin{column}{0.33\textwidth}
       \begin{beamercolorbox}[wd=\linewidth,sep=8pt,rounded=true]{block body alerted}
         \small\textbf{Parámetros a calibrar}\par\vspace{6pt}
-        $p_1 = r_{min}$: separación lateral de referencia\par\vspace{6pt}
-        $p_2 = d_a$: distancia de activación de la elusión
+        $p_1 = d_{\mathrm{lat}}$: margen lateral de referencia\par\vspace{6pt}
+        $p_2 = d_{\mathrm{act}}$: distancia de activación de la elusión
       \end{beamercolorbox}
     \end{column}
   \end{columns}
@@ -59,7 +59,7 @@
   \[
     E_m = \frac{E_1 + E_2}{2}
     \qquad\quad
-    \langle E\rangle(r_{min},\,d_a) = \frac{1}{M}\sum_{m=1}^{M} E_m(r_{min},\,d_a)
+    \langle E\rangle(d_{\mathrm{lat}},\,d_{\mathrm{act}}) = \frac{1}{M}\sum_{m=1}^{M} E_m(d_{\mathrm{lat}},\,d_{\mathrm{act}})
   \]
   \vspace{2pt}
   Error estándar de $\langle E\rangle$:
@@ -72,8 +72,8 @@
   \framesubtitle{Simulaciones realizadas}
   \textbf{Grilla de parámetros}
   \begin{itemize}\setlength{\itemsep}{3pt}
-    \item $r_{min}$: $0.10$ a $0.50\uni{m}$, paso $0.05\uni{m}$ \ ($9$ valores)
-    \item $d_a$: $2.5$ a $7\uni{m}$, paso $0.5\uni{m}$ \ ($10$ valores)
+    \item $d_{\mathrm{lat}}$: $0.10$ a $0.50\uni{m}$, paso $0.05\uni{m}$ \ ($9$ valores)
+    \item $d_{\mathrm{act}}$: $2.5$ a $7\uni{m}$, paso $0.5\uni{m}$ \ ($10$ valores)
     \item $90$ puntos de grilla $\times$ $18$ eventos $= 1620$ simulaciones
     \item Duración: $t_f$ de cada evento \ ($5.3$ a $8.9\uni{s}$)
   \end{itemize}

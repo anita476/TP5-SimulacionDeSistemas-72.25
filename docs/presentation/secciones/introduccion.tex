@@ -8,10 +8,11 @@
   \vspace{6pt}
   Fuerza de autopropulsión:
   \[
-    \vv{F}_{Di} = m_i\,\frac{v_{di}\,\vv{e}^{\,target}_i - \vv{v}_i}{\tau_i}
+    \vv{F}_{Di} = m_i\,\frac{v_{di}\,\alert{\vv{e}_0} - \vv{v}_i}{\tau_i}
+    \qquad\quad \text{\normalsize capa de elusión: solo modifica } \alert{\vv{e}_0}
   \]
   \vspace{6pt}
-  Fuerza de contacto, con $\varepsilon_{ij} = r_{ij} - (r_i + r_j)$:
+  Fuerza de contacto, con $\varepsilon_{ij} = d_{ij} - (r_i + r_j)$:
   \[
     \vv{F}_{Gi} = \sum_{j\neq i}\Big[\big(-\varepsilon_{ij}\,k_n\big)\,\vv{e}^{\,n}_{ij}
       + \big(v^{t}_{ij}\,\varepsilon_{ij}\,k_t\big)\,\vv{e}^{\,t}_{ij}\Big]\,g(\varepsilon_{ij})
@@ -19,37 +20,28 @@
 \end{frame}
 
 \begin{frame}{Fundamentos}
-  \framesubtitle{Capa de elusión: detección del conflicto}
+  \framesubtitle{Capa de elusión: ¿cuándo actúa?}
   \centering
-  \includegraphics[width=\linewidth,height=0.42\textheight,keepaspectratio]{esquema_elusion.png}
-  \vspace{4pt}
+  \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{elusion_deteccion.png}
+  \vspace{2pt}
 
   \large
   Conflicto entre $i$ y $j$:
   \[
-    r_{ij} \leq d_a, \qquad 0 < s < D, \qquad |\ell| < R = r_{min} + r_j
+    d_{ij} \leq d_{\mathrm{act}}, \qquad 0 < s < D, \qquad |\ell| < R = r_j + d_{\mathrm{lat}}
   \]
-  con \quad $s = (\vv{r}_j - \vv{r}_i)\cdot\hat{\vv{u}}$, \qquad $\ell = (\vv{r}_j - \vv{r}_i)\cdot\hat{\vv{n}}$, \qquad $\hat{\vv{n}} = (u_y,\,-u_x)$
 \end{frame}
 
 \begin{frame}{Fundamentos}
-  \framesubtitle{Capa de elusión: target temporal}
+  \framesubtitle{Capa de elusión: ¿qué hace?}
+  \centering
+  \includegraphics[width=\linewidth,height=0.60\textheight,keepaspectratio]{elusion_activacion.png}
+  \vspace{2pt}
+
   \large
-  Parábola por $i$, punto de paso $P = (s,\ \ell + R)$ y target final:
   \[
-    y(x) = (\ell + R)\,\frac{x\,(D - x)}{s\,(D - s)}
-    \qquad\Rightarrow\qquad
     y'(0) = \frac{(\ell + R)\,D}{s\,(D - s)}
-  \]
-  \vspace{4pt}
-  Target temporal, sobre tangente a parábola en $i$:
-  \[
-    \vv{x}^{\,temp}_i = \vv{r}_i + s\,\hat{\vv{u}} + s\,y'(0)\,\hat{\vv{n}}
-  \]
-  \vspace{4pt}
-  Dirección deseada:
-  \[
-    \vv{e}^{\,target}_i = \frac{\vv{x}^{\,temp}_i - \vv{r}_i}{|\vv{x}^{\,temp}_i - \vv{r}_i|}
-      = \frac{\hat{\vv{u}} + y'(0)\,\hat{\vv{n}}}{\sqrt{1 + y'(0)^2}}
+    \qquad\Rightarrow\qquad
+    \vv{e}_0 = \frac{\hat{\vv{u}} + y'(0)\,\hat{\vv{n}}}{\sqrt{1 + y'(0)^2}}
   \]
 \end{frame}

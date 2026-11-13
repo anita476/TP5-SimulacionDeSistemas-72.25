@@ -32,8 +32,8 @@ for traj in data/cruces_evento/prueba*.txt; do   # cruces recortados al inicio c
 
   "$SIM" \
     --traj_path "$traj" \
-    --r_min 0.4 \
-    --action_distance 6.0 \
+    --d_lat 0.4 \
+    --d_act 6.0 \
     --v_path data/pruebas_speeds.txt \
     --out-path "$sim"
 

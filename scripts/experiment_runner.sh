@@ -21,14 +21,14 @@ TRAJ_PLOT_SCRIPT="scripts/plot_traj.py"
 usage() {
   cat <<'EOF'
 Uso:
-  scripts/experiment_runner.sh --r-mins VALORES --action-distances VALORES
+  scripts/experiment_runner.sh --d-lats VALORES --d-acts VALORES
 
 Los valores se pasan como listas separadas por coma, por ejemplo:
-  scripts/experiment_runner.sh --r-mins 0.3,0.4 --action-distances 5,6
+  scripts/experiment_runner.sh --d-lats 0.3,0.4 --d-acts 5,6
 
 Opciones:
-  --r-mins VALORES          Valores de --r_min a simular (requerido)
-  --action-distances VALORES Valores de --action_distance a simular (requerido)
+  --d-lats VALORES          Valores de --d_lat a simular (requerido)
+  --d-acts VALORES Valores de --d_act a simular (requerido)
   -h, --help                Mostrar esta ayuda
 
 Variables de entorno opcionales:
@@ -39,19 +39,19 @@ Variables de entorno opcionales:
 EOF
 }
 
-r_mins_csv=""
-action_distances_csv=""
+d_lats_csv=""
+d_acts_csv=""
 
 while (($# > 0)); do
   case "$1" in
-    --r-mins)
-      (($# >= 2)) || { echo "Falta el valor de --r-mins." >&2; exit 2; }
-      r_mins_csv="$2"
+    --d-lats)
+      (($# >= 2)) || { echo "Falta el valor de --d-lats." >&2; exit 2; }
+      d_lats_csv="$2"
       shift 2
       ;;
-    --action-distances)
-      (($# >= 2)) || { echo "Falta el valor de --action-distances." >&2; exit 2; }
-      action_distances_csv="$2"
+    --d-acts)
+      (($# >= 2)) || { echo "Falta el valor de --d-acts." >&2; exit 2; }
+      d_acts_csv="$2"
       shift 2
       ;;
     -h|--help)
@@ -66,8 +66,8 @@ while (($# > 0)); do
   esac
 done
 
-if [[ -z "$r_mins_csv" || -z "$action_distances_csv" ]]; then
-  echo "Se requieren --r-mins y --action-distances." >&2
+if [[ -z "$d_lats_csv" || -z "$d_acts_csv" ]]; then
+  echo "Se requieren --d-lats y --d-acts." >&2
   usage >&2
   exit 2
 fi
@@ -92,12 +92,12 @@ parse_values() {
   done
 }
 
-declare -a r_mins action_distances trajs
+declare -a d_lats d_acts trajs
 declare -a parsed_values
-parse_values "$r_mins_csv" "--r-mins"
-r_mins=("${parsed_values[@]}")
-parse_values "$action_distances_csv" "--action-distances"
-action_distances=("${parsed_values[@]}")
+parse_values "$d_lats_csv" "--d-lats"
+d_lats=("${parsed_values[@]}")
+parse_values "$d_acts_csv" "--d-acts"
+d_acts=("${parsed_values[@]}")
 
 if [[ ! -x "$SIM" ]]; then
   echo "No se encontró el ejecutable del motor: $SIM" >&2
@@ -132,21 +132,21 @@ fi
 
 for traj in "${trajs[@]}"; do
   name="$(basename "$traj" .txt)"
-  for action_distance in "${action_distances[@]}"; do
-    combination_dir="$OUTPUT_DIR/$name/action_distance_${action_distance}"
+  for d_act in "${d_acts[@]}"; do
+    combination_dir="$OUTPUT_DIR/$name/action_distance_${d_act}"
     mkdir -p "$combination_dir"
 
-    for r_min in "${r_mins[@]}"; do
-      output_stem="${name}_action_distance_${action_distance}_radio_${r_min}"
+    for d_lat in "${d_lats[@]}"; do
+      output_stem="${name}_action_distance_${d_act}_radio_${d_lat}"
       output="$combination_dir/${output_stem}.txt"
-      comparison_dir="$combination_dir/comparisons_radio_${r_min}"
+      comparison_dir="$combination_dir/comparisons_radio_${d_lat}"
       metric="$comparison_dir/${output_stem}_nearest_point.txt"
-      echo "Simulando $name (r_min=$r_min, action_distance=$action_distance)"
+      echo "Simulando $name (d_lat=$d_lat, d_act=$d_act)"
 
       "$SIM" \
         --traj_path "$traj" \
-        --r_min "$r_min" \
-        --action_distance "$action_distance" \
+        --d_lat "$d_lat" \
+        --d_act "$d_act" \
         --v_path "$SPEEDS_PATH" \
         --time_path "$TIMES_PATH" \
         --initial_speeds_path "$INITIAL_SPEEDS_PATH" \
@@ -156,7 +156,7 @@ for traj in "${trajs[@]}"; do
 
       if [[ "${SKIP_COMPARISONS:-0}" != "1" ]]; then
         mkdir -p "$comparison_dir"
-        echo "Comparando $name (r_min=$r_min, action_distance=$action_distance)"
+        echo "Comparando $name (d_lat=$d_lat, d_act=$d_act)"
         "$PYTHON" "$NEAREST_POINT_SCRIPT" \
           --traj "$traj" \
           --sim "$output" \
@@ -182,4 +182,4 @@ for traj in "${trajs[@]}"; do
   done
 done
 
-echo "Experimentos y comparaciones terminados: ${#trajs[@]} pruebas, ${#r_mins[@]} valores de r_min y ${#action_distances[@]} action_distances."
+echo "Experimentos y comparaciones terminados: ${#trajs[@]} pruebas, ${#d_lats[@]} valores de d_lat y ${#d_acts[@]} d_acts."

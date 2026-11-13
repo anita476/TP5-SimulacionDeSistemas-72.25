@@ -4,9 +4,9 @@ Recolector E[m, i, j]: recorre data/experiments (salida de experiment_runner.sh)
 de cada simulación con las mismas funciones de calculate_equal_time.py / calculate_nearest_point.py y escribe
 una única tabla:
 
-    metric prueba r_min action_distance E_left E_right E_event
+    metric prueba d_lat d_act E_left E_right E_event
 
-m = métrica (1 iguales tiempos, 2 punto más cercano), i = evento (prueba), j = (r_min, action_distance).
+m = métrica (1 iguales tiempos, 2 punto más cercano), i = evento (prueba), j = (d_lat, d_act).
 
 Uso:
     python scripts/collect_errors.py                                   # data/experiments -> data/calibration/errors.txt
@@ -70,7 +70,7 @@ def collect(experiments_dir: Path, traj_dir: Path) -> list[ErrorRecord]:
     if not sims:
         raise SystemExit(f"no simulations found under {experiments_dir} (run scripts/experiment_runner.sh first)")
     for sim in sims:
-        prueba, r_min, action_distance = parse_experiment_name(sim.stem)  # type: ignore[misc]
+        prueba, d_lat, d_act = parse_experiment_name(sim.stem)  # type: ignore[misc]
         traj = traj_dir / f"prueba{prueba}.txt"
         if not traj.is_file():
             print(f"[aviso] {sim}: no existe {traj}, se saltea", file=sys.stderr)
@@ -80,8 +80,8 @@ def collect(experiments_dir: Path, traj_dir: Path) -> list[ErrorRecord]:
             print(f"[aviso] {sim}: se esperaban 2 peatones, hay {len(e1)}/{len(e2)}, se saltea", file=sys.stderr)
             continue
         left, right = order_left_right(traj, e1)
-        records.append(ErrorRecord(1, prueba, r_min, action_distance, e1[left], e1[right]))
-        records.append(ErrorRecord(2, prueba, r_min, action_distance, e2[left], e2[right]))
+        records.append(ErrorRecord(1, prueba, d_lat, d_act, e1[left], e1[right]))
+        records.append(ErrorRecord(2, prueba, d_lat, d_act, e2[left], e2[right]))
     return records
 
 

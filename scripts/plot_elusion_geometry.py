@@ -4,13 +4,13 @@
 Ejes del dibujo: û apunta de la partícula i a su target final (hacia la derecha
 de la página) y n̂ = (u_y, -u_x) es la derecha de la partícula (hacia abajo en la
 página). El obstáculo j está en (s, ℓ) en esas coordenadas. Hay conflicto si
-0 < s < D y |ℓ| < R, con R = r_min + r_j. La dirección deseada e0 es la tangente
+0 < s < D y |ℓ| < R, con R = d_lat + r_j. La dirección deseada e0 es la tangente
 en el origen de la parábola que pasa por (0, 0), P = (s, ℓ + R) y (D, 0), igual
 que `new_desired_direction` en src/utils/quadratic_heuristic.cpp.
 
 Uso:
     python scripts/plot_elusion_geometry.py
-    python scripts/plot_elusion_geometry.py --s 3 --l 0.1 --r-min 0.25
+    python scripts/plot_elusion_geometry.py --s 3 --l 0.1 --d-lat 0.25
 """
 
 import argparse
@@ -32,15 +32,15 @@ def main():
     parser.add_argument("--s", type=float, default=2.6, help="coordenada del obstáculo a lo largo de û (m)")
     parser.add_argument("--l", type=float, default=-0.15, help="coordenada lateral del obstáculo, + = derecha (m)")
     parser.add_argument("--r", type=float, default=0.25, help="radio de las partículas (m)")
-    parser.add_argument("--r-min", type=float, default=0.3, help="parámetro r_min (m)")
-    parser.add_argument("--d-a", type=float, default=4.0, help="parámetro distancia de acción d_a (m)")
+    parser.add_argument("--d-lat", type=float, default=0.3, help="parámetro d_lat (m)")
+    parser.add_argument("--d-act", type=float, default=4.0, help="parámetro distancia de acción d_act (m)")
     parser.add_argument("--out", type=Path, default=REPO / "docs" / "presentation" / "images" / "esquema_elusion.png")
     args = parser.parse_args()
 
-    D, s, lat, r, d_a = args.D, args.s, args.l, args.r, args.d_a
-    R = args.r_min + r
+    D, s, lat, r, d_act = args.D, args.s, args.l, args.r, args.d_act
+    R = args.d_lat + r
     if not (0.0 < s < D and abs(lat) < R):
-        parser.error("la geometría pedida no es un conflicto: se necesita 0 < s < D y |l| < r_min + r")
+        parser.error("la geometría pedida no es un conflicto: se necesita 0 < s < D y |l| < d_lat + r")
     lat_p = lat + R  # coordenada lateral del punto de paso P
     slope = lat_p * D / (s * (D - s))  # y'(0) de la parábola
     e0 = np.array([1.0, slope]) / np.hypot(1.0, slope)
@@ -61,7 +61,7 @@ def main():
 
     # corredor de conflicto |ℓ| < R entre la partícula y su target
     ax.add_patch(Rectangle((0.0, -R), D, 2.0 * R, facecolor="0.9", edgecolor="0.6", linewidth=1.0, zorder=0))
-    ax.text(D, -R - 0.1, r"corredor de conflicto: $|\ell| < R = r_{min} + r_j$", ha="right", va="top", fontsize=font)
+    ax.text(D, -R - 0.1, r"corredor de conflicto: $|\ell| < R = r_j + d_{\mathrm{lat}}$", ha="right", va="top", fontsize=font)
 
     # recta al target final y versores
     ax.plot([0.0, D], [0.0, 0.0], color="0.35", linestyle="--", linewidth=1.5, zorder=1)
@@ -73,11 +73,11 @@ def main():
     ax.annotate("", xy=page(0.0, 0.8), xytext=(0.0, 0.0), arrowprops=dict(color="black", **arrow), zorder=6)
     ax.text(-0.08, -0.8, r"$\hat{\mathbf{n}}$", ha="right", va="center", fontsize=font)
 
-    # alcance de la distancia de acción d_a
-    half = np.arcsin(min(1.0, (R + 0.25) / d_a))  # el arco sobresale del corredor solo hacia arriba
-    angle = np.linspace(-np.arcsin(min(1.0, R / d_a)), half, 100)
-    ax.plot(d_a * np.cos(angle), d_a * np.sin(angle), color="0.35", linestyle=":", linewidth=1.8, zorder=1)
-    ax.text(d_a * np.cos(half), d_a * np.sin(half) + 0.05, r"$d_a$", ha="center", va="bottom", fontsize=font)
+    # alcance de la distancia de acción d_act
+    half = np.arcsin(min(1.0, (R + 0.25) / d_act))  # el arco sobresale del corredor solo hacia arriba
+    angle = np.linspace(-np.arcsin(min(1.0, R / d_act)), half, 100)
+    ax.plot(d_act * np.cos(angle), d_act * np.sin(angle), color="0.35", linestyle=":", linewidth=1.8, zorder=1)
+    ax.text(d_act * np.cos(half), d_act * np.sin(half) + 0.05, r"$d_{\mathrm{act}}$", ha="center", va="bottom", fontsize=font)
 
     # partícula i, obstáculo j y su círculo de radio R
     ax.add_patch(Circle((0.0, 0.0), r, facecolor=BLUE, edgecolor="black", alpha=0.85, zorder=4))
