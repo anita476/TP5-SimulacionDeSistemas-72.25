@@ -27,6 +27,42 @@
 \end{frame}
 
 \begin{frame}{Resultados}
+  \framesubtitle{Evolución temporal del observable: métrica 1}
+  \begin{columns}[T]
+    \begin{column}{0.49\textwidth}
+      \centering{\small Evento 15}\par\smallskip
+      \includegraphics[width=\linewidth,height=0.60\textheight,keepaspectratio]{evol_E1_a.png}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \centering{\small Evento 11}\par\smallskip
+      \includegraphics[width=\linewidth,height=0.60\textheight,keepaspectratio]{evol_E1_b.png}
+    \end{column}
+  \end{columns}
+  \vspace{4pt}
+  \centering{\small $d^2_i(t_k) = \big|\vv{r}^{\,exp}_i(t_k) - \vv{r}^{\,sim}_i(t_k)\big|^2$, \quad
+    punteada: $E^{(1)}_i = \frac{1}{N_m}\sum_k d^2_i(t_k)$, \quad
+    $d_{\mathrm{lat}} = 0.25\uni{m}$, \ $d_{\mathrm{act}} = 5\uni{m}$}
+\end{frame}
+
+\begin{frame}{Resultados}
+  \framesubtitle{Evolución temporal del observable: métrica 2}
+  \begin{columns}[T]
+    \begin{column}{0.49\textwidth}
+      \centering{\small Evento 15}\par\smallskip
+      \includegraphics[width=\linewidth,height=0.60\textheight,keepaspectratio]{evol_E2_a.png}
+    \end{column}
+    \begin{column}{0.49\textwidth}
+      \centering{\small Evento 11}\par\smallskip
+      \includegraphics[width=\linewidth,height=0.60\textheight,keepaspectratio]{evol_E2_b.png}
+    \end{column}
+  \end{columns}
+  \vspace{4pt}
+  \centering{\small $d^2_{i,\min}(t_k) = \min_j\big|\vv{r}^{\,exp}_i(t_k) - \vv{r}^{\,sim}_i(t_j)\big|^2$, \quad
+    punteada: $E^{(2)}_i = \frac{1}{N_m}\sum_k d^2_{i,\min}(t_k)$, \quad
+    $d_{\mathrm{lat}} = 0.25\uni{m}$, \ $d_{\mathrm{act}} = 5\uni{m}$}
+\end{frame}
+
+\begin{frame}{Resultados}
   \framesubtitle{Calibración poblacional: métrica 1}
   \begin{cols}
     \begin{column}{0.62\textwidth}

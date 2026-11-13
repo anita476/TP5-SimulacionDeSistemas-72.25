@@ -23,9 +23,9 @@ from lib.plot_style import (
 )
 from lib.traj import DEFAULT_CROSSINGS_DIR, DEFAULT_TRIALS_PATH, Position, read_experiment, read_trials
 
-NO_EVADE_M = 0.10
-AMBIGUOUS_LO_M = 0.08
-AMBIGUOUS_HI_M = 0.12
+NO_EVADE_M = 0.15
+AMBIGUOUS_LO_M = NO_EVADE_M - 0.02
+AMBIGUOUS_HI_M = NO_EVADE_M + 0.02
 
 _SIDE_HEADER = re.compile(r"#\s*(izquierda|derecha):\s*id\s+([^,\s]+)", re.IGNORECASE)
 
@@ -359,11 +359,15 @@ def write_table(path: Path, trials: list[Trial]) -> None:
         ]
     )
     if ambiguous:
-        lines.append("# ambiguos |delta| en [0.08, 0.12] m: prueba id |delta_pico|")
+        lines.append(
+            f"# ambiguos |delta| en [{AMBIGUOUS_LO_M:.2f}, {AMBIGUOUS_HI_M:.2f}] m: prueba id |delta_pico|"
+        )
         for number, person, value in ambiguous:
             lines.append(f"# {number} {person} {value:.6f}")
     else:
-        lines.append("# ambiguos |delta| en [0.08, 0.12] m: ninguno")
+        lines.append(
+            f"# ambiguos |delta| en [{AMBIGUOUS_LO_M:.2f}, {AMBIGUOUS_HI_M:.2f}] m: ninguno"
+        )
 
     path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
@@ -479,6 +483,50 @@ def plot_histogram(trials: list[Trial], out_path: Path) -> None:
     save_figure(fig, out_path)
 
 
+def plot_deviation_distribution(trials: list[Trial], out_path: Path) -> None:
+    values = [
+        abs(walker.delta_peak)
+        for trial in trials
+        for walker in (trial.left, trial.right)
+    ]
+    if not values:
+        raise ValueError("no deviations to bin")
+    # 0.05 m puts the 0.15 m cut on a bin edge and leaves the empty gap
+    # (0.15 m, 0.20 m) as the next bin. Scott (~0.18 m) and Freedman-Diaconis
+    # (~0.13 m) would swallow the threshold and that gap.
+    width = 0.05
+    n_bins = math.ceil(max(values) / width - 1e-9)
+    edges = [round(index * width, 10) for index in range(n_bins + 1)]
+    right = round(edges[-1] + width, 10)
+
+    fig, ax = new_figure()
+    ax.axvspan(0.0, NO_EVADE_M, color=GREEN, alpha=0.22, zorder=0, label="no elude")
+    counts, _, _ = ax.hist(
+        values,
+        bins=edges,
+        color=BLUE,
+        edgecolor="black",
+        linewidth=0.6,
+        zorder=2,
+    )
+    ax.vlines(values, 0.0, 0.4, colors="black", linewidth=0.7, zorder=3)
+    ax.axvline(
+        NO_EVADE_M,
+        color="0.35",
+        linestyle="--",
+        zorder=4,
+        label=rf"umbral ${NO_EVADE_M:.2f}$ m",
+    )
+    top = int(max(counts))
+    style_axes(ax, r"$|\delta|$ (m)", "peatones")
+    ax.set_xlim(0.0, right)
+    ax.set_ylim(0.0, top + 1.5)
+    ax.set_xticks([round(tick * 0.1, 1) for tick in range(int(round(right / 0.1)) + 1)])
+    ax.set_yticks(range(0, top + 2))
+    place_legend_below(ax, ncol=2)
+    save_figure(fig, out_path)
+
+
 def plot_trajectories(trials: list[Trial], out_path: Path) -> None:
     fig, ax = new_figure()
     for index, trial in enumerate(trials):
@@ -571,6 +619,7 @@ def main() -> None:
 
     try:
         plot_deviations(trials, args.out_dir / "desvios_por_prueba.png")
+        plot_deviation_distribution(trials, args.out_dir / "desvios_distribucion.png")
         plot_histogram(trials, args.out_dir / "desvios_histograma.png")
         plot_trajectories(trials, args.out_dir / "trayectorias_reales.png")
         plot_summary(trials, args.out_dir / "resumen_lados.png")

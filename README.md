@@ -158,7 +158,7 @@ python scripts/get_initial_speeds.py
 
 Lado y magnitud del desvío lateral en las pasadas reales. Para cada peatón, 
 delta es la distancia con signo a la cuerda inicio-fin, positiva hacia su 
-derecha (normal rx = uy, ry = -ux). Si |delta| < 0.10 m, cuenta como que 
+derecha (normal rx = uy, ry = -ux). Si |delta| < 0.15 m, cuenta como que 
 no elude.
 
 ```bash
@@ -167,7 +167,7 @@ python scripts/analyze_behavior.py
 
 Escribe en `data/behavior/` la tabla `elusion_behavior.txt` (una fila por
 peatón, un bloque por prueba y el resumen) y las figuras
-`desvios_por_prueba.png`, `desvios_histograma.png`, `trayectorias_reales.png`
+`desvios_por_prueba.png`, `desvios_distribucion.png`, `desvios_histograma.png`, `trayectorias_reales.png`
 y `resumen_lados.png`.
 
 ### Comparaciones de trayectorias 
