@@ -26,7 +26,7 @@ from matplotlib.colors import LogNorm  # noqa: E402
 from matplotlib.ticker import ScalarFormatter  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "lib"))
-from plot_style import BLUE, VERMILLION, apply_academic_style, style_axes  # noqa: E402
+from plot_style import BLUE, D_ACT_COLOR, D_LAT_COLOR, VERMILLION, apply_academic_style, style_axes  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
 XLABEL = r"Margen lateral de referencia $d_{\mathrm{lat}}$ (m)"
@@ -97,18 +97,25 @@ def plot_population(metric: int, indir: Path, outdir: Path) -> None:
 
     # 1D cuts through the optimum
     ia, ir = np.searchsorted(ads, a_opt), np.searchsorted(d_lats, r_opt)
-    for xs, ys, es, xlabel, fixed, name in (
-        (d_lats, Z[ia], S[ia], XLABEL, rf"$d_{{\mathrm{{act}}}} = {a_opt:g}$ m", "corte_rmin"),
-        (ads, Z[:, ir], S[:, ir], YLABEL, rf"$d_{{\mathrm{{lat}}}} = {r_opt:g}$ m", "corte_action_distance"),
+    order = int(np.floor(np.log10(Z[ia, ir])))  # same power of ten on both cuts, taken from the optimum
+    order = order if order < -1 else 0
+    # curve in the colour of the parameter being varied; the fixed one is named on the slide, not in the legend
+    for xs, ys, es, xlabel, name, color in (
+        (d_lats, Z[ia], S[ia], XLABEL, "corte_rmin", D_LAT_COLOR),
+        (ads, Z[:, ir], S[:, ir], YLABEL, "corte_action_distance", D_ACT_COLOR),
     ):
         if len(xs) < 2:
             continue
         fig, ax = plt.subplots(figsize=(8, 6))
-        ax.errorbar(xs, ys, yerr=np.nan_to_num(es), fmt="o-", color=BLUE, ecolor=BLUE, label=fixed)
+        ax.errorbar(xs, ys, yerr=np.nan_to_num(es), fmt="o-", color=color, ecolor=color)
         k = int(np.nanargmin(ys))
         ax.plot(xs[k], ys[k], marker="*", markersize=20, color=VERMILLION, markeredgecolor="black", linestyle="none", label="óptimo")
         ax.set_xticks(xs)
         style_axes(ax, xlabel, elabel(metric))
+        if order:
+            ax.ticklabel_format(axis="y", style="sci", scilimits=(order, order))
+        else:
+            ax.ticklabel_format(axis="y", style="plain")
         ax.legend()
         save(fig, outdir / f"E{metric}_{name}.png")
 
@@ -153,8 +160,8 @@ def plot_individual(metric: int, indir: Path, outdir: Path) -> None:
     w = 0.4
     ax.bar(x - w / 2, E_pop, w, color=BLUE, label="parámetros poblacionales")
     ax.bar(x + w / 2, E_ind, w, color=VERMILLION, label="parámetros individuales")
-    ax.axhline(E_pop.mean(), color=BLUE, linestyle="--", linewidth=1.5)
-    ax.axhline(E_ind.mean(), color=VERMILLION, linestyle="--", linewidth=1.5)
+    ax.axhline(E_pop.mean(), color=BLUE, linestyle="--", linewidth=1.5, label="promedio poblacional")
+    ax.axhline(E_ind.mean(), color=VERMILLION, linestyle="--", linewidth=1.5, label="promedio individual")
     ax.set_xticks(x)
     ax.set_xticklabels([str(p) for p in pruebas], fontsize=15)
     style_axes(ax, "Evento", elabel(metric, mean=False))

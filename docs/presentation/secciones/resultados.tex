@@ -13,7 +13,7 @@
     \end{column}
   \end{columns}
   \vspace{6pt}
-  \centering{\small $d_{\mathrm{lat}} = 0.25\uni{m}$, \quad $d_{\mathrm{act}} = 5\uni{m}$}
+  \centering{\small $\dlat = 0.25\uni{m}$, \quad $\dact = 5\uni{m}$}
 \end{frame}
 
 \begin{frame}{Resultados}
@@ -41,7 +41,7 @@
   \vspace{4pt}
   \centering{\small $d^2_i(t_k) = \big|\vv{r}^{\,exp}_i(t_k) - \vv{r}^{\,sim}_i(t_k)\big|^2$, \quad
     punteada: $E^{(1)}_i = \frac{1}{N_m}\sum_k d^2_i(t_k)$, \quad
-    $d_{\mathrm{lat}} = 0.25\uni{m}$, \ $d_{\mathrm{act}} = 5\uni{m}$}
+    $\dlat = 0.25\uni{m}$, \ $\dact = 5\uni{m}$}
 \end{frame}
 
 \begin{frame}{Resultados}
@@ -59,7 +59,7 @@
   \vspace{4pt}
   \centering{\small $d^2_{i,\min}(t_k) = \min_j\big|\vv{r}^{\,exp}_i(t_k) - \vv{r}^{\,sim}_i(t_j)\big|^2$, \quad
     punteada: $E^{(2)}_i = \frac{1}{N_m}\sum_k d^2_{i,\min}(t_k)$, \quad
-    $d_{\mathrm{lat}} = 0.25\uni{m}$, \ $d_{\mathrm{act}} = 5\uni{m}$}
+    $\dlat = 0.25\uni{m}$, \ $\dact = 5\uni{m}$}
 \end{frame}
 
 \begin{frame}{Resultados}
@@ -70,8 +70,8 @@
     \end{column}
     \begin{column}{0.34\textwidth}
       \begin{resultado}[Óptimo]
-        \item $d_{\mathrm{lat}} = 0.20\uni{m}$
-        \item $d_{\mathrm{act}} = 4\uni{m}$
+        \item $\dlat = 0.20\uni{m}$
+        \item $\dact = 4\uni{m}$
         \item $\langle E^{(1)}\rangle = 0.4 \pm 0.3\uni{m^2}$
       \end{resultado}
     \end{column}
@@ -83,11 +83,13 @@
   \begin{columns}[T]
     \begin{column}{0.49\textwidth}
       \centering
-      \includegraphics[width=\linewidth,height=0.66\textheight,keepaspectratio]{E1_corte_rmin.png}
+      {\small Variando $\dlat$, con $\dact = 4\uni{m}$ fijo\par}
+      \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{E1_corte_rmin.png}
     \end{column}
     \begin{column}{0.49\textwidth}
       \centering
-      \includegraphics[width=\linewidth,height=0.66\textheight,keepaspectratio]{E1_corte_action_distance.png}
+      {\small Variando $\dact$, con $\dlat = 0.20\uni{m}$ fijo\par}
+      \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{E1_corte_action_distance.png}
     \end{column}
   \end{columns}
 \end{frame}
@@ -100,8 +102,8 @@
     \end{column}
     \begin{column}{0.34\textwidth}
       \begin{resultado}[Óptimo]
-        \item $d_{\mathrm{lat}} = 0.25\uni{m}$
-        \item $d_{\mathrm{act}} = 5\uni{m}$
+        \item $\dlat = 0.25\uni{m}$
+        \item $\dact = 5\uni{m}$
         \item $\langle E^{(2)}\rangle = (2 \pm 1)\ten{-2}\uni{m^2}$
       \end{resultado}
     \end{column}
@@ -113,11 +115,13 @@
   \begin{columns}[T]
     \begin{column}{0.49\textwidth}
       \centering
-      \includegraphics[width=\linewidth,height=0.66\textheight,keepaspectratio]{E2_corte_rmin.png}
+      {\small Variando $\dlat$, con $\dact = 5\uni{m}$ fijo\par}
+      \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{E2_corte_rmin.png}
     \end{column}
     \begin{column}{0.49\textwidth}
       \centering
-      \includegraphics[width=\linewidth,height=0.66\textheight,keepaspectratio]{E2_corte_action_distance.png}
+      {\small Variando $\dact$, con $\dlat = 0.25\uni{m}$ fijo\par}
+      \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{E2_corte_action_distance.png}
     \end{column}
   \end{columns}
 \end{frame}
@@ -128,7 +132,7 @@
   \renewcommand{\arraystretch}{1.5}
   \begin{tabular}{lccc}
     \hline
-    Métrica & $d_{\mathrm{lat}}$ (m) & $d_{\mathrm{act}}$ (m) & $\langle E\rangle$ (m$^2$) \\
+    Métrica & $\dlat$ (m) & $\dact$ (m) & $\langle E\rangle$ (m$^2$) \\
     \hline
     1: iguales tiempos & $0.20$ & $4$ & $0.4 \pm 0.3$ \\
     2: punto más cercano & $0.25$ & $5$ & $(2 \pm 1)\ten{-2}$ \\
@@ -177,8 +181,8 @@
   \begin{columns}
     \begin{column}{0.70\textwidth}
       \begin{resultado}[Ganancia al individualizar]
-        \item Métrica 1: $0.384 \to 0.381\uni{m^2}$ \ ($0.7$\,\%)
-        \item Métrica 2: $2.05\ten{-2} \to 1.69\ten{-2}\uni{m^2}$ \ ($17.8$\,\%)
+        \item Métrica 1: $0.7$\,\%, \ $\sqrt{\langle E\rangle}$: $62.0 \to 61.8\uni{cm}$, \ 10 de 18 eventos en el óptimo poblacional
+        \item Métrica 2: $18$\,\%, \ $\sqrt{\langle E\rangle}$: $14.3 \to 13.0\uni{cm}$, \ 0 de 18
       \end{resultado}
     \end{column}
   \end{columns}

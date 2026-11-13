@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Circle
 
-from lib.plot_style import BLUE, GREEN, RED, VERMILLION, apply_academic_style
+from lib.plot_style import BLUE, D_ACT_COLOR, D_LAT_COLOR, GREEN, VERMILLION, apply_academic_style
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT = REPO_ROOT / "docs/presentation/images/cuadro_inicial.png"
@@ -37,9 +37,9 @@ def create_figure(d_act: float, d_lat: float, radius: float, beyond: float):
 
     # d_act: entre centros
     ax.annotate("", xy=(d_act, 0), xytext=(0, 0), zorder=7,
-                arrowprops={"arrowstyle": "<->", "color": "black", "lw": 1.8, "mutation_scale": 22,
+                arrowprops={"arrowstyle": "<->", "color": D_ACT_COLOR, "lw": 1.8, "mutation_scale": 22,
                             "shrinkA": 0, "shrinkB": 0})
-    ax.text(d_act / 2, 0.14, r"$d_{\mathrm{act}}$", fontsize=FS + 2, ha="center", va="bottom")
+    ax.text(d_act / 2, 0.14, r"$d_{\mathrm{act}}$", fontsize=FS + 2, color=D_ACT_COLOR, ha="center", va="bottom")
 
     # (centro, sentido de avance, lado derecho propio en pantalla, colores, nombre)
     peatones = (
@@ -62,11 +62,11 @@ def create_figure(d_act: float, d_lat: float, radius: float, beyond: float):
         ax.add_patch(Circle((ox, 0), R, facecolor="none", edgecolor="0.35", linewidth=1.6,
                             linestyle=(0, (1, 2.4)), zorder=3))
         y0, y1 = right * radius, right * R
-        ax.plot([ox, ox], [y0, y1], color=RED, linewidth=2.8, zorder=8, solid_capstyle="butt")
-        ax.plot([ox - 0.11, ox + 0.11], [y0, y0], color=RED, linewidth=2.8, zorder=8)
+        ax.plot([ox, ox], [y0, y1], color=D_LAT_COLOR, linewidth=2.8, zorder=8, solid_capstyle="butt")
+        ax.plot([ox - 0.11, ox + 0.11], [y0, y0], color=D_LAT_COLOR, linewidth=2.8, zorder=8)
         ax.plot(ox, y1, marker="o", markersize=11, markerfacecolor=GREEN, markeredgecolor="black",
                 markeredgewidth=1.2, zorder=10)
-        ax.text(ox - fwd * 0.16, (y0 + y1) / 2 + right * 0.04, r"$d_{\mathrm{lat}}$", color=RED, fontsize=FS,
+        ax.text(ox - fwd * 0.16, (y0 + y1) / 2 + right * 0.04, r"$d_{\mathrm{lat}}$", color=D_LAT_COLOR, fontsize=FS,
                 ha="right" if fwd > 0 else "left", va="center")
 
     ax.set_xlim(-R - 0.3, d_act + R + 0.3)

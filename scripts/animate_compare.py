@@ -150,31 +150,39 @@ def main() -> None:
     sim_query = [t0 + t for t in query]
 
     pedestrians = [
-        (f"izquierda real (id {left})", LEFT, pad(real[0], n_frames)),
-        (f"derecha real (id {right})", RIGHT, pad(real[1], n_frames)),
-        (f"izquierda sim (id {sim_left})", SIM_LEFT, positions_at_times(sim_times, sim[sim_left][1], sim_query)),
-        (f"derecha sim (id {sim_right})", SIM_RIGHT, positions_at_times(sim_times, sim[sim_right][1], sim_query)),
+        ("izquierda, experimento", LEFT, pad(real[0], n_frames)),
+        ("derecha, experimento", RIGHT, pad(real[1], n_frames)),
+        ("izquierda, simulación", SIM_LEFT, positions_at_times(sim_times, sim[sim_left][1], sim_query)),
+        ("derecha, simulación", SIM_RIGHT, positions_at_times(sim_times, sim[sim_right][1], sim_query)),
     ]
     fps = round(experiment.frame_rate) if args.fps is None else args.fps
-    fig, draw = make_figure(
-        trial,
-        pedestrians,
-        experiment.frame_rate,
-        dots=True,
-        linestyles=["-", "-", "--", "--"],
-        caption=caption,
-        show_title=not args.no_title,
-    )
+
+    def build(untracked_legend: bool | None = None):
+        return make_figure(
+            trial,
+            pedestrians,
+            experiment.frame_rate,
+            dots=True,
+            linestyles=["-", "-", "--", "--"],
+            caption=caption,
+            show_title=not args.no_title,
+            untracked_legend=untracked_legend,
+        )
 
     if args.png:
         index = n_frames - 1 if args.frame is None else args.frame
         if not 0 <= index < n_frames:
             sys.exit(f"--frame must be in [0, {n_frames - 1}]")
-        draw(index)
+        # a still only explains 'sin registro' if someone is drawn without record in that very frame
+        still, draw_still = build(any(positions[index] is None for _l, _c, positions in pedestrians))
+        draw_still(index)
         png_path = Path(args.png)
         png_path.parent.mkdir(parents=True, exist_ok=True)
-        fig.savefig(png_path, dpi=SAVE_DPI, facecolor="white")
+        still.savefig(png_path, dpi=SAVE_DPI, facecolor="white")
+        plt.close(still)
         print(f"wrote {png_path} (frame {index}, t = {query[index]:.2f} s)")
+
+    fig, draw = build()
 
     if args.out:
         gif_path = Path(args.out)

@@ -27,7 +27,11 @@
 
 \usetheme{Warsaw}
 \setbeamertemplate{navigation symbols}{}
-\definecolor{acento}{rgb}{0.2,0.2,0.7} 
+\definecolor{acento}{rgb}{0.2,0.2,0.7}
+\definecolor{dlat}{HTML}{DB2B2B}   % mismos colores que D_LAT_COLOR / D_ACT_COLOR en scripts/lib/plot_style.py
+\definecolor{dact}{HTML}{6E00B7}
+\newcommand{\dlat}{\textcolor{dlat}{d_{\mathrm{lat}}}}   % los dos parámetros, siempre en su color (modo matemático)
+\newcommand{\dact}{\textcolor{dact}{d_{\mathrm{act}}}}
 
 % Barra de navegación: una columna por sección, un punto por diapositiva.
 \useoutertheme[subsection=false]{miniframes}

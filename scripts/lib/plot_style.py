@@ -13,6 +13,8 @@ GREEN = "#009E73"
 PURPLE = "#CC79A7"
 RED = "#DB2B2B"
 VIOLET = "#6E00B7"
+D_LAT_COLOR = RED      # the two elusion parameters keep one colour each in every figure and on the slides
+D_ACT_COLOR = VIOLET   # (estilo.tex defines the same two as dlat / dact)
 SERIES = (BLUE, VERMILLION, GREEN, PURPLE, VIOLET)
 MARKERS = ("o", "s", "D", "^", "v")
 

@@ -52,17 +52,22 @@ def make_figure(
     linestyles: list[str] | None = None,
     caption: str | None = None,
     show_title: bool = True,
+    untracked_legend: bool | None = None,
 ):
     """pedestrians: (label, color, positions) in drawing order.
 
     discs of radius r (meters) by default; small circular markers if dots=True.
     linestyles, if given, is one matplotlib linestyle per pedestrian (default solid).
     caption, if given, replaces the default 'prueba N' title.
+    untracked_legend: show the 'sin registro' legend entry; None = only if some pedestrian has a frame without record.
     """
     apply_academic_style()
     import matplotlib.pyplot as plt
 
     styles = linestyles if linestyles is not None else ["-"] * len(pedestrians)
+    if untracked_legend is None:
+        # entrada de leyenda solo si algún peatón pierde el registro en algún cuadro
+        untracked_legend = any(p is None for _l, _c, positions in pedestrians for p in positions)
     if len(styles) != len(pedestrians):
         raise ValueError(f"linestyles has {len(styles)} entries, expected {len(pedestrians)}")
 
@@ -72,9 +77,8 @@ def make_figure(
     y0, y1 = min(y for _, y in known) - margin, max(y for _, y in known) + margin
 
     # Figure height follows the data aspect so the equal-aspect axes fill the frame.
-    n_legend = len(pedestrians) + 1
     width, left_in, right_in, top_in, bottom_in = 12.0, 1.3, 0.3, 0.8, 2.1
-    if n_legend > 3:
+    if len(pedestrians) > 2:  # the legend takes two rows
         bottom_in = 2.6
     ax_width = width - left_in - right_in
     ax_height = ax_width * (y1 - y0) / (x1 - x0)
@@ -126,14 +130,15 @@ def make_figure(
         color=UNTRACKED,
         markeredgecolor="black",
         alpha=UNTRACKED_ALPHA,
-        # entrada de leyenda solo si algún peatón pierde el registro en algún cuadro
-        label="sin registro" if any(p is None for _l, _c, positions in pedestrians for p in positions) else "_nolegend_",
+        label="sin registro" if untracked_legend else "_nolegend_",
     )
     if dots:
         untracked.set_markersize(DOT_SIZE)
     handles, labels = ax.get_legend_handles_labels()
+    # up to 3 entries in one row; more go in two rows filled by columns, so each column is one group
+    # (experimento | simulación | sin registro) and each row one pedestrian
     n_legend = len(labels)
-    ncol = 2 if n_legend > 3 else n_legend
+    ncol = n_legend if n_legend <= 3 else math.ceil(n_legend / 2)
     fig.legend(handles, labels, loc="lower center", ncol=ncol, frameon=True, fancybox=False)
     head = caption if caption is not None else rf"prueba {trial}"
     stats = fig.text(0.5, 1.0 - 0.15 / height, _stats_line(head, 0.0), ha="center", va="top", fontsize=FONT_SIZE)

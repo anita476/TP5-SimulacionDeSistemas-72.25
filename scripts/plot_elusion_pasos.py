@@ -13,7 +13,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import Arc, Circle, Rectangle
 
-from lib.plot_style import BLUE, VERMILLION, GREEN, RED, apply_academic_style
+from lib.plot_style import BLUE, VERMILLION, GREEN, D_ACT_COLOR, D_LAT_COLOR, apply_academic_style
 
 OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parents[1] / "docs/presentation/images"
 D, s, l, r, d_lat, d_act = 12.0, 5.2, -1.1, 1.0, 1.3, 9.5   # unidades arbitrarias, relaciones exactas
@@ -72,10 +72,10 @@ ax.add_patch(zona); zona.set_clip_path(Circle((0, 0), d_act, transform=ax.transD
 ax.plot([0, D], [0, 0], color="0.45", linestyle="--", linewidth=1.8, zorder=2)
 half = np.degrees(np.arcsin(R / d_act)) + 2.2
 ang = np.radians(np.linspace(-half, half, 200))
-ax.plot(d_act * np.cos(ang), d_act * np.sin(ang), color="0.2", linewidth=2.2, zorder=3)
+ax.plot(d_act * np.cos(ang), d_act * np.sin(ang), color=D_ACT_COLOR, linewidth=2.2, zorder=3)
 a_r = np.radians(-10.5)
-arrow(ax, (0, 0), (d_act * np.cos(a_r), d_act * np.sin(a_r)), lw=1.8, scale=22, style="->", zorder=8)
-ax.text(6.3, -1.72, r"$d_{\mathrm{act}}$", fontsize=FS, ha="center", va="center")
+arrow(ax, (0, 0), (d_act * np.cos(a_r), d_act * np.sin(a_r)), color=D_ACT_COLOR, lw=1.8, scale=22, style="->", zorder=8)
+ax.text(6.3, -1.72, r"$d_{\mathrm{act}}$", fontsize=FS, color=D_ACT_COLOR, ha="center", va="center")
 actors(ax)
 ax.plot(0, 0, marker="o", markersize=9, color="black", zorder=11)   # centro de i: origen de u, n y d_act
 # ejes locales
@@ -92,8 +92,8 @@ ax.plot([s, s], [0, -l], linestyle="none", marker="o", markersize=6, color="blac
 ax.text(s + 0.38, -l / 2 + 0.05, r"$\ell$", fontsize=FS, ha="center", va="center", zorder=9)
 # R y D
 cota(ax, (10.9, 0), (10.9, r)); ax.text(10.65, r / 2, r"$r_j$", fontsize=FS - 4, ha="right", va="center")
-cota(ax, (10.9, r), (10.9, R), color=RED, lw=2.6)
-ax.text(10.65, (r + R) / 2, r"$d_{\mathrm{lat}}$", fontsize=FS - 4, color=RED, ha="right", va="center")
+cota(ax, (10.9, r), (10.9, R), color=D_LAT_COLOR, lw=2.6)
+ax.text(10.65, (r + R) / 2, r"$d_{\mathrm{lat}}$", fontsize=FS - 4, color=D_LAT_COLOR, ha="right", va="center")
 ax.text(10.9, R + 0.5, r"$R = r_j + d_{\mathrm{lat}}$", fontsize=FS - 2, ha="center", va="center")
 cota(ax, (10.9, 0), (10.9, -R)); ax.text(11.15, -R / 2, "$R$", fontsize=FS, ha="left", va="center")
 arrow(ax, (0, -2.62), (D, -2.62), lw=1.5, scale=20, style="<->")
@@ -125,8 +125,8 @@ ax.text(T[0] + 0.45, T[1] - 0.12, "target temporal", fontsize=FS - 4, color=DARK
 ax.plot([s, s], [-l, -l - r], color="black", linewidth=1.7, zorder=8)
 ax.plot(s, -l, marker="o", markersize=6, color="black", zorder=9)
 ax.text(s + 0.14, -l - r / 2 + 0.05, r"$r_j$", fontsize=FS - 2, ha="left", va="center", zorder=9)
-cota(ax, (s, -l - r), (s, -Pn), color=RED, lw=2.8)
-ax.text(s - 0.28, (-l - r - Pn) / 2 - 0.1, r"$d_{\mathrm{lat}}$", fontsize=FS, color=RED, ha="right", va="center",
+cota(ax, (s, -l - r), (s, -Pn), color=D_LAT_COLOR, lw=2.8)
+ax.text(s - 0.28, (-l - r - Pn) / 2 - 0.1, r"$d_{\mathrm{lat}}$", fontsize=FS, color=D_LAT_COLOR, ha="right", va="center",
         bbox={"facecolor": "white", "edgecolor": "none", "pad": 1.2}, zorder=7)
 ax.plot(s, -Pn, marker="o", markersize=13, markerfacecolor=GREEN, markeredgecolor="black", markeredgewidth=1.3, zorder=11)
 ax.text(s + 0.32, -Pn + 0.48, "$P$", fontsize=FS, ha="left", va="center",
