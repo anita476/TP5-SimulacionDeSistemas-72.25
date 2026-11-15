@@ -171,8 +171,18 @@
 \end{frame}
 
 \begin{frame}{Error de cada evento}
-  \centering
-  \includegraphics[width=\linewidth,height=0.86\textheight,keepaspectratio]{error_por_evento.png}
+  \begin{cols}
+    \begin{column}{0.78\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.86\textheight,keepaspectratio]{error_por_evento.png}
+    \end{column}
+    \begin{column}{0.20\textwidth}
+      \begin{parametros}[Parámetros poblacionales ($\dlat$, $\dact$)]
+        \item Métrica 1: $(0.20,\ 4)\uni{m}$
+        \item Métrica 2: $(0.25,\ 5)\uni{m}$
+      \end{parametros}
+    \end{column}
+  \end{cols}
 \end{frame}
 
 \begin{frame}{Calibración poblacional e individual}
@@ -202,13 +212,14 @@
 
 \begin{frame}{Validación cruzada}
   \begin{columns}[c]
-    \begin{column}{0.76\textwidth}
+    \begin{column}{0.73\textwidth}
       \figura{validacion_cruzada.png}
     \end{column}
-    \begin{column}{0.22\textwidth}
+    \begin{column}{0.25\textwidth}
       \begin{parametros}
         \item $20$ particiones al azar
-        \item Calibración poblacional: $18$ eventos
+        \item Óptimo recalibrado con el entrenamiento de cada una
+        \item Poblacional: $18$ eventos
       \end{parametros}
       \vspace{4pt}
       \begin{resultado}
