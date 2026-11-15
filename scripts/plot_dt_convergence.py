@@ -98,29 +98,33 @@ def main():
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    fig, axes = plt.subplots(1, 2, figsize=(13.0, 5.4), layout="constrained")
-    fig.get_layout_engine().set(h_pad=0.2, w_pad=0.2)
-    for column, (ax, ylabel) in enumerate(zip(axes, ("Error métrica 1 (m$^2$)", "Error métrica 2 (m$^2$)"))):
+    # sized for a 0.76 column of the slide, 20 pt text at ~9 pt there (guía 1.8); each event's (d_lat, d_act)
+    # goes beside the figure on the slide, not in the legend (guía 1.7). The two metrics share the (log) y axis:
+    # one label and one column of tick labels leave the panels more width
+    fig, axes = plt.subplots(1, 2, sharey=True, figsize=(9.2, 5.0), layout="constrained")
+    fig.get_layout_engine().set(h_pad=0.2, w_pad=0.05)
+    for column, ax in enumerate(axes):
         for k, case in enumerate(args.cases):
-            trial, d_lat, d_act = parse_case(case)
-            label = rf"Evento {trial}: $d_{{\mathrm{{lat}}}}$ = {d_lat} m, $d_{{\mathrm{{act}}}}$ = {d_act} m"
+            trial, _d_lat, _d_act = parse_case(case)
+            label = f"Evento {trial}"
             ax.plot(dts, results[case][:, column], marker=MARKERS[k % len(MARKERS)],
                     color=SERIES[k % len(SERIES)], linestyle="-", linewidth=1.0, label=label)
         ax.set_xscale("log")
         ax.set_yscale("log")
-        style_axes(ax, "Paso de simulación (s)", ylabel)
-        # el eje y va en décadas enteras, así siempre hay al menos dos potencias de 10 rotuladas
+        style_axes(ax, "Paso de simulación (s)", "Error del evento (m$^2$)" if column == 0 else "")
+        ax.set_title(f"Métrica {column + 1}")
         ax.set_xlim(dts.min() * 0.7, 10.0 ** np.ceil(np.log10(dts.max())))
-        values = np.concatenate([results[case][:, column] for case in args.cases])
-        ax.set_ylim(10.0 ** np.floor(np.log10(values.min())), 10.0 ** np.ceil(np.log10(values.max())))
         for axis in (ax.xaxis, ax.yaxis):
             axis.set_major_locator(LogLocator(base=10, numticks=12))
             axis.set_minor_locator(LogLocator(base=10, subs=range(2, 10), numticks=12))
             axis.set_minor_formatter(NullFormatter())
         ax.tick_params(axis="both", which="minor", length=3.5, width=0.9)
+    # common y range, after drawing both panels (sharey): whole decades, so at least two powers of 10 are labelled
+    values = np.concatenate([results[case][:, :2].ravel() for case in args.cases])
+    axes[0].set_ylim(10.0 ** np.floor(np.log10(values.min())), 10.0 ** np.ceil(np.log10(values.max())))
 
     handles, labels = axes[0].get_legend_handles_labels()
-    legend = fig.legend(handles, labels, loc="outside lower center", ncol=1)
+    legend = fig.legend(handles, labels, loc="outside lower center", ncol=len(labels))
     save_figure(fig, args.out, extra=(legend,))
 
 

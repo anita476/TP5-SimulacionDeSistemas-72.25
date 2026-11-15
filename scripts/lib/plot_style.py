@@ -13,8 +13,8 @@ GREEN = "#009E73"
 PURPLE = "#CC79A7"
 RED = "#DB2B2B"
 VIOLET = "#6E00B7"
-D_LAT_COLOR = RED      # the two elusion parameters keep one colour each in every figure and on the slides
-D_ACT_COLOR = VIOLET   # (estilo.tex defines the same two as dlat / dact)
+D_LAT_COLOR = RED      # the two elusion parameters keep one colour each in every figure
+D_ACT_COLOR = VIOLET   # (the slide text writes them in black)
 SERIES = (BLUE, VERMILLION, GREEN, PURPLE, VIOLET)
 MARKERS = ("o", "s", "D", "^", "v")
 
@@ -171,6 +171,33 @@ def place_legend_below(ax, ncol: int = 1):
         legend.set_zorder(20)
         return legend
     return ax.figure.legend(handles, labels, loc="outside lower center", ncol=ncol)
+
+
+def _freeze_layout(fig) -> None:
+    """Run the layout once and keep it, so what is added or measured afterwards does not move the axes."""
+    fig.canvas.draw()
+    if fig.get_layout_engine() is not None:
+        fig.set_layout_engine("none")
+
+
+def save_centered_on_axes(fig, ax, path: Path, pad_in: float = 0.12) -> None:
+    """Crop like bbox_inches='tight', but widened so the axes sit in the horizontal middle of the image:
+    a heading the slide puts above the figure is then centred on the plot."""
+    from matplotlib.transforms import Bbox
+    import matplotlib.pyplot as plt
+
+    _freeze_layout(fig)
+    renderer = fig.canvas.get_renderer()
+    tight = fig.get_tightbbox(renderer)  # inches
+    box = ax.get_window_extent(renderer).transformed(fig.dpi_scale_trans.inverted())
+    center = (box.x0 + box.x1) / 2
+    half = max(center - tight.x0, tight.x1 - center)
+    crop = Bbox.from_extents(center - half - pad_in, tight.y0 - pad_in, center + half + pad_in, tight.y1 + pad_in)
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(path, dpi=SAVE_DPI, bbox_inches=crop, facecolor="white")
+    plt.close(fig)
+    print(f"wrote {path}")
 
 
 def save_figure(fig, path: Path, extra: tuple = ()) -> None:

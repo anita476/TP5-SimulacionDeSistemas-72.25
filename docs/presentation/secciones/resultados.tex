@@ -1,52 +1,71 @@
 \begin{frame}{Elección de $dt$}
-  \centering
-  \includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{dt_convergencia.png}
-
-  \vspace{4pt}
-  {\large Paso de simulación $dt = 10^{-3}\uni{s}$; \quad paso para guardar estado $dt_2 = \Delta t_{exp}$}
+  \begin{cols}
+    \begin{column}{0.75\textwidth}
+      \centering
+      \includegraphics[width=\linewidth,height=0.86\textheight,keepaspectratio]{dt_convergencia.png}
+    \end{column}
+    \begin{column}{0.23\textwidth}
+      \begin{parametros}[Parámetros ($\dlat$, $\dact$)]
+        \item Evento 6: $(0.20,\ 2.5)\uni{m}$
+        \item Evento 7: $(0.10,\ 7)\uni{m}$
+        \item Evento 19: $(0.30,\ 5)\uni{m}$
+      \end{parametros}
+      \vspace{6pt}
+      \begin{resultado}
+        \item Simulación: $dt = 10^{-3}\uni{s}$
+        \item Guardado: $dt_2 = \Delta t_{exp}$
+      \end{resultado}
+    \end{column}
+  \end{cols}
 \end{frame}
 
-\begin{frame}{Animaciones del sistema}
-  \begin{columns}[T]
-    \begin{column}{0.49\textwidth}
+\begin{frame}{Animación del sistema}
+  \begin{cols}
+    \begin{column}{0.72\textwidth}
       \centering{\small Evento 15 (menor $E^{(2)}_m$)}\par\smallskip
-      \includegraphics[width=\linewidth,height=0.52\textheight,keepaspectratio]{anim_a.png}
+      \includegraphics[width=\linewidth,height=0.66\textheight,keepaspectratio]{anim_a.png}
       \par\smallskip{\scriptsize\url{https://youtu.be/PENDIENTE}}
     \end{column}
-    \begin{column}{0.49\textwidth}
-      \centering{\small Evento 11 (mayor $E^{(2)}_m$)}\par\smallskip
-      \includegraphics[width=\linewidth,height=0.52\textheight,keepaspectratio]{anim_b.png}
-      \par\smallskip{\scriptsize\url{https://youtu.be/PENDIENTE}}
+    \begin{column}{0.25\textwidth}
+      \begin{parametros}
+        \item $\dlat = 0.25\uni{m}$
+        \item $\dact = 5\uni{m}$
+        \item Óptimo de la métrica~2
+      \end{parametros}
     \end{column}
-  \end{columns}
-  \vspace{6pt}
-  \centering{\small $\dlat = 0.25\uni{m}$, \quad $\dact = 5\uni{m}$}
+  \end{cols}
 \end{frame}
 
-\begin{frame}{Trayectorias experimentales y simuladas}
-  \centering
-  {\small Evento 15}\par
-  \includegraphics[width=\linewidth,height=0.33\textheight,keepaspectratio]{tray_a.png}\par
-  \vspace{2pt}
-  {\small Evento 11}\par
-  \includegraphics[width=\linewidth,height=0.33\textheight,keepaspectratio]{tray_b.png}\par
-  \vspace{4pt}
-  {\small $\dlat = 0.25\uni{m}$, \quad $\dact = 5\uni{m}$}
+\begin{frame}{Animación del sistema}
+  \begin{cols}
+    \begin{column}{0.72\textwidth}
+      \centering{\small Evento 11 (mayor $E^{(2)}_m$)}\par\smallskip
+      \includegraphics[width=\linewidth,height=0.66\textheight,keepaspectratio]{anim_b.png}
+      \par\smallskip{\scriptsize\url{https://youtu.be/PENDIENTE}}
+    \end{column}
+    \begin{column}{0.25\textwidth}
+      \begin{parametros}
+        \item $\dlat = 0.25\uni{m}$
+        \item $\dact = 5\uni{m}$
+        \item Óptimo de la métrica~2
+      \end{parametros}
+    \end{column}
+  \end{cols}
 \end{frame}
 
 \begin{frame}{Evolución temporal de $d^2_i$}
-  \begin{columns}[T]
-    \begin{column}{0.49\textwidth}
-      \centering{\small Evento 15}\par\smallskip
-      \includegraphics[width=\linewidth,height=0.60\textheight,keepaspectratio]{evol_E1_a.png}
+  \begin{columns}[c]
+    \begin{column}{0.80\textwidth}
+      \figura{evol_E1.png}
     \end{column}
-    \begin{column}{0.49\textwidth}
-      \centering{\small Evento 11}\par\smallskip
-      \includegraphics[width=\linewidth,height=0.60\textheight,keepaspectratio]{evol_E1_b.png}
+    \begin{column}{0.17\textwidth}
+      \begin{parametros}
+        \item $\dlat = 0.20\uni{m}$
+        \item $\dact = 4\uni{m}$
+        \item Óptimo de la métrica~1
+      \end{parametros}
     \end{column}
   \end{columns}
-  \vspace{4pt}
-  \centering{\small $\dlat = 0.25\uni{m}$, \quad $\dact = 5\uni{m}$}
 \end{frame}
 
 \begin{frame}{$\langle E^{(1)}\rangle$ en la grilla de parámetros}
@@ -65,33 +84,32 @@
 \end{frame}
 
 \begin{frame}{Cortes de $\langle E^{(1)}\rangle$ por el óptimo}
-  \begin{columns}[T]
-    \begin{column}{0.49\textwidth}
-      \centering
-      {\small Variando $\dlat$, con $\dact = 4\uni{m}$ fijo\par}
-      \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{E1_corte_rmin.png}
+  \begin{columns}[c]
+    \begin{column}{0.80\textwidth}
+      \figura{E1_cortes.png}
     \end{column}
-    \begin{column}{0.49\textwidth}
-      \centering
-      {\small Variando $\dact$, con $\dlat = 0.20\uni{m}$ fijo\par}
-      \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{E1_corte_action_distance.png}
+    \begin{column}{0.17\textwidth}
+      \begin{parametros}[Parámetros fijos]
+        \item Izquierda: $\dact = 4\uni{m}$
+        \item Derecha: $\dlat = 0.20\uni{m}$
+      \end{parametros}
     \end{column}
   \end{columns}
 \end{frame}
 
 \begin{frame}{Evolución temporal de $d^2_{i,\min}$}
-  \begin{columns}[T]
-    \begin{column}{0.49\textwidth}
-      \centering{\small Evento 15}\par\smallskip
-      \includegraphics[width=\linewidth,height=0.60\textheight,keepaspectratio]{evol_E2_a.png}
+  \begin{columns}[c]
+    \begin{column}{0.80\textwidth}
+      \figura{evol_E2.png}
     \end{column}
-    \begin{column}{0.49\textwidth}
-      \centering{\small Evento 11}\par\smallskip
-      \includegraphics[width=\linewidth,height=0.60\textheight,keepaspectratio]{evol_E2_b.png}
+    \begin{column}{0.17\textwidth}
+      \begin{parametros}
+        \item $\dlat = 0.25\uni{m}$
+        \item $\dact = 5\uni{m}$
+        \item Óptimo de la métrica~2
+      \end{parametros}
     \end{column}
   \end{columns}
-  \vspace{4pt}
-  \centering{\small $\dlat = 0.25\uni{m}$, \quad $\dact = 5\uni{m}$}
 \end{frame}
 
 \begin{frame}{$\langle E^{(2)}\rangle$ en la grilla de parámetros}
@@ -110,16 +128,15 @@
 \end{frame}
 
 \begin{frame}{Cortes de $\langle E^{(2)}\rangle$ por el óptimo}
-  \begin{columns}[T]
-    \begin{column}{0.49\textwidth}
-      \centering
-      {\small Variando $\dlat$, con $\dact = 5\uni{m}$ fijo\par}
-      \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{E2_corte_rmin.png}
+  \begin{columns}[c]
+    \begin{column}{0.80\textwidth}
+      \figura{E2_cortes.png}
     \end{column}
-    \begin{column}{0.49\textwidth}
-      \centering
-      {\small Variando $\dact$, con $\dlat = 0.25\uni{m}$ fijo\par}
-      \includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{E2_corte_action_distance.png}
+    \begin{column}{0.17\textwidth}
+      \begin{parametros}[Parámetros fijos]
+        \item Izquierda: $\dact = 5\uni{m}$
+        \item Derecha: $\dlat = 0.25\uni{m}$
+      \end{parametros}
     \end{column}
   \end{columns}
 \end{frame}
@@ -149,29 +166,13 @@
 \end{frame}
 
 \begin{frame}{Óptimos individuales}
-  \begin{columns}[T]
-    \begin{column}{0.49\textwidth}
-      \centering{\small Métrica 1}\par
-      \includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{E1_optimos_individuales.png}
-    \end{column}
-    \begin{column}{0.49\textwidth}
-      \centering{\small Métrica 2}\par
-      \includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{E2_optimos_individuales.png}
-    \end{column}
-  \end{columns}
+  \centering
+  \includegraphics[width=\linewidth,height=0.86\textheight,keepaspectratio]{optimos_individuales.png}
 \end{frame}
 
 \begin{frame}{Error de cada evento}
-  \begin{columns}[T]
-    \begin{column}{0.49\textwidth}
-      \centering{\small Métrica 1}\par
-      \includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{E1_error_por_evento.png}
-    \end{column}
-    \begin{column}{0.49\textwidth}
-      \centering{\small Métrica 2}\par
-      \includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{E2_error_por_evento.png}
-    \end{column}
-  \end{columns}
+  \centering
+  \includegraphics[width=\linewidth,height=0.86\textheight,keepaspectratio]{error_por_evento.png}
 \end{frame}
 
 \begin{frame}{Calibración poblacional e individual}
@@ -200,17 +201,16 @@
 \end{frame}
 
 \begin{frame}{Validación cruzada}
-  \begin{columns}[T]
-    \begin{column}{0.38\textwidth}
-      \centering{\small Métrica 1}\par
-      \includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{E1_validacion_cruzada.png}
-    \end{column}
-    \begin{column}{0.38\textwidth}
-      \centering{\small Métrica 2}\par
-      \includegraphics[width=\linewidth,height=0.70\textheight,keepaspectratio]{E2_validacion_cruzada.png}
+  \begin{columns}[c]
+    \begin{column}{0.76\textwidth}
+      \figura{validacion_cruzada.png}
     \end{column}
     \begin{column}{0.22\textwidth}
-      \vspace{0.20\textheight}
+      \begin{parametros}
+        \item $20$ particiones al azar
+        \item Calibración poblacional: $18$ eventos
+      \end{parametros}
+      \vspace{4pt}
       \begin{resultado}
         \item Validación $\approx$ entrenamiento $\approx$ poblacional
         \item Sin sobreajuste

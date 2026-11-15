@@ -8,7 +8,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / "lib"))
 import matplotlib
 
 from anim import GIF_DPI, LEFT, RIGHT, SIM_LEFT, SIM_RIGHT, make_figure, trial_positions
-from plot_style import SAVE_DPI
+from plot_style import save_centered_on_axes
 from traj import (
     DEFAULT_TRIALS_PATH,
     Position,
@@ -89,6 +89,9 @@ def main() -> None:
     parser.add_argument("--png", help="PNG of one frame")
     parser.add_argument("--frame", type=int, default=None, help="PNG frame index (default: last; 0 = initial)")
     parser.add_argument("--no-title", action="store_true", help="hide the 'prueba N  t = ...' line (slide figures carry no title)")
+    parser.add_argument("--width", type=float, default=12.0,
+                        help="figure width in inches (default 12; ~5 keeps the text readable on half a slide)")
+    parser.add_argument("--legend-ncol", type=int, default=None, help="legend columns (default: two rows)")
     parser.add_argument("--show", action="store_true", help="open a window")
     parser.add_argument("--fps", type=int, default=None, help="video frames per second (default: experimental frame rate rounded, ~real time)")
     args = parser.parse_args()
@@ -150,10 +153,10 @@ def main() -> None:
     sim_query = [t0 + t for t in query]
 
     pedestrians = [
-        ("izquierda, experimento", LEFT, pad(real[0], n_frames)),
-        ("derecha, experimento", RIGHT, pad(real[1], n_frames)),
-        ("izquierda, simulación", SIM_LEFT, positions_at_times(sim_times, sim[sim_left][1], sim_query)),
-        ("derecha, simulación", SIM_RIGHT, positions_at_times(sim_times, sim[sim_right][1], sim_query)),
+        ("izquierdo, experimento", LEFT, pad(real[0], n_frames)),
+        ("derecho, experimento", RIGHT, pad(real[1], n_frames)),
+        ("izquierdo, simulación", SIM_LEFT, positions_at_times(sim_times, sim[sim_left][1], sim_query)),
+        ("derecho, simulación", SIM_RIGHT, positions_at_times(sim_times, sim[sim_right][1], sim_query)),
     ]
     fps = round(experiment.frame_rate) if args.fps is None else args.fps
 
@@ -167,6 +170,8 @@ def main() -> None:
             caption=caption,
             show_title=not args.no_title,
             untracked_legend=untracked_legend,
+            width=args.width,
+            legend_ncol=args.legend_ncol,
         )
 
     if args.png:
@@ -176,11 +181,9 @@ def main() -> None:
         # a still only explains 'sin registro' if someone is drawn without record in that very frame
         still, draw_still = build(any(positions[index] is None for _l, _c, positions in pedestrians))
         draw_still(index)
-        png_path = Path(args.png)
-        png_path.parent.mkdir(parents=True, exist_ok=True)
-        still.savefig(png_path, dpi=SAVE_DPI, facecolor="white")
-        plt.close(still)
-        print(f"wrote {png_path} (frame {index}, t = {query[index]:.2f} s)")
+        # cropped with the axes in the middle, so the heading the slide puts above the frame is centred on the plot
+        save_centered_on_axes(still, still.axes[0], Path(args.png))
+        print(f"  (frame {index}, t = {query[index]:.2f} s)")
 
     fig, draw = build()
 
