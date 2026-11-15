@@ -21,7 +21,7 @@ from lib.plot_style import (
     save_figure,
     style_axes,
 )
-from lib.traj import DEFAULT_CROSSINGS_DIR, DEFAULT_TRIALS_PATH, Position, read_experiment, read_trials
+from lib.traj import DEFAULT_TRIALS_PATH, Position, read_experiment, read_trials
 
 NO_EVADE_M = 0.15
 AMBIGUOUS_LO_M = NO_EVADE_M - 0.02
@@ -30,6 +30,9 @@ AMBIGUOUS_HI_M = NO_EVADE_M + 0.02
 _SIDE_HEADER = re.compile(r"#\s*(izquierda|derecha):\s*id\s+([^,\s]+)", re.IGNORECASE)
 
 _REPO_ROOT = Path(__file__).resolve().parent.parent
+# Original crossings, not cruces_postprocess: that set mirrors the left-evading events for the simulation,
+# and this study is precisely about which side real pedestrians choose.
+DEFAULT_IN_DIR = _REPO_ROOT / "data" / "cruces"
 DEFAULT_OUT_DIR = _REPO_ROOT / "data" / "behavior"
 
 
@@ -445,9 +448,9 @@ def plot_deviations(trials: list[Trial], out_path: Path) -> None:
 
 def plot_histogram(trials: list[Trial], out_path: Path) -> None:
     groups = (
-        ("a su derecha", "derecha", BLUE),
-        ("a su izquierda", "izquierda", VERMILLION),
-        ("no elude", "no_elude", GREEN),
+        ("A su derecha", "derecha", BLUE),
+        ("A su izquierda", "izquierda", VERMILLION),
+        ("No elude", "no_elude", GREEN),
     )
     labels: list[str] = []
     means: list[float] = []
@@ -479,7 +482,7 @@ def plot_histogram(trials: list[Trial], out_path: Path) -> None:
         zorder=3,
     )
     ax.set_ylim(0.0, max(mean + std for mean, std in zip(means, stds)) * 1.15)
-    style_axes(ax, "lado de elusión", r"$|\delta|$ (m)")
+    style_axes(ax, "Lado de elusión", r"Desvío lateral máximo $|\delta|$ (m)")
     save_figure(fig, out_path)
 
 
@@ -518,7 +521,7 @@ def plot_deviation_distribution(trials: list[Trial], out_path: Path) -> None:
         label=rf"umbral ${NO_EVADE_M:.2f}$ m",
     )
     top = int(max(counts))
-    style_axes(ax, r"$|\delta|$ (m)", "peatones")
+    style_axes(ax, r"Desvío lateral máximo $|\delta|$ (m)", "Número de peatones")
     ax.set_xlim(0.0, right)
     ax.set_ylim(0.0, top + 1.5)
     ax.set_xticks([round(tick * 0.1, 1) for tick in range(int(round(right / 0.1)) + 1)])
@@ -572,8 +575,8 @@ def main() -> None:
     parser.add_argument(
         "--in-dir",
         type=Path,
-        default=DEFAULT_CROSSINGS_DIR,
-        help=f"crossing files (default: {DEFAULT_CROSSINGS_DIR})",
+        default=DEFAULT_IN_DIR,
+        help=f"original (unmirrored) crossing files (default: {DEFAULT_IN_DIR})",
     )
     parser.add_argument(
         "--trials-file",
