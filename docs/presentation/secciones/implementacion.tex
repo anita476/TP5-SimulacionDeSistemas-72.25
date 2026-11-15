@@ -6,11 +6,11 @@
 \begin{frame}{Algoritmo de simulación}
   \begin{algorithmic}[1]
     \Require $\vv{r}_i(0)$, $\vv{v}_i(0)$, target final y $v_{di}$ de cada peatón, $t_f$, $dt$, $dt_2$
-    \State $n \gets \mathrm{round}(dt_2/dt)$, \quad $dt \gets dt_2/n$
+    \State $n_{\mathrm{sub}} \gets \mathrm{round}(dt_2/dt)$, \quad $dt \gets dt_2/n_{\mathrm{sub}}$
     \For{$k = 1,\, 2,\, \dots,\, t_f/dt_2$}
-      \For{$n$ pasos de integración}
+      \For{$n_{\mathrm{sub}}$ pasos de integración}
         \For{cada peatón $i$}
-          \State $\vv{e}_0 \gets$ target temporal si hay conflicto; si no, target final
+          \State $\vv{e}_0 \gets$ tangente a la parábola si hay conflicto; si no, hacia el target final
           \State $\vv{F}_i \gets \vv{F}_{Di} + \vv{F}_{Gi}$
         \EndFor
         \State $\vv{v}_i \gets \vv{v}_i + (\vv{F}_i/m_i)\,dt$

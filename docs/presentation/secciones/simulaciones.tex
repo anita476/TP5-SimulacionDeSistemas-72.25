@@ -11,12 +11,11 @@
         \item $\tau_i = 0.5\uni{s}$
         \item $k_n = 1.2\ten{5}\uni{N/m}$
         \item $k_t = 2.4\ten{5}\uni{kg/(m\,s)}$
-        \item[] {\scriptsize Helbing et al., Nature (2000)}
       \end{parametros}
       \vspace{4pt}
       \begin{parametros}[Parámetros variables (a calibrar)]
         \item $\dlat$: margen lateral de elusión
-        \item $\dact$: distancia de activación de la elusión
+        \item $\dact$: distancia activación de elusión
       \end{parametros}
     \end{column}
   \end{cols}
@@ -60,28 +59,28 @@
 \end{frame}
 
 \begin{frame}{Observables}
-  Error del peatón $i$ del evento $m$ \ ($N_m$ instantes $t_k = k\,\Delta t_{\mathrm{exp}}$):
+  Error del peatón $i$ del evento $\ell$ \ ($N_\ell$ instantes $t_k = k\,\Delta t_{\mathrm{exp}}$):
   \[
     d^2_i(t_k) = \big|\vv{r}^{\,\mathrm{exp}}_i(t_k) - \vv{r}^{\,\mathrm{sim}}_i(t_k)\big|^2
     \qquad\quad
-    d^2_{i,\min}(t_k) = \min_{j}\big|\vv{r}^{\,\mathrm{exp}}_i(t_k) - \vv{r}^{\,\mathrm{sim}}_i(t_j)\big|^2
+    d^2_{i,\min}(t_k) = \min_{k'}\big|\vv{r}^{\,\mathrm{exp}}_i(t_k) - \vv{r}^{\,\mathrm{sim}}_i(t_{k'})\big|^2
   \]
   \[
-    \boxed{E^{(1)}_i = \frac{1}{N_m}\sum_{k} d^2_i(t_k)}
+    \boxed{E^{(1)}_i = \frac{1}{N_\ell}\sum_{k} d^2_i(t_k)}
     \qquad\quad
-    \boxed{E^{(2)}_i = \frac{1}{N_m}\sum_{k} d^2_{i,\min}(t_k)}
+    \boxed{E^{(2)}_i = \frac{1}{N_\ell}\sum_{k} d^2_{i,\min}(t_k)}
   \]
   \vspace{2pt}
   Error del evento y error poblacional:
   \[
-    E_m = \frac{1}{2}\sum_{i=1}^{2} E_i
+    E_\ell = \frac{1}{2}\sum_{i=1}^{2} E_i
     \qquad\quad
-    \langle E\rangle(\dlat,\,\dact) = \frac{1}{M}\sum_{m=1}^{M} E_m(\dlat,\,\dact)
+    \langle E\rangle(\dlat,\,\dact) = \frac{1}{M}\sum_{\ell=1}^{M} E_\ell(\dlat,\,\dact)
   \]
   \vspace{2pt}
   Barra de error: desvío estándar muestral entre eventos,\ $\langle E\rangle \pm \sigma_E$
   \[
-    \sigma_E = \sqrt{\frac{1}{M-1}\sum_{m=1}^{M}\big(E_m - \langle E\rangle\big)^2}
+    \sigma_E = \sqrt{\frac{1}{M-1}\sum_{\ell=1}^{M}\big(E_\ell - \langle E\rangle\big)^2}
   \]
 \end{frame}
 
@@ -101,7 +100,7 @@
   \begin{tabular}{ll}
     \hline
     Calibración poblacional & mínimo de $\langle E\rangle$ en la grilla, $18$ eventos \\
-    Calibración individual  & mínimo de $E_m$ en la grilla, por evento \\
+    Calibración individual  & mínimo de $E_\ell$ en la grilla, por evento \\
     Validación cruzada      & $20$ particiones al azar: $13$ de entrenamiento, $5$ de validación \\
     \hline
   \end{tabular}

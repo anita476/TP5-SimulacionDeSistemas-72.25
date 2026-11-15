@@ -34,10 +34,10 @@ def main():
     p1 = p1_start + np.array([0.78, 0.0])
     p2 = p2_start - np.array([0.78, 0.0])
     pedestrians = (
-        {"name": "$p_1$", "here": p1, "aim": np.array([1.0, 0.0]),
-         "target": p2_start, "label": "target de $p_1$\n$\\mathbf{r}_2(0)$", "color": BLUE},
-        {"name": "$p_2$", "here": p2, "aim": np.array([-1.0, 0.0]),
-         "target": p1_start, "label": "target de $p_2$\n$\\mathbf{r}_1(0)$", "color": VERMILLION},
+        {"name": "$i$", "velocity": "$\\mathbf{v}_i$", "here": p1, "aim": np.array([1.0, 0.0]),
+         "target": p2_start, "label": "target de $i$\n$\\mathbf{r}_j(0)$", "color": BLUE},
+        {"name": "$j$", "velocity": "$\\mathbf{v}_j$", "here": p2, "aim": np.array([-1.0, 0.0]),
+         "target": p1_start, "label": "target de $j$\n$\\mathbf{r}_i(0)$", "color": VERMILLION},
     )
 
     xlim, ylim = (-3.25, 3.25), (-0.88, 1.42)
@@ -61,7 +61,7 @@ def main():
                     arrowprops={"arrowstyle": "-|>", "color": color, "lw": 1.35,
                                 "shrinkA": 0, "shrinkB": 0, "mutation_scale": 12},
                     zorder=6)
-        ax.text(tip[0], 0.16, "$\\mathbf{v}$", color=color, ha="center", va="bottom",
+        ax.text(tip[0], 0.16, ped["velocity"], color=color, ha="center", va="bottom",
                 fontsize=FONT, zorder=7,
                 bbox={"facecolor": "white", "edgecolor": "none", "pad": 0.15})
 

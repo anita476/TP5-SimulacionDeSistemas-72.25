@@ -19,16 +19,10 @@ m_i\,\ddot{\vv{r}}_i =
 m_i\,\frac{v_{di}\,\vv{e}_0 - \vv{v}_i}{\tau_i}
 \]
 
-\[
-\text{\normalsize Capa de elusión: solo modifica }
-\vv{e}_0
-\]
-
 \vspace{6pt}
 
 \textbf{
-Fuerza de contacto, con
-$\varepsilon_{ij} = d_{ij} - (r_i + r_j)$:
+Fuerza de contacto, solo si se superponen ($\varepsilon_{ij} < 0$):
 }
 
 \[
@@ -39,45 +33,53 @@ $\varepsilon_{ij} = d_{ij} - (r_i + r_j)$:
 \Big]
 \]
 
+{\small
+$\varepsilon_{ij} = d_{ij} - (r_i + r_j)$,
+\quad $d_{ij} = \|\vv{r}_i - \vv{r}_j\|$,
+\quad $\vv{e}^{\,n}_{ij} = (\vv{r}_i - \vv{r}_j)/d_{ij}$,
+\quad $\vv{e}^{\,t}_{ij} = (-e^{n}_{ij,y},\ e^{n}_{ij,x})$,
+\quad $v^{t}_{ij} = (\vv{v}_i - \vv{v}_j)\cdot\vv{e}^{\,t}_{ij}$,
+}
+
 \end{frame}
 
 
 
 \begin{frame}{Capa de elusión}
 
-\textbf{Sistema de referencia local}
+\textbf{Sistema de referencia local} (peatón $i$, obstáculo $j$, target $\vv{t}$)
 
 \[
-\mathbf{u} =
-\frac{\mathbf{t}-\mathbf{p}}{\|\mathbf{t}-\mathbf{p}\|},
+\hat{\vv{u}} =
+\frac{\vv{t}-\vv{r}_i}{\|\vv{t}-\vv{r}_i\|},
 \qquad
-\mathbf{r} =
+\hat{\vv{n}} =
 \begin{pmatrix}u_y\\-u_x\end{pmatrix}
 \]
 
 \textbf{Proyección de la posición del obstáculo}
 
 \[
-\mathbf{q}=\mathbf{o}-\mathbf{p}
+\vv{q}=\vv{r}_j-\vv{r}_i
 \]
 
 \[
-d_{\parallel}=\mathbf{q}\cdot\mathbf{u},
+d_{\parallel}=\vv{q}\cdot\hat{\vv{u}},
 \qquad
-d_{\perp}=\mathbf{q}\cdot\mathbf{r}
+d_{\perp}=\vv{q}\cdot\hat{\vv{n}}
 \]
 
 \textbf{Condición de conflicto}
 
 \[
-R=r_o+d_{\text{lat}},
+R=r_j+\dlat,
 \qquad
-d_T=\|\mathbf{t}-\mathbf{p}\|
+d_T=\|\vv{t}-\vv{r}_i\|
 \]
 
 \[
 \boxed{
-\|\mathbf{o}-\mathbf{p}\|\leq d_{\text{act}}
+d_{ij}\leq \dact
 \quad\land\quad
 0<d_{\parallel}<d_T
 \quad\land\quad
@@ -98,13 +100,13 @@ d_T=\|\mathbf{t}-\mathbf{p}\|
       \textbf{Interpolación cuadrática (Lagrange)}
       \begin{flalign*}
         & P_0=(0,0),\quad
-          P_1=(d_{\parallel},R),\quad
+          P_1=(d_{\parallel},\,d_{\perp}+R),\quad
           P_2=(d_T,0) & \\
         & f(x)=ax^2+bx+c
           \qquad
           \boxed{
-            m=f'(0)=
-            \frac{R\,d_T}{d_{\parallel}(d_T-d_{\parallel})}
+            f'(0)=
+            \frac{(d_{\perp}+R)\,d_T}{d_{\parallel}(d_T-d_{\parallel})}
           } &
       \end{flalign*}
     \end{column}
@@ -112,12 +114,12 @@ d_T=\|\mathbf{t}-\mathbf{p}\|
       \textbf{Integración con SFM}
       \begin{flalign*}
         & \boxed{
-            \mathbf{e}_0=
-            \frac{\mathbf{u}+m\mathbf{r}}{\sqrt{1+m^2}}
+            \vv{e}_0=
+            \frac{\hat{\vv{u}}+f'(0)\,\hat{\vv{n}}}{\sqrt{1+f'(0)^2}}
           } & \\[4pt]
         & \boxed{
-            \mathbf{F}_d=
-            \frac{m_p}{\tau}(v_0\mathbf{e}_0-\mathbf{v})
+            \vv{F}_{Di}=
+            m_i\,\frac{v_{di}\,\vv{e}_0-\vv{v}_i}{\tau_i}
           } &
       \end{flalign*}
     \end{column}
