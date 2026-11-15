@@ -1,4 +1,3 @@
-#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -136,8 +135,15 @@ inline SpeedRow read_speed(const std::string &path, int num) {
 }
 
 inline int parse_test_num(const std::string &path_str) {
-  std::filesystem::path p(path_str);
-  std::string stem = p.stem().string();
+  std::string stem = path_str;
+  const auto slash = stem.find_last_of("/\\");
+  if (slash != std::string::npos) {
+    stem = stem.substr(slash + 1);
+  }
+  const auto dot = stem.rfind('.');
+  if (dot != std::string::npos) {
+    stem = stem.substr(0, dot);
+  }
 
   const std::string prefix = "prueba";
   if (stem.rfind(prefix, 0) != 0) {
