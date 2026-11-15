@@ -18,10 +18,12 @@
 \begin{frame}{Trayectorias experimentales y simuladas}
   \centering
   {\small Evento 15}\par
-  \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{tray_a.png}\par
+  \includegraphics[width=\linewidth,height=0.33\textheight,keepaspectratio]{tray_a.png}\par
   \vspace{2pt}
   {\small Evento 11}\par
-  \includegraphics[width=\linewidth,height=0.36\textheight,keepaspectratio]{tray_b.png}
+  \includegraphics[width=\linewidth,height=0.33\textheight,keepaspectratio]{tray_b.png}\par
+  \vspace{4pt}
+  {\small $\dlat = 0.25\uni{m}$, \quad $\dact = 5\uni{m}$}
 \end{frame}
 
 \begin{frame}{Evolución temporal de $d^2_i$}
@@ -36,9 +38,7 @@
     \end{column}
   \end{columns}
   \vspace{4pt}
-  \centering{\small $d^2_i(t_k) = \big|\vv{r}^{\,exp}_i(t_k) - \vv{r}^{\,sim}_i(t_k)\big|^2$, \quad
-    punteada: $E^{(1)}_i = \frac{1}{N_m}\sum_k d^2_i(t_k)$, \quad
-    $\dlat = 0.25\uni{m}$, \ $\dact = 5\uni{m}$}
+  \centering{\small $\dlat = 0.25\uni{m}$, \quad $\dact = 5\uni{m}$}
 \end{frame}
 
 \begin{frame}{Evolución temporal de $d^2_{i,\min}$}
@@ -53,9 +53,7 @@
     \end{column}
   \end{columns}
   \vspace{4pt}
-  \centering{\small $d^2_{i,\min}(t_k) = \min_j\big|\vv{r}^{\,exp}_i(t_k) - \vv{r}^{\,sim}_i(t_j)\big|^2$, \quad
-    punteada: $E^{(2)}_i = \frac{1}{N_m}\sum_k d^2_{i,\min}(t_k)$, \quad
-    $\dlat = 0.25\uni{m}$, \ $\dact = 5\uni{m}$}
+  \centering{\small $\dlat = 0.25\uni{m}$, \quad $\dact = 5\uni{m}$}
 \end{frame}
 
 \begin{frame}{$\langle E^{(1)}\rangle$ en la grilla de parámetros}
@@ -134,7 +132,7 @@
   \begin{columns}
     \begin{column}{0.62\textwidth}
       \begin{resultado}
-        \item Óptimos a un paso de grilla entre sí
+        \item Óptimos a un paso de grilla en $\dlat$ y a dos en $\dact$
         \item $\langle E^{(1)}\rangle$ un orden de magnitud mayor que $\langle E^{(2)}\rangle$
         \item $\sqrt{\langle E\rangle}$: $0.6 \pm 0.2\uni{m}$ (métrica 1), $0.14 \pm 0.05\uni{m}$ (métrica 2)
       \end{resultado}
@@ -180,13 +178,14 @@
     \hline
   \end{tabular}
 
-  \vspace{16pt}
+  \vspace{6pt}
+  {\small Ganancia $= \big(\langle E\rangle_{\mathrm{pob}} - \langle E\rangle_{\mathrm{ind}}\big) / \langle E\rangle_{\mathrm{pob}}$}
+
+  \vspace{12pt}
   \begin{columns}
-    \begin{column}{0.62\textwidth}
+    \begin{column}{0.78\textwidth}
       \begin{resultado}
-        \item Ganancia $= \big(\langle E\rangle_{\mathrm{pob}} - \langle E\rangle_{\mathrm{ind}}\big) / \langle E\rangle_{\mathrm{pob}}$
-        \item $\sqrt{\langle E\rangle}$, métrica 1: $0.6 \pm 0.2\uni{m}$ en ambos casos
-        \item $\sqrt{\langle E\rangle}$, métrica 2: $0.14 \pm 0.05 \to 0.13 \pm 0.04\uni{m}$
+        \item $\sqrt{\langle E\rangle}$ individual: $0.6 \pm 0.2\uni{m}$ (métrica 1), $0.13 \pm 0.04\uni{m}$ (métrica 2)
       \end{resultado}
     \end{column}
   \end{columns}

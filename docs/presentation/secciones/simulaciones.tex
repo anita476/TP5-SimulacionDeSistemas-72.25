@@ -38,7 +38,7 @@
           $k_n$ & $1.2\ten{5}\uni{N/m}$ \\
           $k_t$ & $2.4\ten{5}\uni{kg/(m\,s)}$ \\
         \end{tabular}\par\vspace{4pt}
-        {\footnotesize Helbing et al. (2000)}
+        {\footnotesize Helbing et al., Nature (2000)}
       \end{beamercolorbox}
     \end{column}
   \end{columns}
@@ -47,14 +47,19 @@
 \begin{frame}{Observables}
   Error del peatón $i$ del evento $m$ \ ($N_m$ instantes $t_k = k\,\Delta t_{exp}$):
   \[
-    E^{(1)}_i = \frac{1}{N_m}\sum_{k}\big|\vv{r}^{\,exp}_i(t_k) - \vv{r}^{\,sim}_i(t_k)\big|^2
+    d^2_i(t_k) = \big|\vv{r}^{\,exp}_i(t_k) - \vv{r}^{\,sim}_i(t_k)\big|^2
     \qquad\quad
-    E^{(2)}_i = \frac{1}{N_m}\sum_{k}\min_{j}\big|\vv{r}^{\,exp}_i(t_k) - \vv{r}^{\,sim}_i(t_j)\big|^2
+    d^2_{i,\min}(t_k) = \min_{j}\big|\vv{r}^{\,exp}_i(t_k) - \vv{r}^{\,sim}_i(t_j)\big|^2
+  \]
+  \[
+    E^{(1)}_i = \frac{1}{N_m}\sum_{k} d^2_i(t_k)
+    \qquad\quad
+    E^{(2)}_i = \frac{1}{N_m}\sum_{k} d^2_{i,\min}(t_k)
   \]
   \vspace{2pt}
   Error del evento y error poblacional:
   \[
-    E_m = \frac{E_1 + E_2}{2}
+    E_m = \frac{1}{2}\sum_{i=1}^{2} E_i
     \qquad\quad
     \langle E\rangle(\dlat,\,\dact) = \frac{1}{M}\sum_{m=1}^{M} E_m(\dlat,\,\dact)
   \]
