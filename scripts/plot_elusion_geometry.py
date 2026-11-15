@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Esquema minimalista de la capa de elusión: cómo se toman r_p, r_o, d_lat y d_act."""
+"""Esquema minimalista de la capa de elusión: cómo se toman r_o, d_min y d_act."""
 import argparse
 
 import matplotlib.pyplot as plt
@@ -9,8 +9,8 @@ from matplotlib.patches import Circle, Rectangle
 plt.rcParams["mathtext.fontset"] = "cm"
 
 BLUE, ORANGE, GREEN, GRAY = "#0072B2", "#D55E00", "#009E73", "#4d4d4d"
-R_P, R_O, D_LAT = 0.40, 0.40, 0.60
-R = R_P + R_O + D_LAT
+R_P, R_O, D_MIN = 0.40, 0.40, 1.00   # R_P solo para dibujar la partícula
+R = D_MIN + R_O                       # distancia de paso: borde del obstáculo -> centro de la partícula = d_min
 P, O, T = np.array([1.5, 2.5]), np.array([5.0, 2.5]), np.array([9.3, 2.5])
 
 
@@ -51,11 +51,8 @@ def main():
     arrow(ax, (P[0], y_act), (P[0] + d_act, y_act))
     ax.text(P[0] + d_act / 2, y_act + 0.15, "$d_{act}$", fontsize=26, ha="center")
 
-    # partícula y radio r_p
+    # partícula
     ax.add_patch(Circle(P, R_P, fc=BLUE, ec="k", lw=1.5, zorder=4))
-    ang_p = np.deg2rad(-135)
-    ax.text(P[0] - 0.5, P[1] - 0.75, "$r$", fontsize=26, ha="center")
-    ax.plot(*zip(P, P + R_P * np.array([np.cos(ang_p), np.sin(ang_p)])), color="k", lw=2, zorder=5)
     ax.plot(*P, ".", color="k", ms=5, zorder=6)
 
     # obstáculo y radio r_o
@@ -64,15 +61,15 @@ def main():
     ax.plot(*O, ".", color="k", ms=5, zorder=6)
     ax.text(O[0] + 0.55, O[1] + 0.45, "$r$", fontsize=26, ha="center")
 
-    # partícula al pasar (a distancia r_o + d_lat + r_p del centro del obstáculo)
+    # partícula al pasar: su centro queda a d_min del borde del obstáculo
     G = np.array([O[0], O[1] - R])
     ax.add_patch(Circle(G, R_P, fc="none", ec=BLUE, ls="--", lw=2, zorder=4))
     ax.plot(*G, ".", color=BLUE, ms=6, zorder=5)
 
-    # d_lat: hueco entre el borde del obstáculo y el borde de la partícula
-    y_top, y_bot = O[1] - R_O, G[1] + R_P
+    # d_min: del borde del obstáculo al CENTRO de la partícula
+    y_top, y_bot = O[1] - R_O, G[1]
     arrow(ax, (O[0], y_top), (O[0], y_bot))
-    ax.text(O[0] + 0.2, (y_top + y_bot) / 2, "$d_{lat}$", fontsize=26, va="center")
+    ax.text(O[0] + 0.2, y_top - 0.3, "$d_{min}$", fontsize=26, va="center")
 
     ax.set_xlim(-0.2, 10.2)
     ax.set_ylim(-1.6, 5.2)
