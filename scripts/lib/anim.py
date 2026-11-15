@@ -55,6 +55,9 @@ def make_figure(
     untracked_legend: bool | None = None,
     width: float = 12.0,
     legend_ncol: int | None = None,
+    figsize: tuple[float, float] | None = None,
+    dot_size: float | None = None,
+    trail_lw: float | None = None,
 ):
     """pedestrians: (label, color, positions) in drawing order.
 
@@ -64,6 +67,7 @@ def make_figure(
     untracked_legend: show the 'sin registro' legend entry; None = only if some pedestrian has a frame without record.
     width: figure width in inches; a narrower figure keeps the 20 pt text readable when the frame takes half a slide.
     legend_ncol: legend columns; None = up to 3 entries in one row, more in two rows.
+    figsize: if given, (W, H) in inches (YouTube 16:9 is 16×9 at 120 dpi → 1920×1080); title, axes and legend are packed and centred.
     """
     apply_academic_style()
     import matplotlib.pyplot as plt
@@ -92,11 +96,40 @@ def make_figure(
     left_in, right_in = 1.3, 0.3
     top_in = 0.8 if show_title else 0.25
     bottom_in = 1.2 + 0.5 * legend_rows
-    ax_width = width - left_in - right_in
-    ax_height = ax_width * (y1 - y0) / (x1 - x0)
-    height = ax_height + top_in + bottom_in
+    data_aspect = (y1 - y0) / (x1 - x0)
+    marker_size = DOT_SIZE if dot_size is None else dot_size
+    line_w = 1.6 if trail_lw is None else trail_lw
+    video = figsize is not None
+    if video:
+        width, height = figsize
+        title_h = 0.55 if show_title else 0.12
+        xlabel_h = 1.05
+        legend_h = 0.22 + 0.52 * legend_rows
+        # equal left/right margins around the axes so the plot sits in the middle of 16:9
+        min_side = 1.55
+        box_w = width - 2.0 * min_side
+        max_ax_h = height - title_h - xlabel_h - legend_h
+        if box_w <= 0 or max_ax_h <= 0:
+            raise ValueError("figsize is too small for the axis labels and legend")
+        if box_w * data_aspect <= max_ax_h:
+            ax_width, ax_height = box_w, box_w * data_aspect
+        else:
+            ax_height, ax_width = max_ax_h, max_ax_h / data_aspect
+        content_h = title_h + ax_height + xlabel_h + legend_h
+        y_pad = (height - content_h) / 2
+        ax_left = (width - ax_width) / 2
+        ax_bottom = y_pad + legend_h + xlabel_h
+        if marker_size == DOT_SIZE:
+            marker_size = 11.0
+        if trail_lw is None:
+            line_w = 2.2
+    else:
+        ax_width = width - left_in - right_in
+        ax_height = ax_width * data_aspect
+        height = ax_height + top_in + bottom_in
+        ax_left, ax_bottom = left_in, bottom_in
     fig = plt.figure(figsize=(width, height))
-    ax = fig.add_axes((left_in / width, bottom_in / height, ax_width / width, ax_height / height))
+    ax = fig.add_axes((ax_left / width, ax_bottom / height, ax_width / width, ax_height / height))
     ax.set_xlim(x0, x1)
     ax.set_ylim(y0, y1)
     ax.set_aspect("equal")
@@ -105,7 +138,7 @@ def make_figure(
     trails = []
     discs = []
     for (label, color, _positions), ls in zip(pedestrians, styles):
-        (trail,) = ax.plot([], [], color=color, lw=1.6, linestyle=ls, alpha=0.8, zorder=3)
+        (trail,) = ax.plot([], [], color=color, lw=line_w, linestyle=ls, alpha=0.8, zorder=3)
         if dots:
             (disc,) = ax.plot(
                 [],
@@ -114,8 +147,8 @@ def make_figure(
                 marker="o",
                 color=color,
                 markeredgecolor="black",
-                markersize=DOT_SIZE,
-                markeredgewidth=0.6,
+                markersize=marker_size,
+                markeredgewidth=0.8,
                 zorder=4,
             )
             ax.plot(
@@ -125,7 +158,7 @@ def make_figure(
                 marker="o",
                 color=color,
                 markeredgecolor="black",
-                markersize=DOT_SIZE,
+                markersize=marker_size,
                 label=label,
             )
         else:
@@ -145,14 +178,32 @@ def make_figure(
         label="sin registro" if untracked_legend else "_nolegend_",
     )
     if dots:
-        untracked.set_markersize(DOT_SIZE)
+        untracked.set_markersize(marker_size)
     handles, labels = ax.get_legend_handles_labels()
     # centred under the axes, not under the figure (the y label makes the left margin wider)
-    axes_center = (left_in + ax_width / 2) / width
-    fig.legend(handles, labels, loc="lower center", bbox_to_anchor=(axes_center, 0.0), ncol=ncol, frameon=True,
-               fancybox=False)
+    axes_center = (ax_left + ax_width / 2) / width
+    if video:
+        legend_top = (ax_bottom - xlabel_h) / height
+        fig.legend(
+            handles,
+            labels,
+            loc="upper center",
+            bbox_to_anchor=(axes_center, legend_top),
+            ncol=ncol,
+            frameon=True,
+            fancybox=False,
+        )
+        title_y = (ax_bottom + ax_height) / height + 0.012
+        title_va = "bottom"
+        title_x = axes_center
+    else:
+        fig.legend(handles, labels, loc="lower center", bbox_to_anchor=(axes_center, 0.0), ncol=ncol, frameon=True,
+                   fancybox=False)
+        title_y = 1.0 - 0.15 / height
+        title_va = "top"
+        title_x = 0.5
     head = caption if caption is not None else rf"prueba {trial}"
-    stats = fig.text(0.5, 1.0 - 0.15 / height, _stats_line(head, 0.0), ha="center", va="top", fontsize=FONT_SIZE)
+    stats = fig.text(title_x, title_y, _stats_line(head, 0.0), ha="center", va=title_va, fontsize=FONT_SIZE)
     stats.set_visible(show_title)  # las figuras de las diapositivas no llevan título adentro
 
     # NaN breaks the trail where the tracker lost the person instead of bridging the gap.

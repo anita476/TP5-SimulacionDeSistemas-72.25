@@ -89,8 +89,30 @@ def main() -> None:
     parser.add_argument("--png", help="PNG of one frame")
     parser.add_argument("--frame", type=int, default=None, help="PNG frame index (default: last; 0 = initial)")
     parser.add_argument("--no-title", action="store_true", help="hide the 'prueba N  t = ...' line (slide figures carry no title)")
+    parser.add_argument(
+        "--caption",
+        default=None,
+        help="title above the axes (default: 'prueba N'; YouTube: 'Ejecución evento 15, menor $E^{(2)}_m$')",
+    )
+    parser.add_argument(
+        "--discs",
+        action="store_true",
+        help="draw pedestrians as discs of radius r instead of small markers",
+    )
+    parser.add_argument(
+        "--no-untracked",
+        action="store_true",
+        help="hide the 'sin registro' legend entry",
+    )
     parser.add_argument("--width", type=float, default=12.0,
                         help="figure width in inches (default 12; ~5 keeps the text readable on half a slide)")
+    parser.add_argument(
+        "--figsize",
+        nargs=2,
+        type=float,
+        metavar=("W", "H"),
+        help="figure size in inches (YouTube 16:9: 16 9 at 120 dpi → 1920×1080); overrides --width",
+    )
     parser.add_argument("--legend-ncol", type=int, default=None, help="legend columns (default: two rows)")
     parser.add_argument("--show", action="store_true", help="open a window")
     parser.add_argument("--fps", type=int, default=None, help="video frames per second (default: experimental frame rate rounded, ~real time)")
@@ -98,6 +120,12 @@ def main() -> None:
 
     if args.fps is not None and args.fps < 1:
         sys.exit("--fps must be >= 1")
+    figsize = None
+    if args.figsize is not None:
+        fig_w, fig_h = args.figsize
+        if not (fig_w > 0.0 and fig_h > 0.0):
+            sys.exit("--figsize width and height must be > 0")
+        figsize = (fig_w, fig_h)
     if not args.out and not args.mp4 and not args.png and not args.show:
         args.show = True
     if not args.show:
@@ -117,7 +145,9 @@ def main() -> None:
         trial_number = real_n
     else:
         sys.exit("could not parse trial number from --data; pass --trial")
-    if real_n is not None and sim_n is not None and real_n != sim_n:
+    if args.caption is not None:
+        caption = args.caption
+    elif real_n is not None and sim_n is not None and real_n != sim_n:
         caption = rf"real prueba {real_n} / sim prueba {sim_n}"
     else:
         caption = rf"prueba {trial_number}"
@@ -161,17 +191,20 @@ def main() -> None:
     fps = round(experiment.frame_rate) if args.fps is None else args.fps
 
     def build(untracked_legend: bool | None = None):
+        if args.no_untracked:
+            untracked_legend = False
         return make_figure(
             trial,
             pedestrians,
             experiment.frame_rate,
-            dots=True,
+            dots=not args.discs,
             linestyles=["-", "-", "--", "--"],
             caption=caption,
             show_title=not args.no_title,
             untracked_legend=untracked_legend,
             width=args.width,
             legend_ncol=args.legend_ncol,
+            figsize=figsize,
         )
 
     if args.png:
@@ -200,7 +233,7 @@ def main() -> None:
         anim = FuncAnimation(fig, draw, frames=n_frames, blit=False, interval=1000 / fps)
         anim.save(
             mp4_path,
-            writer=FFMpegWriter(fps=fps, bitrate=3000),
+            writer=FFMpegWriter(fps=fps, bitrate=3000, extra_args=["-pix_fmt", "yuv420p", "-profile:v", "high"]),
             dpi=MP4_DPI,
             savefig_kwargs={"facecolor": "white"},
         )
