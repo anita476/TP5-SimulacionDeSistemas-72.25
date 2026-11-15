@@ -3,11 +3,17 @@
 #include "utils/include/sfm.hpp"
 #include <argparse/argparse.hpp>
 #include <cmath>
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <stdexcept>
+#include <string>
+#include <utility>
 
 const double MASS = 80;
 const double TAU = 0.5;
 const int PRECISION = 8;
-const double EXPERIMENTAL_FPS = 15.0192; // TODO: should be taken from experiment
+const double EXPERIMENTAL_FPS = 15.0192; // fps of the experimental recordings
 const double DT2 = 1.0 / EXPERIMENTAL_FPS;
 
 int main(int argc, char *argv[]) {
@@ -25,31 +31,31 @@ int main(int argc, char *argv[]) {
       "Friction: Tangential k");
   program.add_argument("--out-path", "--out_path", "--outpath")
       .default_value("data/sim/")
-      .help("Path for output files");
+      .help("Output trajectory file");
   program.add_argument("--traj_path", "--traj-path", "--trajpath")
       .default_value("data/cruces/prueba6.txt")
-      .help("Path to the trajectory file");
+      .help("Experimental trajectory (filename must be pruebaN.txt)");
   program.add_argument("--time_path", "--time-path", "--timepath")
-      .default_value("data/tiempos_totales.txt");
+      .default_value("data/tiempos_totales.txt")
+      .help("File with one line per trial: trial_number t_final");
   program
       .add_argument("--initial_speeds_path", "--initial-speeds-path",
                     "--initialspeedspath")
-      .default_value("data/velocidades_iniciales.txt");
+      .default_value("data/velocidades_iniciales.txt")
+      .help("File with one line per pedestrian: trial_number id vx vy");
   program.add_argument("--v_path", "--v-path", "--vpath")
       .default_value("data/pruebas_speeds.txt")
-      .help("Path to the median velocity file");
+      .help("File with desired speeds: two lines per trial, trial_number id v0");
   program.add_argument("--d_lat", "--d-lat", "--dlat")
       .default_value(0.30)
       .scan<'g', double>()
-      .help("Minimum radius from the othr particle that particles are willing "
-            "to go near (used for heuristic)");
+      .help("Extra lateral clearance beyond the other pedestrian's radius");
   program
       .add_argument("--d_act", "--d-act",
                     "--dact")
       .default_value(5.0)
       .scan<'g', double>()
-      .help("Distance to obstacle since which particle begins to act for "
-            "elusion");
+      .help("Center-to-center distance at which the elusion layer can activate");
   program.add_argument("--initial_velocity", "--initial-velocity")
       .default_value(std::string("experimental"))
       .choices("zero", "experimental")
@@ -93,14 +99,13 @@ int main(int argc, char *argv[]) {
 
     double tf = parse_final_time(time_path, num);
     if (tf <= 0) {
-      throw std::invalid_argument("Couldnt get final time from traj\n");
+      throw std::invalid_argument("Could not get final time from " + time_path);
     }
     std::cout << "Final time: " << tf << "\n";
 
     InitialPositions positions = parse_initial_positions(
         traj_path, vdata.particle_left, vdata.particle_right);
 
-    // Obs!! Can use, @todo ask later
     InitialSpeeds speeds = parse_initial_speeds(
         initial_speeds_path, vdata.particle_left, vdata.particle_right, num);
 

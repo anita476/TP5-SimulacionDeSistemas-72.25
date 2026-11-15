@@ -88,8 +88,7 @@ Step sfm_step(FSMPair &pair, double dt, double initial_time,
   double ax_r = (fd_r.first + fc_r.first) / pair.right.m;
   double ay_r = (fd_r.second + fc_r.second) / pair.right.m;
 
-  // update speed, then update positions // @todo revisar esto, maybe se
-  // puede usar algo de verlet ?
+  // update speed, then update positions
   pair.left.vx += ax_l * dt;
   pair.left.vy += ay_l * dt;
   pair.right.vx += ax_r * dt;

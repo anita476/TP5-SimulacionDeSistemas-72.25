@@ -15,7 +15,7 @@ struct DrivingForceInstance {
 
 /**
  * @brief Execute a step in a pair simulation.
- * @returns Step if successfull, NULL if something went wrong
+ * @returns the state after the step (time and positions of both particles)
  */
 Step sfm_step(FSMPair &pair, double dt, double initial_time,
               std::pair<double, double> target_left,
