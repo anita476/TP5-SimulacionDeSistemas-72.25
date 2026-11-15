@@ -39,7 +39,7 @@ new_desired_direction(Particle particle, Particle obstacle,
   const double obs_edge =
       obs_x * rx + obs_y * ry +
       (d_lat +
-       obstacle.r); // distancia del centro del obs al borde "imaginario"
+       obstacle.r + particle.r); // distancia del centro del obs al borde "imaginario"
 
   // la pendiente se calcula como si la linea recta particula -> target fuera el
   // eje x
@@ -66,7 +66,7 @@ bool is_conflicting(Particle particle, Particle pot_obstacle,
   const double along = obs_x * ux + obs_y * uy; // distance along the line
   const double lateral = obs_x * rx + obs_y * ry;
 
-  const double R = d_lat + pot_obstacle.r;
+  const double R = d_lat + pot_obstacle.r + particle.r;
 
   /* particle isnt on the target, obstacle is in front of the target, and iits
    * inside the circle*/
