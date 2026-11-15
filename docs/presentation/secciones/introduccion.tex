@@ -16,12 +16,12 @@ m_i\,\ddot{\vv{r}}_i =
 
 \[
 \vv{F}_{Di} =
-m_i\,\frac{v_{di}\,\alert{\vv{e}_0} - \vv{v}_i}{\tau_i}
+m_i\,\frac{v_{di}\,\vv{e}_0 - \vv{v}_i}{\tau_i}
 \]
 
 \[
 \text{\normalsize Capa de elusión: solo modifica }
-\alert{\vv{e}_0}
+\vv{e}_0
 \]
 
 \vspace{6pt}
@@ -91,75 +91,42 @@ d_T=\|\mathbf{t}-\mathbf{p}\|
 \end{frame}
 
 \begin{frame}{Capa de elusión}
-    \begin{columns}[T,onlytextwidth]
+  \small
+  \setlength{\abovedisplayskip}{3pt}
+  \setlength{\belowdisplayskip}{3pt}
+  \setlength{\jot}{2pt}
 
-    \begin{column}{0.59\textwidth}
-    
-        \small
-        \setlength{\abovedisplayskip}{4pt}
-        \setlength{\belowdisplayskip}{4pt}
-        \setlength{\jot}{2pt}
-
-        \textbf{Interpolación cuadrática (Lagrange)}
-
-        \[
-        P_0=(0,0),\quad
-        P_1=(d_{\parallel},R),\quad
-        P_2=(d_T,0)
-        \]
-
-        \[
-        f(x)=ax^2+bx+c
-        \]
-
-        \[
-        \boxed{
-        m=f'(0)=
-        \frac{R\,d_T}
-        {d_{\parallel}(d_T-d_{\parallel})}
-        }
-        \]
-
-        \vspace{3pt}
-
-        \textbf{Integración con SFM}
-
-        \[
-        \boxed{
-        \mathbf{e}_0=
-        \frac{\mathbf{u}+m\mathbf{r}}
-        {\sqrt{1+m^2}}
-        }
-        \]
-
-        \vspace{3pt}
-
-
-        \[
-        \boxed{
-        \mathbf{F}_d=
-        \frac{m_p}{\tau}
-        (v_0\mathbf{e}_0-\mathbf{v})
-        }
-        \]
+  \begin{columns}[T,onlytextwidth]
+    \begin{column}{0.56\textwidth}
+      \textbf{Interpolación cuadrática (Lagrange)}
+      \begin{flalign*}
+        & P_0=(0,0),\quad
+          P_1=(d_{\parallel},R),\quad
+          P_2=(d_T,0) & \\
+        & f(x)=ax^2+bx+c
+          \qquad
+          \boxed{
+            m=f'(0)=
+            \frac{R\,d_T}{d_{\parallel}(d_T-d_{\parallel})}
+          } &
+      \end{flalign*}
     \end{column}
+    \begin{column}{0.42\textwidth}
+      \textbf{Integración con SFM}
+      \begin{flalign*}
+        & \boxed{
+            \mathbf{e}_0=
+            \frac{\mathbf{u}+m\mathbf{r}}{\sqrt{1+m^2}}
+          } & \\[4pt]
+        & \boxed{
+            \mathbf{F}_d=
+            \frac{m_p}{\tau}(v_0\mathbf{e}_0-\mathbf{v})
+          } &
+      \end{flalign*}
+    \end{column}
+  \end{columns}
 
-    
-\begin{column}{0.38\textwidth}
-
-    \begin{minipage}[c][0.90\textheight][c]{\linewidth}
-        \centering
-
-        \includegraphics[
-            width=\linewidth,
-            keepaspectratio
-        ]{elusion_activacion.png}
-
-    \end{minipage}
-
-\end{column}
-
-
-\end{columns}
-
+  \vspace{8pt}
+  \centering
+  \includegraphics[width=0.92\linewidth,height=0.42\textheight,keepaspectratio]{elusion_activacion.png}
 \end{frame}

@@ -108,14 +108,11 @@
 }
 
 
-% Logo ITBA al pie de la portada
+% Logo ITBA al pie de la portada (igual que TP3/TP4: anclado al borde inferior).
 \addtobeamertemplate{title page}{}{%
   \begin{tikzpicture}[remember picture,overlay]
-    \node[
-      anchor=south,
-      yshift=0.35cm
-    ] at (current page.south) {%
-      \includegraphics[height=0.65cm]{images/Itba_bsas_logo.png}
+    \node[anchor=south, inner sep=0pt, yshift=0.40cm] at (current page.south) {%
+      \includegraphics[height=1.15cm,keepaspectratio]{Itba_bsas_logo.png}%
     };
   \end{tikzpicture}%
 }

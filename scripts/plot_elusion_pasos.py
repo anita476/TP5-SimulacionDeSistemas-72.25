@@ -24,12 +24,12 @@ FS = 28
 DARK = "#004C7A"
 
 
-def scene():
+def scene(xlim=XLIM, ylim=YLIM):
     apply_academic_style()
     matplotlib.rcParams["svg.fonttype"] = "path"
-    fig, ax = plt.subplots(figsize=(11.6, 11.6 * (YLIM[1] - YLIM[0]) / (XLIM[1] - XLIM[0])))
+    fig, ax = plt.subplots(figsize=(11.6, 11.6 * (ylim[1] - ylim[0]) / (xlim[1] - xlim[0])))
     fig.subplots_adjust(0, 0, 1, 1)
-    ax.set_xlim(*XLIM); ax.set_ylim(*YLIM); ax.set_aspect("equal"); ax.axis("off")
+    ax.set_xlim(*xlim); ax.set_ylim(*ylim); ax.set_aspect("equal"); ax.axis("off")
     return fig, ax
 
 
@@ -58,7 +58,8 @@ def cota(ax, p, q, half=0.15, lw=1.7, zorder=8, color="black"):
 
 def save(fig, name):
     for ext in ("svg", "png"):
-        fig.savefig(OUT / f"{name}.{ext}", dpi=300, facecolor="white")
+        fig.savefig(OUT / f"{name}.{ext}", dpi=300, facecolor="white",
+                    bbox_inches="tight", pad_inches=0.06)
     plt.close(fig)
 
 
@@ -103,9 +104,10 @@ ax.text(D / 2, -3.0, "$D$", fontsize=FS, ha="center", va="center",
 save(fig, "elusion_deteccion")
 
 # ---------------- Figura 2: dirección deseada ----------------
-fig, ax = scene()
+fig, ax = scene(xlim=(-1.55, 13.35), ylim=(-2.25, 3.55))
 ax.plot([0, D], [0, 0], color="0.45", linestyle="--", linewidth=1.8, zorder=2)
-ax.add_patch(Circle((s, -l), R, facecolor="none", edgecolor=VERMILLION, linewidth=2.0, linestyle=(0, (1, 2.4)), zorder=3))
+ax.add_patch(Circle((s, -l), R, facecolor="none", edgecolor=VERMILLION, linewidth=2.0,
+                    linestyle=(0, (1, 2.4)), zorder=3, clip_on=False))
 x = np.linspace(0, D, 400)
 ax.plot(x, -Pn * x * (D - x) / (s * (D - s)), color=GREEN, linewidth=2.4, zorder=6)   # parábola auxiliar
 actors(ax, destination_marker="x", destination_color=GREEN)
