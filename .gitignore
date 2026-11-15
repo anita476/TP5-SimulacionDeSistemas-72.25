@@ -109,3 +109,5 @@ data/sim/
 data/experiments/
 data/calibration/
 docs/Teorica_0.pdf
+
+data/tests/*
