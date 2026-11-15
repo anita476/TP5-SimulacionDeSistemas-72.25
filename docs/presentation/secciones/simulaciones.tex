@@ -21,20 +21,42 @@
   \end{cols}
 \end{frame}
 
-\begin{frame}{Eventos experimentales}
-  \begin{columns}[c]
-    \begin{column}{0.70\textwidth}
-      \begin{beamercolorbox}[wd=\linewidth,sep=8pt,rounded=true]{block body}
-        \small\textbf{Eventos experimentales}\par\vspace{4pt}
-        \begin{itemize}\setlength{\itemsep}{6pt}
-          \item $M = 18$ eventos, intervalo de muestreo $\Delta t_{\mathrm{exp}} \approx 0.0666\uni{s}$
-          \item Por evento: $\vv{r}_i(0)$, $\vv{v}_i(0)$, $v_{di}$ y $t_f$
-          \item Target final: posición inicial del otro peatón
-          \item $5$ eventos espejados: $y' = 2\,y_0 - y$
-        \end{itemize}
-      \end{beamercolorbox}
+\begin{frame}{Recorte de las trayectorias}
+  \begin{cols}
+    \begin{column}{0.60\textwidth}
+      \figura{procesamiento_recorte.png}
     \end{column}
-  \end{columns}
+    \begin{column}{0.38\textwidth}
+      \begin{parametros}[Evento 11]
+        \item Se usa solo el tramo semihorizontal
+        \item Termina en la $x$ inicial del otro peatón
+        \item $t = 0$ en el primer cuadro con datos de los dos
+      \end{parametros}
+      \vspace{4pt}
+      \begin{parametros}[Eventos]
+        \item $\Delta t_{\mathrm{exp}} \approx 0.0666\uni{s}$
+      \end{parametros}
+    \end{column}
+  \end{cols}
+\end{frame}
+
+\begin{frame}{Espejado y condiciones iniciales}
+  \begin{cols}
+    \begin{column}{0.60\textwidth}
+      \figura{procesamiento_espejado.png}
+    \end{column}
+    \begin{column}{0.38\textwidth}
+      \begin{parametros}[Evento 14]
+        \item Se espejan los eventos $6$, $8$, $10$, $12$ y $14$, que eluden por izquierda
+        \item La capa solo esquiva por derecha
+      \end{parametros}
+      \vspace{4pt}
+      \begin{parametros}[Condiciones iniciales]
+        \item $\vv{v}_i(0)$ con los dos primeros cuadros
+        \item $v_{di}$: rapidez media en el tramo
+      \end{parametros}
+    \end{column}
+  \end{cols}
 \end{frame}
 
 \begin{frame}{Observables}
