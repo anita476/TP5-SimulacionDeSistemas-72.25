@@ -108,7 +108,6 @@ int main(int argc, char *argv[]) {
     const bool use_exp_v = program.get("--initial_velocity") == "experimental";
     Particle left = {
         .id = vdata.particle_left,
-        .type = FIXED,
         .x = positions.particle_left_x,
         .y = positions.particle_left_y,
         .r = program.get<double>("--r"),
@@ -119,7 +118,6 @@ int main(int argc, char *argv[]) {
     };
     Particle right = {
         .id = vdata.particle_right,
-        .type = FIXED,
         .x = positions.particle_right_x,
         .y = positions.particle_right_y,
         .r = program.get<double>("--r"),

@@ -1,0 +1,110 @@
+@startuml
+
+left to right direction
+skinparam packageStyle rectangle
+
+
+  class "main.cpp" as Main <<orquestador>> {
+    +main(argc, argv)
+  }
+
+  class "file_parser.h" as Parser <<parser>> {
+    +parse_test_num(path)
+    +read_speed(path, test_num): SpeedRow
+    +parse_final_time(path, test_num): double
+    +parse_initial_positions(path, left_id, right_id): InitialPositions
+    +parse_initial_speeds(path, left_id, right_id, test_num): InitialSpeeds
+  }
+
+  class "dump.h" as Dump <<salida>> {
+    +write_sfm_traj_header(out)
+    +write_sfm_traj_step(out, pair, time)
+    -write_particle_row(out, particle, time)
+  }
+
+  class "SpeedRow" as SpeedRow <<struct>> {
+    +test_num: int
+    +particle_left: int
+    +particle_right: int
+    +particle_left_speed: double
+    +particle_right_speed: double
+  }
+
+  class "InitialPositions" as InitialPositions <<struct>> {
+    +particle_left_x: double
+    +particle_left_y: double
+    +particle_right_x: double
+    +particle_right_y: double
+  }
+
+  class "InitialSpeeds" as InitialSpeeds <<struct>> {
+    +particle_left_x: double
+    +particle_left_y: double
+    +particle_right_x: double
+    +particle_right_y: double
+  }
+
+  class "FileRow" as FileRow <<struct>> {
+    +a, b: int
+    +c: double
+  }
+
+  class "Particle" as Particle <<struct>> {
+    +id: int
+    +x, y, r: double
+    +vx, vy, v0: double
+    +m, r_min, r_max: double
+  }
+
+  class "FSMPair" as FSMPair <<struct>> {
+    +left: Particle
+    +right: Particle
+    +kn, kt, tau: double
+    +d_lat, d_act: double
+  }
+
+  class "sfm.cpp / sfm.hpp" as SFM <<dinamica>> {
+    +sfm_step(pair, dt, initial_time, target_left, target_right): Step
+    -contact_force(pair): ContactForceInstance
+    -driving_force(pair, targets): DrivingForceInstance
+  }
+
+  class "ContactForceInstance" as ContactForceInstance <<struct>> {
+    +force_particle_1: pair<double, double>
+    +force_particle_2: pair<double, double>
+  }
+
+  class "DrivingForceInstance" as DrivingForceInstance <<struct>> {
+    +force_particle_1: pair<double, double>
+    +force_particle_2: pair<double, double>
+  }
+
+  class "quadratic_heuristic" as Heuristic <<elusion>> {
+    +is_conflicting(particle, obstacle, target, d_lat): bool
+    +new_desired_direction(particle, obstacle, target, d_lat): direction
+  }
+
+  class "Step" as Step <<resultado de paso>> {
+    +final_time: double
+    +left_position_x, left_position_y: double
+    +right_position_x, right_position_y: double
+  }
+
+
+Main ..> Parser : carga parametros experimentales
+Parser ..> SpeedRow
+Parser ..> FileRow
+Parser ..> InitialPositions
+Parser ..> InitialSpeeds
+Main ..> FSMPair : inicializa
+FSMPair *-- Particle : left
+FSMPair *-- Particle : right
+Main ..> SFM : integra
+SFM ..> Heuristic : si hay conflicto
+SFM ..> ContactForceInstance
+SFM ..> DrivingForceInstance
+SFM ..> Step : devuelve estado del paso
+Main ..> Dump : escribe trayectoria
+Dump ..> FSMPair : lee posiciones y velocidades
+
+@enduml
