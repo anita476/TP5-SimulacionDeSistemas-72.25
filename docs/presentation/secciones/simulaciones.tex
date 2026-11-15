@@ -28,9 +28,9 @@
     \end{column}
     \begin{column}{0.38\textwidth}
       \begin{parametros}[Evento 11]
-        \item Se usa solo el tramo semihorizontal
-        \item Termina en la $x$ inicial del otro peatón
-        \item $t = 0$ en el primer cuadro con datos de los dos
+        \item Solo tramo semihorizontal
+        \item Termina en $x$ inicial del otro peatón
+        \item $t = 0$ en el primer cuadro con datos para ambos
       \end{parametros}
       \vspace{4pt}
       \begin{parametros}[Eventos]
@@ -47,8 +47,7 @@
     \end{column}
     \begin{column}{0.38\textwidth}
       \begin{parametros}[Evento 14]
-        \item Se espejan los eventos $6$, $8$, $10$, $12$ y $14$, que eluden por izquierda
-        \item La capa solo esquiva por derecha
+        \item Se espejan eventos $6$, $8$, $10$, $12$ y $14$, que eluden por izquierda
       \end{parametros}
       \vspace{4pt}
       \begin{parametros}[Condiciones iniciales]
@@ -67,9 +66,9 @@
     d^2_{i,\min}(t_k) = \min_{j}\big|\vv{r}^{\,\mathrm{exp}}_i(t_k) - \vv{r}^{\,\mathrm{sim}}_i(t_j)\big|^2
   \]
   \[
-    E^{(1)}_i = \frac{1}{N_m}\sum_{k} d^2_i(t_k)
+    \boxed{E^{(1)}_i = \frac{1}{N_m}\sum_{k} d^2_i(t_k)}
     \qquad\quad
-    E^{(2)}_i = \frac{1}{N_m}\sum_{k} d^2_{i,\min}(t_k)
+    \boxed{E^{(2)}_i = \frac{1}{N_m}\sum_{k} d^2_{i,\min}(t_k)}
   \]
   \vspace{2pt}
   Error del evento y error poblacional:
@@ -91,7 +90,6 @@
     \item $\dlat$: $0.10$ a $0.50\uni{m}$, paso $0.05\uni{m}$ \ ($9$ valores)
     \item $\dact$: $2.5$ a $7\uni{m}$, paso $0.5\uni{m}$ \ ($10$ valores)
     \item $90$ puntos de grilla $\times$ $18$ eventos $= 1620$ simulaciones
-    \item Modelo determinista: una corrida por cada evento y punto de grilla
     \item Duración: $t_f$ de cada evento \ ($5.3$ a $8.9\uni{s}$)
   \end{itemize}
   \vspace{8pt}

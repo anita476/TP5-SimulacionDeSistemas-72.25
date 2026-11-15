@@ -1,24 +1,3 @@
-\begin{frame}{Geometría de la capa de elusión}
-  \large
-  Marco local de $i$, con $\hat{\vv{u}}$ hacia el target final y $\hat{\vv{n}} = (u_y,\,-u_x)$:
-  \[
-    s = (\vv{r}_j - \vv{r}_i)\cdot\hat{\vv{u}}, \qquad \ell = (\vv{r}_j - \vv{r}_i)\cdot\hat{\vv{n}}
-  \]
-  \vspace{2pt}
-  Parábola por $i$, punto de paso $P = (s,\ \ell + R)$ y target final:
-  \[
-    y(x) = (\ell + R)\,\frac{x\,(D - x)}{s\,(D - s)}
-    \qquad\Rightarrow\qquad
-    y'(0) = \frac{(\ell + R)\,D}{s\,(D - s)}
-  \]
-  \vspace{2pt}
-  Target temporal, sobre tangente a parábola en $i$:
-  \[
-    \vv{x}^{\,\mathrm{temp}}_i = \vv{r}_i + s\,\hat{\vv{u}} + s\,y'(0)\,\hat{\vv{n}},
-    \qquad
-    \vv{e}_0 = \frac{\vv{x}^{\,\mathrm{temp}}_i - \vv{r}_i}{|\vv{x}^{\,\mathrm{temp}}_i - \vv{r}_i|}
-  \]
-\end{frame}
 
 \begin{frame}{Distribución de $|\delta|$}
   \begin{cols}
@@ -29,19 +8,19 @@
       \begin{parametros}
         \item $18$ eventos, $36$ peatones
         \item $|\delta| = \max_k \big|(\vv{r}_k - \vv{r}_0)\cdot\hat{\vv{n}}\big|$
-        \item $\hat{\vv{n}}$: normal a $\vv{r}_f - \vv{r}_0$, hacia la derecha del peatón
+        \item $\hat{\vv{n}}$: normal a $\vv{r}_f - \vv{r}_0$, hacia derecha de peatón
         \item Ancho de bin $0.05\uni{m}$
       \end{parametros}
       \vspace{6pt}
       \begin{resultado}
-        \item Ningún peatón entre $0.15$ y $0.20\uni{m}$: umbral de elusión $0.15\uni{m}$
-        \item $6$ peatones por debajo del umbral
+        \item Umbral de elusión $0.15\uni{m}$
+        \item $6$ peatones por debajo de umbral
       \end{resultado}
     \end{column}
   \end{cols}
 \end{frame}
 
-\begin{frame}{Lado de elusión en los cruces experimentales}
+\begin{frame}{Lado de elusión cruces experimentales}
   \centering
   \renewcommand{\arraystretch}{1.4}
   \begin{columns}[T]
@@ -72,12 +51,12 @@
   \begin{columns}[T]
     \begin{column}{0.46\textwidth}
       \begin{parametros}
-        \item Lado: signo de $\delta$ ($\delta > 0$: a su derecha)
+        \item Lado: signo $\delta$ ($\delta > 0$: a derecha)
       \end{parametros}
     \end{column}
     \begin{column}{0.46\textwidth}
       \begin{resultado}
-        \item Si eluden los dos, siempre hacia el mismo lado
+        \item Si eluden ambos, siempre hacia mismo lado
         \item Elusión a la izquierda en $5$ eventos ($6$, $8$, $10$, $12$ y $14$)
       \end{resultado}
     \end{column}
@@ -106,7 +85,7 @@
     \end{column}
     \begin{column}{0.34\textwidth}
       \begin{parametros}
-        \item Se inicia cuando el primero en eludir se desvía $0.1\,|\delta|$
+        \item Inicia cuando primero en eludir se desvía $0.1\,|\delta|$
         \item $d_{\mathrm{inicio}}$: distancia entre centros al inicio
       \end{parametros}
       \vspace{6pt}
