@@ -43,8 +43,8 @@ def create_figure(d_act: float, d_lat: float, radius: float, beyond: float):
 
     # (centro, sentido de avance, lado derecho propio en pantalla, colores, nombre)
     peatones = (
-        (0.0, 1, -1, BLUE, DARK_BLUE, "Peatón 1"),
-        (d_act, -1, 1, VERMILLION, DARK_ORANGE, "Peatón 2"),
+        (0.0, 1, -1, BLUE, DARK_BLUE, "Peatón izquierdo"),
+        (d_act, -1, 1, VERMILLION, DARK_ORANGE, "Peatón derecho"),
     )
     for (cx, fwd, right, color, dark, name), (ox, *_rest) in zip(peatones, peatones[::-1]):
         ax.add_patch(Circle((cx, 0), radius, facecolor=color, edgecolor="black", linewidth=1.3, zorder=5))

@@ -53,6 +53,8 @@ def make_figure(
     caption: str | None = None,
     show_title: bool = True,
     untracked_legend: bool | None = None,
+    width: float = 12.0,
+    legend_ncol: int | None = None,
 ):
     """pedestrians: (label, color, positions) in drawing order.
 
@@ -60,6 +62,8 @@ def make_figure(
     linestyles, if given, is one matplotlib linestyle per pedestrian (default solid).
     caption, if given, replaces the default 'prueba N' title.
     untracked_legend: show the 'sin registro' legend entry; None = only if some pedestrian has a frame without record.
+    width: figure width in inches; a narrower figure keeps the 20 pt text readable when the frame takes half a slide.
+    legend_ncol: legend columns; None = up to 3 entries in one row, more in two rows.
     """
     apply_academic_style()
     import matplotlib.pyplot as plt
@@ -76,10 +80,18 @@ def make_figure(
     x0, x1 = min(x for x, _ in known) - margin, max(x for x, _ in known) + margin
     y0, y1 = min(y for _, y in known) - margin, max(y for _, y in known) + margin
 
+    n_legend = len(pedestrians) + (1 if untracked_legend else 0)
+    # up to 3 entries in one row; more go in two rows filled by columns, so each column is one group
+    # (experimento | simulación | sin registro) and each row one pedestrian
+    ncol = legend_ncol if legend_ncol is not None else (n_legend if n_legend <= 3 else math.ceil(n_legend / 2))
+    legend_rows = math.ceil(n_legend / ncol)
+
     # Figure height follows the data aspect so the equal-aspect axes fill the frame.
-    width, left_in, right_in, top_in, bottom_in = 12.0, 1.3, 0.3, 0.8, 2.1
-    if len(pedestrians) > 2:  # the legend takes two rows
-        bottom_in = 2.6
+    # bottom: x tick labels and axis label (~1.2 in) plus 0.5 in per legend row;
+    # top: room for the 'prueba N  t = ...' line only when it is shown
+    left_in, right_in = 1.3, 0.3
+    top_in = 0.8 if show_title else 0.25
+    bottom_in = 1.2 + 0.5 * legend_rows
     ax_width = width - left_in - right_in
     ax_height = ax_width * (y1 - y0) / (x1 - x0)
     height = ax_height + top_in + bottom_in
@@ -135,11 +147,10 @@ def make_figure(
     if dots:
         untracked.set_markersize(DOT_SIZE)
     handles, labels = ax.get_legend_handles_labels()
-    # up to 3 entries in one row; more go in two rows filled by columns, so each column is one group
-    # (experimento | simulación | sin registro) and each row one pedestrian
-    n_legend = len(labels)
-    ncol = n_legend if n_legend <= 3 else math.ceil(n_legend / 2)
-    fig.legend(handles, labels, loc="lower center", ncol=ncol, frameon=True, fancybox=False)
+    # centred under the axes, not under the figure (the y label makes the left margin wider)
+    axes_center = (left_in + ax_width / 2) / width
+    fig.legend(handles, labels, loc="lower center", bbox_to_anchor=(axes_center, 0.0), ncol=ncol, frameon=True,
+               fancybox=False)
     head = caption if caption is not None else rf"prueba {trial}"
     stats = fig.text(0.5, 1.0 - 0.15 / height, _stats_line(head, 0.0), ha="center", va="top", fontsize=FONT_SIZE)
     stats.set_visible(show_title)  # las figuras de las diapositivas no llevan título adentro

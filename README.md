@@ -120,6 +120,14 @@ python scripts/animate_compare.py --data data/cruces/prueba1.txt --sim data/sim/
 python scripts/animate_compare.py --data data/cruces/prueba3.txt --sim data/sim/prueba6.txt --png data/anim/compare.png --frame 40
 ```
 
+Fotograma para la diapositiva (`docs/presentation/images/anim_a.png`): sin título y más angosto, para que el texto se lea.
+Se usa el último cuadro en el que los dos peatones tienen registro experimental (88 en la prueba 15, 100 en la 11), así
+se ven las trayectorias casi completas:
+
+```bash
+python scripts/animate_compare.py --data data/cruces_evento/prueba15.txt --sim <simulación con d_lat 0.25, d_act 5> --png docs/presentation/images/anim_a.png --frame 88 --no-title --width 8
+```
+
 Tramo semihorizontal de cada prueba (sin la llegada a la posición inicial ni lo
 posterior al destino), un `data/cruces/pruebaN.txt` por prueba con el mismo
 formato que los datos, y su animación en `data/cruces/gif/pruebaN.gif`:
@@ -212,6 +220,12 @@ Métrica 1 del enunciado (iguales tiempos, ecuación 1): compara el cuadro `f` d
 python scripts/calculate_equal_time.py --traj data/cruces_evento/prueba3.txt --sim data/sim/prueba3_sim.txt -o data/comparisons/prueba3_equal_time.txt
 python scripts/plot_nearest_point_diff.py --diff data/comparisons/prueba3_equal_time.txt --traj data/cruces_evento/prueba3.txt --outdir data/comparisons/equal_time
 ```
+
+Para la diapositiva, varios eventos de una misma métrica en una sola figura, un panel por evento (en el orden de `--diff`):
+
+```bash
+python scripts/plot_nearest_point_diff.py --diff E1_prueba15.txt E1_prueba11.txt --paneles docs/presentation/images/evol_E1.png
+```
 Y para graficar las trayectorias (png):
 
 ```bash
@@ -237,8 +251,9 @@ python scripts/plot_calibration.py        # figuras en data/calibration/figures/
 - `crossval_mK.txt`: una fila por partición aleatoria (óptimo sobre entrenamiento, error sobre entrenamiento y validación, eventos de validación); promedio y desvío en la cabecera.
 - `summary.txt` y `summary.tex` (tabla lista para la presentación).
 
-`plot_calibration.py` genera, por métrica: `EK_superficie.png`, `EK_corte_rmin.png`, `EK_corte_action_distance.png` (b),
-`EK_optimos_individuales.png`, `EK_error_por_evento.png` (c) y `EK_validacion_cruzada.png` (d).
+`plot_calibration.py` genera, por métrica: `EK_superficie.png` y `EK_cortes.png` (los dos cortes por el óptimo, un panel cada uno) (b);
+y para todas las métricas juntas, un panel por métrica con una sola leyenda: `optimos_individuales.png`,
+`error_por_evento.png` (c) y `validacion_cruzada.png` (d).
 
 ### Referencias
 

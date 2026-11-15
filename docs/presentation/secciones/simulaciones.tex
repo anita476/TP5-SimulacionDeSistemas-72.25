@@ -1,22 +1,29 @@
 \begin{frame}{Sistema}
-  \begin{columns}[c]
-    \begin{column}{0.64\textwidth}
-      \centering
-      \includegraphics[width=\linewidth,height=0.72\textheight,keepaspectratio]{cuadro_inicial.png}
+  \begin{cols}
+    \begin{column}{0.60\textwidth}
+      \figura{cuadro_inicial.png}
     \end{column}
-    \begin{column}{0.33\textwidth}
-      \begin{beamercolorbox}[wd=\linewidth,sep=8pt,rounded=true]{block body alerted}
-        \small\textbf{Parámetros a calibrar}\par\vspace{6pt}
-        $p_1 = \dlat$: margen lateral de referencia\par\vspace{6pt}
-        $p_2 = \dact$: distancia de activación de la elusión
-      \end{beamercolorbox}
+    \begin{column}{0.36\textwidth}
+      \begin{parametros}[Parámetros fijos]
+        \item Radio $r_i = 0.25\uni{m}$
+        \item Masa $m_i = 80\uni{kg}$
+        \item $\tau_i = 0.5\uni{s}$
+        \item $k_n = 1.2\ten{5}\uni{N/m}$
+        \item $k_t = 2.4\ten{5}\uni{kg/(m\,s)}$
+        \item[] {\scriptsize Helbing et al., Nature (2000)}
+      \end{parametros}
+      \vspace{4pt}
+      \begin{parametros}[Parámetros variables (a calibrar)]
+        \item $p_1 = \dlat$: margen lateral de referencia
+        \item $p_2 = \dact$: distancia de activación de la elusión
+      \end{parametros}
     \end{column}
-  \end{columns}
+  \end{cols}
 \end{frame}
 
-\begin{frame}{Eventos experimentales y parámetros}
+\begin{frame}{Eventos experimentales}
   \begin{columns}[c]
-    \begin{column}{0.54\textwidth}
+    \begin{column}{0.70\textwidth}
       \begin{beamercolorbox}[wd=\linewidth,sep=8pt,rounded=true]{block body}
         \small\textbf{Eventos experimentales}\par\vspace{4pt}
         \begin{itemize}\setlength{\itemsep}{6pt}
@@ -25,20 +32,6 @@
           \item Target final: posición inicial del otro peatón
           \item $5$ eventos espejados: $y' = 2\,y_0 - y$
         \end{itemize}
-      \end{beamercolorbox}
-    \end{column}
-    \begin{column}{0.38\textwidth}
-      \begin{beamercolorbox}[wd=\linewidth,sep=8pt,rounded=true]{block body}
-        \small\textbf{Parámetros fijos}\par\vspace{6pt}
-        \renewcommand{\arraystretch}{1.25}
-        \begin{tabular}{@{}l@{\qquad}l@{}}
-          Radio $r_i$ & $0.25\uni{m}$ \\
-          Masa $m_i$ & $80\uni{kg}$ \\
-          $\tau_i$ & $0.5\uni{s}$ \\
-          $k_n$ & $1.2\ten{5}\uni{N/m}$ \\
-          $k_t$ & $2.4\ten{5}\uni{kg/(m\,s)}$ \\
-        \end{tabular}\par\vspace{4pt}
-        {\footnotesize Helbing et al., Nature (2000)}
       \end{beamercolorbox}
     \end{column}
   \end{columns}
