@@ -14,9 +14,9 @@
   \vspace{2pt}
   Target temporal, sobre tangente a parábola en $i$:
   \[
-    \vv{x}^{\,temp}_i = \vv{r}_i + s\,\hat{\vv{u}} + s\,y'(0)\,\hat{\vv{n}},
+    \vv{x}^{\,\mathrm{temp}}_i = \vv{r}_i + s\,\hat{\vv{u}} + s\,y'(0)\,\hat{\vv{n}},
     \qquad
-    \vv{e}_0 = \frac{\vv{x}^{\,temp}_i - \vv{r}_i}{|\vv{x}^{\,temp}_i - \vv{r}_i|}
+    \vv{e}_0 = \frac{\vv{x}^{\,\mathrm{temp}}_i - \vv{r}_i}{|\vv{x}^{\,\mathrm{temp}}_i - \vv{r}_i|}
   \]
 \end{frame}
 
@@ -129,4 +129,14 @@
     2: punto más cercano & $(2 \pm 1)\ten{-2}$ & $(2.0 \pm 0.2)\ten{-2}$ & $(2.1 \pm 0.6)\ten{-2}$ \\
     \hline
   \end{tabular}
+
+  \vspace{12pt}
+  \begin{columns}
+    \begin{column}{0.78\textwidth}
+      \begin{aclaraciones}
+        \item Poblacional: promedio $\pm$ desvío entre los $18$ eventos
+        \item Entrenamiento y validación: error medio de cada partición, promedio $\pm$ desvío entre las $20$ particiones
+      \end{aclaraciones}
+    \end{column}
+  \end{columns}
 \end{frame}

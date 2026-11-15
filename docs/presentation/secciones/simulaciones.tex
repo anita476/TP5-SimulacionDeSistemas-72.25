@@ -27,7 +27,7 @@
       \begin{beamercolorbox}[wd=\linewidth,sep=8pt,rounded=true]{block body}
         \small\textbf{Eventos experimentales}\par\vspace{4pt}
         \begin{itemize}\setlength{\itemsep}{6pt}
-          \item $M = 18$ eventos, intervalo de muestreo $\Delta t_{exp} \approx 0.0666\uni{s}$
+          \item $M = 18$ eventos, intervalo de muestreo $\Delta t_{\mathrm{exp}} \approx 0.0666\uni{s}$
           \item Por evento: $\vv{r}_i(0)$, $\vv{v}_i(0)$, $v_{di}$ y $t_f$
           \item Target final: posición inicial del otro peatón
           \item $5$ eventos espejados: $y' = 2\,y_0 - y$
@@ -38,11 +38,11 @@
 \end{frame}
 
 \begin{frame}{Observables}
-  Error del peatón $i$ del evento $m$ \ ($N_m$ instantes $t_k = k\,\Delta t_{exp}$):
+  Error del peatón $i$ del evento $m$ \ ($N_m$ instantes $t_k = k\,\Delta t_{\mathrm{exp}}$):
   \[
-    d^2_i(t_k) = \big|\vv{r}^{\,exp}_i(t_k) - \vv{r}^{\,sim}_i(t_k)\big|^2
+    d^2_i(t_k) = \big|\vv{r}^{\,\mathrm{exp}}_i(t_k) - \vv{r}^{\,\mathrm{sim}}_i(t_k)\big|^2
     \qquad\quad
-    d^2_{i,\min}(t_k) = \min_{j}\big|\vv{r}^{\,exp}_i(t_k) - \vv{r}^{\,sim}_i(t_j)\big|^2
+    d^2_{i,\min}(t_k) = \min_{j}\big|\vv{r}^{\,\mathrm{exp}}_i(t_k) - \vv{r}^{\,\mathrm{sim}}_i(t_j)\big|^2
   \]
   \[
     E^{(1)}_i = \frac{1}{N_m}\sum_{k} d^2_i(t_k)
@@ -57,7 +57,7 @@
     \langle E\rangle(\dlat,\,\dact) = \frac{1}{M}\sum_{m=1}^{M} E_m(\dlat,\,\dact)
   \]
   \vspace{2pt}
-  Barra de error: desvío estándar muestral entre eventos, \ $\langle E\rangle \pm \sigma_E$
+  Barra de error: desvío estándar muestral entre eventos,\ $\langle E\rangle \pm \sigma_E$
   \[
     \sigma_E = \sqrt{\frac{1}{M-1}\sum_{m=1}^{M}\big(E_m - \langle E\rangle\big)^2}
   \]
@@ -69,6 +69,7 @@
     \item $\dlat$: $0.10$ a $0.50\uni{m}$, paso $0.05\uni{m}$ \ ($9$ valores)
     \item $\dact$: $2.5$ a $7\uni{m}$, paso $0.5\uni{m}$ \ ($10$ valores)
     \item $90$ puntos de grilla $\times$ $18$ eventos $= 1620$ simulaciones
+    \item Modelo determinista: una corrida por cada evento y punto de grilla
     \item Duración: $t_f$ de cada evento \ ($5.3$ a $8.9\uni{s}$)
   \end{itemize}
   \vspace{8pt}
