@@ -1,33 +1,22 @@
 #!/usr/bin/env python3
-"""Esquema básico de targets, movimiento actual y driving force para dos partículas."""
+"""Dos peatones enfrentados: posición actual, velocidad y target del otro."""
 
 import argparse
 from pathlib import Path
 
 import matplotlib
-import numpy as np
 
 matplotlib.use("Agg")
 
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.patches import Circle
 
 from lib.plot_style import BLUE, GREEN, VERMILLION, apply_academic_style
 
-
-def arrow(ax, start, vector, color, label, label_offset=(0.0, 0.0), lw=2.6):
-    end = start + vector
-    ax.annotate(
-        "",
-        xy=end,
-        xytext=start,
-        arrowprops={"arrowstyle": "-|>", "color": color, "lw": lw,
-                    "shrinkA": 0, "shrinkB": 0, "mutation_scale": 22},
-        zorder=6,
-    )
-    ax.text(end[0] + label_offset[0], end[1] + label_offset[1], label,
-            color=color, ha="center", va="center", fontsize=20,
-            bbox={"facecolor": "white", "edgecolor": "none", "pad": 0.15})
+# Ancho de la columna de la diapositiva Sistema. La fuente queda en puntos de esa diapositiva.
+SLIDE_WIDTH_IN = 7.6 / 2.54
+FONT = 11
 
 
 def main():
@@ -38,56 +27,54 @@ def main():
     args = parser.parse_args()
 
     apply_academic_style()
-    xlim, ylim = (-2.55, 2.55), (-0.62, 1.02)
-    fig, ax = plt.subplots(figsize=(11.4, 11.4 * (ylim[1] - ylim[0]) / (xlim[1] - xlim[0])))
-    fig.subplots_adjust(0, 0, 1, 1)
 
-    radius = 0.38
-    travel_distance = 0.78
-    p1_x0, p1_y0 = -2.05, 0.0
-    p2_x0, p2_y0 = 2.05, 0.0
-    p1_initial = np.array([p1_x0, p1_y0])
-    p2_initial = np.array([p2_x0, p2_y0])
-    p1_direction = (p2_initial - p1_initial) / np.linalg.norm(p2_initial - p1_initial)
-    p2_direction = (p1_initial - p2_initial) / np.linalg.norm(p1_initial - p2_initial)
-    particles = (
-        {"name": "$p_1$", "position": p1_initial + travel_distance * p1_direction,
-         "target": p2_initial, "target_coords": "$(px_{2_{0}}, py_{2_0})$",
-         "color": BLUE},
-        {"name": "$p_2$", "position": p2_initial + travel_distance * p2_direction,
-         "target": p1_initial, "target_coords": "$(px_{1_0}, py_{1_0})$",
-         "color": VERMILLION},
+    radius = 0.36
+    p1_start = np.array([-2.05, 0.0])
+    p2_start = np.array([2.05, 0.0])
+    p1 = p1_start + np.array([0.78, 0.0])
+    p2 = p2_start - np.array([0.78, 0.0])
+    pedestrians = (
+        {"name": "$p_1$", "here": p1, "aim": np.array([1.0, 0.0]),
+         "target": p2_start, "label": "target de $p_1$\n$\\mathbf{r}_2(0)$", "color": BLUE},
+        {"name": "$p_2$", "here": p2, "aim": np.array([-1.0, 0.0]),
+         "target": p1_start, "label": "target de $p_2$\n$\\mathbf{r}_1(0)$", "color": VERMILLION},
     )
 
-    ax.plot([p1_initial[0], p2_initial[0]], [p1_initial[1], p2_initial[1]],
-            color="0.55", linestyle=":", linewidth=1.8, zorder=1)
+    xlim, ylim = (-3.25, 3.25), (-0.88, 1.42)
+    fig_w = SLIDE_WIDTH_IN
+    fig_h = fig_w * (ylim[1] - ylim[0]) / (xlim[1] - xlim[0])
+    fig, ax = plt.subplots(figsize=(fig_w, fig_h))
+    fig.subplots_adjust(0, 0, 1, 1)
 
-    for particle in particles:
-        position = particle["position"]
-        target = particle["target"]
-        color = particle["color"]
-        direction = target - position
-        direction /= np.linalg.norm(direction)
+    ax.plot([p1_start[0], p2_start[0]], [0, 0], color="0.55", linestyle=(0, (0.6, 1.1)),
+            linewidth=1.0, zorder=1)
 
-        ax.add_patch(Circle(position, radius, facecolor=color, edgecolor="black",
-                            linewidth=1.3, alpha=0.9, zorder=4))
-        ax.plot(*position, marker="o", color="black", markersize=5, zorder=5)
-        ax.text(position[0], -radius - 0.08, particle["name"], ha="center", va="top",
-            color=color, fontsize=20)
+    for ped in pedestrians:
+        here = ped["here"]
+        color = ped["color"]
+        ax.add_patch(Circle(here, radius, facecolor=color, edgecolor="black",
+                            linewidth=0.7, zorder=4))
+        ax.plot(*here, marker="o", color="black", markersize=2.4, zorder=7)
 
-        cross_half = 0.18
-        ax.plot([target[0] - cross_half, target[0] + cross_half],
-            [target[1] - cross_half, target[1] + cross_half],
-            color=GREEN, lw=3.4, solid_capstyle="butt", zorder=8)
-        ax.plot([target[0] - cross_half, target[0] + cross_half],
-            [target[1] + cross_half, target[1] - cross_half],
-            color=GREEN, lw=3.4, solid_capstyle="butt", zorder=8)
-        ax.text(target[0], 0.42,
-            f"target {particle['name']}\n{particle['target_coords']}",
-            color=GREEN, ha="center", va="bottom", fontsize=17)
+        tip = here + 0.85 * ped["aim"]
+        ax.annotate("", xy=tip, xytext=here,
+                    arrowprops={"arrowstyle": "-|>", "color": color, "lw": 1.35,
+                                "shrinkA": 0, "shrinkB": 0, "mutation_scale": 12},
+                    zorder=6)
+        ax.text(tip[0], 0.16, "$\\mathbf{v}$", color=color, ha="center", va="bottom",
+                fontsize=FONT, zorder=7,
+                bbox={"facecolor": "white", "edgecolor": "none", "pad": 0.15})
 
-        arrow(ax, position, 0.85 * direction, color, "v",
-              (0.0, 0.18), lw=2.6)
+        target = ped["target"]
+        arm = 0.18
+        ax.plot([target[0] - arm, target[0] + arm], [target[1] - arm, target[1] + arm],
+                color=GREEN, lw=1.7, solid_capstyle="butt", zorder=8)
+        ax.plot([target[0] - arm, target[0] + arm], [target[1] + arm, target[1] - arm],
+                color=GREEN, lw=1.7, solid_capstyle="butt", zorder=8)
+        ax.text(target[0], 0.58, ped["label"], color=GREEN, ha="center", va="bottom",
+                fontsize=FONT, linespacing=1.05, zorder=8)
+        ax.text(here[0], -radius - 0.06, ped["name"], color=color, ha="center", va="top",
+                fontsize=FONT, zorder=8)
 
     ax.set_aspect("equal")
     ax.set_xlim(*xlim)
@@ -95,7 +82,7 @@ def main():
     ax.axis("off")
 
     args.out.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(args.out, dpi=300, facecolor="white", bbox_inches="tight", pad_inches=0.06)
+    fig.savefig(args.out, dpi=300, facecolor="white")
     print(f"Esquema guardado en: {args.out}")
     if not args.no_show:
         plt.show()
