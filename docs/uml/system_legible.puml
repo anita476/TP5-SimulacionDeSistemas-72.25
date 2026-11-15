@@ -1,0 +1,42 @@
+@startuml
+!pragma layout smetana
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 22
+skinparam shadowing false
+skinparam dpi 150
+skinparam nodesep 90
+skinparam ranksep 110
+hide empty members
+
+class "main.cpp" as Main <<orquestador>> {
+  +main(argc, argv)
+}
+
+class "sfm" as SFM <<dinámica>> {
+  +sfm_step(pair, dt, t, targets)
+  -driving_force(pair, targets)
+  -contact_force(pair)
+}
+
+class "quadratic_heuristic" as Heuristic <<elusión>> {
+  +is_conflicting(i, j, target, d_lat): bool
+  +new_desired_direction(i, j, target, d_lat): e0
+}
+
+class FSMPair {
+  +left, right: Particle
+  +kn, kt, tau: double
+  +d_lat, d_act: double
+}
+
+class Particle {
+  +x, y, vx, vy: double
+  +r, m, v0: double
+}
+
+Main .right.> SFM : integra
+SFM .down.> Heuristic : <U+00A0><U+00A0>si d_ij ≤ d_act
+Main .down.> FSMPair : <U+00A0><U+00A0>inicializa
+SFM .down.> FSMPair : actualiza
+Particle "2" -right-* FSMPair
+@enduml
