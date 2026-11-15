@@ -41,3 +41,82 @@
     \end{column}
   \end{columns}
 \end{frame}
+
+\begin{frame}{Distribución de $|\delta|$}
+  \begin{cols}
+    \begin{column}{0.62\textwidth}
+      \figura{desvios_distribucion.png}
+    \end{column}
+    \begin{column}{0.34\textwidth}
+      \begin{parametros}
+        \item $18$ eventos, $36$ peatones
+        \item $|\delta| = \max_k \big|(\vv{r}_k - \vv{r}_0)\cdot\hat{\vv{n}}\big|$
+        \item $\hat{\vv{n}}$: normal a $\vv{r}_f - \vv{r}_0$, hacia la derecha del peatón
+        \item Ancho de bin $0.05\uni{m}$
+      \end{parametros}
+      \vspace{6pt}
+      \begin{resultado}
+        \item Ningún peatón entre $0.15$ y $0.20\uni{m}$: umbral de elusión $0.15\uni{m}$
+        \item $6$ peatones por debajo del umbral
+      \end{resultado}
+    \end{column}
+  \end{cols}
+\end{frame}
+
+\begin{frame}{Lado de elusión en los cruces experimentales}
+  \centering
+  \renewcommand{\arraystretch}{1.4}
+  \begin{columns}[T]
+    \begin{column}{0.46\textwidth}
+      \centering{\small Por peatón}\par\smallskip
+      \begin{tabular}{lc}
+        \hline
+        Elude a su derecha & $22$ \\
+        Elude a su izquierda & $8$ \\
+        \hline
+      \end{tabular}
+    \end{column}
+    \begin{column}{0.46\textwidth}
+      \centering{\small Por evento}\par\smallskip
+      \begin{tabular}{lc}
+        \hline
+        Ambos a su derecha & $9$ \\
+        Ambos a su izquierda & $3$ \\
+        Ambos, a lados opuestos & $0$ \\
+        Elude uno solo & $6$ \\
+        Ninguno elude & $0$ \\
+        \hline
+      \end{tabular}
+    \end{column}
+  \end{columns}
+
+  \vspace{12pt}
+  \begin{columns}[T]
+    \begin{column}{0.46\textwidth}
+      \begin{parametros}
+        \item Lado: signo de $\delta$ ($\delta > 0$: a su derecha)
+      \end{parametros}
+    \end{column}
+    \begin{column}{0.46\textwidth}
+      \begin{resultado}
+        \item Si eluden los dos, siempre hacia el mismo lado
+        \item Elusión a la izquierda en $5$ eventos ($6$, $8$, $10$, $12$ y $14$)
+      \end{resultado}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{$|\delta|$ según el lado de elusión}
+  \begin{cols}
+    \begin{column}{0.62\textwidth}
+      \figura{desvios_histograma.png}
+    \end{column}
+    \begin{column}{0.34\textwidth}
+      \begin{resultado}
+        \item A su derecha: $0.4 \pm 0.1\uni{m}$
+        \item A su izquierda: $0.5 \pm 0.1\uni{m}$
+        \item No elude: $0.10 \pm 0.03\uni{m}$
+      \end{resultado}
+    \end{column}
+  \end{cols}
+\end{frame}
