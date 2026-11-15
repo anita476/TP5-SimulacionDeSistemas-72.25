@@ -226,7 +226,8 @@ def plot_individual(metrics: list[int], indir: Path, outdir: Path) -> None:
     save_figure(fig, outdir / "optimos_individuales.png", extra=(legend,))
 
     # per-event errors: each metric keeps its own scale and unit, so each panel has its own y label
-    fig, axes = plt.subplots(1, len(data), figsize=(11.6, 5.4), layout="constrained")
+    # sized for a 0.78 column: the population parameters go in a box beside it on the slide (guía 1.7)
+    fig, axes = plt.subplots(1, len(data), figsize=(9.8, 5.4), layout="constrained")
     fig.get_layout_engine().set(h_pad=0.15)
     axes = np.atleast_1d(axes)
     for ax, d in zip(axes, data):
@@ -259,6 +260,9 @@ def draw_crossval(ax, metric: int, indir: Path) -> int:
         ax.errorbar(x, mean / scale, yerr=sd / scale, fmt="o", markersize=13, color=color, ecolor=color, capsize=9,
                     capthick=2.2, elinewidth=2.2, zorder=3)
     ax.axhline(E_pop / scale, color="black", linestyle=":", linewidth=1.8, label="calibración poblacional", zorder=1)
+    # legend entry only (nothing drawn): says what the point and its error bar are
+    ax.errorbar([np.nan], [np.nan], yerr=[np.nan], fmt="o", markersize=13, color="0.45", capsize=9, capthick=2.2,
+                elinewidth=2.2, label="promedio ± desvío entre particiones")
     ax.set_xticks([0, 1])
     ax.set_xticklabels(["Entrenamiento\n(13 eventos)", "Validación\n(5 eventos)"])
     ax.set_xlim(-0.6, 1.6)
@@ -279,7 +283,8 @@ def plot_crossval(metrics: list[int], indir: Path, outdir: Path) -> None:
         style_axes(ax, "Conjunto de eventos", f"Error medio ({unit})")  # words, not symbols (guía 1.8)
         ax.set_title(f"Métrica {metric}")
     handles, labels = axes[0].get_legend_handles_labels()
-    legend = fig.legend(handles, labels, loc="outside lower center", ncol=len(labels))
+    # matplotlib lists the line before the error bar; the point and its bar go first
+    legend = fig.legend(handles[::-1], labels[::-1], loc="outside lower center", ncol=len(labels))
     save_figure(fig, outdir / "validacion_cruzada.png", extra=(legend,))
 
 
