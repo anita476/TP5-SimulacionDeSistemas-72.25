@@ -16,7 +16,7 @@ P, O, T = np.array([1.5, 2.5]), np.array([5.0, 2.5]), np.array([9.3, 2.5])
 
 def arrow(ax, p, q, **kw):
     ax.annotate("", xy=q, xytext=p, arrowprops=dict(
-        arrowstyle=kw.pop("style", "<->"), color=kw.pop("color", "k"), lw=1.8,
+        arrowstyle=kw.pop("style", "<->"), color=kw.pop("color", "k"), lw=kw.pop("lw", 1.8),
         shrinkA=0, shrinkB=0, **kw))
 
 
@@ -37,6 +37,9 @@ def main():
     x0, x1, x2 = P[0], O[0], T[0]
     y = 2.5 - R * (s - x0) * (s - x2) / ((x1 - x0) * (x1 - x2))
     ax.plot(s, y, color="k", lw=2.2, zorder=2)
+    tangent_slope = -R * (x0 - x2) / ((x1 - x0) * (x1 - x2))
+    e0 = np.array([1.0, tangent_slope])
+    e0 /= np.linalg.norm(e0)
 
     # target: cruz verde inclinada 45 grados
     h = 0.35 / np.sqrt(2)
@@ -54,12 +57,14 @@ def main():
     # partícula
     ax.add_patch(Circle(P, R_P, fc=BLUE, ec="k", lw=1.5, zorder=4))
     ax.plot(*P, ".", color="k", ms=5, zorder=6)
+    e0_tip = P + 1.65 * e0
+    arrow(ax, P, e0_tip, style="-|>", color=BLUE, lw=2.6, mutation_scale=22)
+    ax.text(e0_tip[0] + 0.08, e0_tip[1] - 0.12, r"$e_0$",
+            color=BLUE, fontsize=24, ha="left", va="top")
 
     # obstáculo y radio r_o
     ax.add_patch(Circle(O, R_O, fc=ORANGE, ec="k", lw=1.5, zorder=4))
-    ax.plot(*zip(O, O + R_O * np.array([np.cos(np.deg2rad(40)), np.sin(np.deg2rad(40))])), color="k", lw=2, zorder=5)
     ax.plot(*O, ".", color="k", ms=5, zorder=6)
-    ax.text(O[0] + 0.55, O[1] + 0.45, "$r$", fontsize=26, ha="center")
 
     # partícula al pasar: su centro queda a d_lat del borde del obstáculo
     G = np.array([O[0], O[1] - R])

@@ -1,25 +1,165 @@
-\begin{frame}{Modelo}
-  \large
-  Ecuación de Newton para cada peatón $i$:
-  \[
-    m_i\,\ddot{\vv{r}}_i = \vv{F}_{Gi} + \vv{F}_{Di}
-  \]
-  \vspace{6pt}
-  Fuerza de autopropulsión:
-  \[
-    \vv{F}_{Di} = m_i\,\frac{v_{di}\,\alert{\vv{e}_0} - \vv{v}_i}{\tau_i}
-    \qquad\quad \text{\normalsize capa de elusión: solo modifica } \alert{\vv{e}_0}
-  \]
-  \vspace{6pt}
-  Fuerza de contacto, con $\varepsilon_{ij} = d_{ij} - (r_i + r_j)$:
-  \[
-    \vv{F}_{Gi} = \sum_{j\neq i}\Big[\big(-\varepsilon_{ij}\,k_n\big)\,\vv{e}^{\,n}_{ij}
-      + \big(v^{t}_{ij}\,\varepsilon_{ij}\,k_t\big)\,\vv{e}^{\,t}_{ij}\Big]\,g(\varepsilon_{ij})
-  \]
-  \small{SFM sin fuerza social}
+
+\begin{frame}{Modelo: SFM sin fuerza social}
+
+\textbf{
+Ecuación de Newton para cada peatón $i$:
+}
+
+\[
+m_i\,\ddot{\vv{r}}_i =
+\vv{F}_{Gi} + \vv{F}_{Di}
+\]
+
+\vspace{6pt}
+
+\textbf{Fuerza de autopropulsión:}
+
+\[
+\vv{F}_{Di} =
+m_i\,\frac{v_{di}\,\alert{\vv{e}_0} - \vv{v}_i}{\tau_i}
+\]
+
+\[
+\text{\normalsize Capa de elusión: solo modifica }
+\alert{\vv{e}_0}
+\]
+
+\vspace{6pt}
+
+\textbf{
+Fuerza de contacto, con
+$\varepsilon_{ij} = d_{ij} - (r_i + r_j)$:
+}
+
+\[
+\begin{aligned}
+\vv{F}_{Gi} = \sum_{j\neq i}
+\Big[
+&(-\varepsilon_{ij}\,k_n)\,\vv{e}^{\,n}_{ij}\\
+&+ (v^{t}_{ij}\,\varepsilon_{ij}\,k_t)\,
+\vv{e}^{\,t}_{ij}
+\Big]
+\end{aligned}
+\]
+
 \end{frame}
 
 
+
 \begin{frame}{Capa de elusión}
+
+\textbf{Sistema de referencia local}
+
+\[
+\mathbf{u} =
+\frac{\mathbf{t}-\mathbf{p}}{\|\mathbf{t}-\mathbf{p}\|},
+\qquad
+\mathbf{r} =
+\begin{pmatrix}u_y\\-u_x\end{pmatrix}
+\]
+
+\textbf{Proyección de la posición del obstáculo}
+
+\[
+\mathbf{q}=\mathbf{o}-\mathbf{p}
+\]
+
+\[
+d_{\parallel}=\mathbf{q}\cdot\mathbf{u},
+\qquad
+d_{\perp}=\mathbf{q}\cdot\mathbf{r}
+\]
+
+\textbf{Condición de conflicto}
+
+\[
+R=r_o+d_{\text{lat}},
+\qquad
+d_T=\|\mathbf{t}-\mathbf{p}\|
+\]
+
+\[
+\boxed{
+\|\mathbf{o}-\mathbf{p}\|\leq d_{\text{act}}
+\quad\land\quad
+0<d_{\parallel}<d_T
+\quad\land\quad
+|d_{\perp}|<R
+}
+\]
+
+\end{frame}
+
+\begin{frame}{Capa de elusión}
+    \begin{columns}[T,onlytextwidth]
+
+    \begin{column}{0.59\textwidth}
+    
+        \small
+        \setlength{\abovedisplayskip}{4pt}
+        \setlength{\belowdisplayskip}{4pt}
+        \setlength{\jot}{2pt}
+
+        \textbf{Interpolación cuadrática (Lagrange)}
+
+        \[
+        P_0=(0,0),\quad
+        P_1=(d_{\parallel},R),\quad
+        P_2=(d_T,0)
+        \]
+
+        \[
+        f(x)=ax^2+bx+c
+        \]
+
+        \[
+        \boxed{
+        m=f'(0)=
+        \frac{R\,d_T}
+        {d_{\parallel}(d_T-d_{\parallel})}
+        }
+        \]
+
+        \vspace{3pt}
+
+        \textbf{Integración con SFM}
+
+        \[
+        \boxed{
+        \mathbf{e}_0=
+        \frac{\mathbf{u}+m\mathbf{r}}
+        {\sqrt{1+m^2}}
+        }
+        \]
+
+        \vspace{3pt}
+
+
+        \[
+        \boxed{
+        \mathbf{F}_d=
+        \frac{m_p}{\tau}
+        (v_0\mathbf{e}_0-\mathbf{v})
+        }
+        \]
+    \end{column}
+
+    
+\begin{column}{0.38\textwidth}
+
+    \begin{minipage}[c][0.90\textheight][c]{\linewidth}
+        \centering
+
+        \includegraphics[
+            width=\linewidth,
+            keepaspectratio
+        ]{elusion_activacion.png}
+
+    \end{minipage}
+
+\end{column}
+
+
+\end{columns}
 
 \end{frame}

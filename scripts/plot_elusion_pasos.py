@@ -2,8 +2,7 @@
 """Dos esquemas de la capa de elusión con la misma escena (geometría exacta).
 
 Marco local de i: u hacia el destino (derecha), n = derecha de i (abajo en la imagen, y = -n).
-i = (0, 0), destino = (D, 0), j = (s, l).  R = r_j + d_lat,  P = (s, l + R),
-target temporal = (s, s*y'(0)) sobre la tangente a la parábola en i.
+i = (0, 0), destino = (D, 0), j = (s, l).  R = r_j + d_lat,  P = (s, l + R).
 """
 import sys
 from pathlib import Path
@@ -34,11 +33,11 @@ def scene():
     return fig, ax
 
 
-def actors(ax):
+def actors(ax, destination_marker="*", destination_color="black"):
     ax.add_patch(Circle((0, 0), r, facecolor=BLUE, edgecolor="black", linewidth=1.4, zorder=5))
     ax.add_patch(Circle((s, -l), r, facecolor=VERMILLION, edgecolor="black", linewidth=1.4, zorder=5))
-    ax.plot(D, 0, marker="*", markersize=30, color="black", zorder=7, clip_on=False)
-    ax.text(D + 0.4, 0, "destino", fontsize=FS - 4, ha="left", va="center")
+    ax.plot(D, 0, marker=destination_marker, markersize=20 if destination_marker == "x" else 30,
+            markeredgewidth=3 if destination_marker == "x" else 1, color=destination_color, zorder=7, clip_on=False)
     ax.text(-r - 0.2, 0.6, "$i$", fontsize=FS, ha="right", va="center")
     ax.text(s - 0.85, -l + 0.95, "$j$", fontsize=FS, ha="right", va="center")
 
@@ -103,24 +102,20 @@ ax.text(D / 2, -3.0, "$D$", fontsize=FS, ha="center", va="center",
         bbox={"facecolor": "white", "edgecolor": "none", "pad": 2})
 save(fig, "elusion_deteccion")
 
-# ---------------- Figura 2: target temporal y dirección deseada ----------------
+# ---------------- Figura 2: dirección deseada ----------------
 fig, ax = scene()
 ax.plot([0, D], [0, 0], color="0.45", linestyle="--", linewidth=1.8, zorder=2)
 ax.add_patch(Circle((s, -l), R, facecolor="none", edgecolor=VERMILLION, linewidth=2.0, linestyle=(0, (1, 2.4)), zorder=3))
 x = np.linspace(0, D, 400)
 ax.plot(x, -Pn * x * (D - x) / (s * (D - s)), color=GREEN, linewidth=2.4, zorder=6)   # parábola auxiliar
-actors(ax)
+actors(ax, destination_marker="x", destination_color=GREEN)
 # dirección directa (gris) y dirección deseada (azul), con el ángulo entre ambas
 L = 3.3
 e = np.array([1.0, -slope]) / np.hypot(1.0, slope)
-T = np.array([s, -s * slope])                                  # target temporal
 arrow(ax, (0, 0), (L, 0), color="0.55", lw=3.0)
-ax.plot([0, T[0]], [0, T[1]], color=DARK, linestyle="--", linewidth=1.6, zorder=7)
 arrow(ax, (0, 0), tuple(L * e), color=DARK, lw=4.2, scale=30, zorder=10)
 ax.add_patch(Arc((0, 0), 4.4, 4.4, theta1=-np.degrees(np.arctan(slope)), theta2=0, color="black", linewidth=1.3, zorder=8))
 ax.text(1.75, -1.55, r"$\mathbf{e}_0$", fontsize=FS + 2, color=DARK, ha="center", va="center")
-ax.plot(*T, marker="*", markersize=26, markerfacecolor=DARK, markeredgecolor="black", markeredgewidth=1.0, zorder=10)
-ax.text(T[0] + 0.45, T[1] - 0.12, "target temporal", fontsize=FS - 4, color=DARK, ha="left", va="center")
 # R = r_j + d_lat sobre la vertical de j
 ax.plot([s, s], [-l, -l - r], color="black", linewidth=1.7, zorder=8)
 ax.plot(s, -l, marker="o", markersize=6, color="black", zorder=9)
@@ -129,12 +124,9 @@ cota(ax, (s, -l - r), (s, -Pn), color=D_LAT_COLOR, lw=2.8)
 ax.text(s - 0.28, (-l - r - Pn) / 2 - 0.1, r"$d_{\mathrm{lat}}$", fontsize=FS, color=D_LAT_COLOR, ha="right", va="center",
         bbox={"facecolor": "white", "edgecolor": "none", "pad": 1.2}, zorder=7)
 ax.plot(s, -Pn, marker="o", markersize=13, markerfacecolor=GREEN, markeredgecolor="black", markeredgewidth=1.3, zorder=11)
-ax.text(s + 0.32, -Pn + 0.48, "$P$", fontsize=FS, ha="left", va="center",
-        bbox={"facecolor": "white", "edgecolor": "none", "pad": 1.0}, zorder=7)
 a_R = np.radians(38)                                            # un radio del círculo punteado, etiquetado
 cR = np.array([s + R * np.cos(a_R), -l + R * np.sin(a_R)])
 arrow(ax, (s, -l), tuple(cR), lw=1.5, scale=18, style="->", zorder=8)
 ax.text(cR[0] + 0.3, cR[1] + 0.22, r"$R = r_j + d_{\mathrm{lat}}$", fontsize=FS - 2, ha="left", va="center")
-ax.text(9.2, -1.45, "parábola auxiliar", fontsize=FS - 4, color="#007A59", ha="center", va="center")
 save(fig, "elusion_activacion")
-print(f"R={R}, P=(s, {Pn:.3f}), y'(0)={slope:.4f}, target temporal=(s, {s*slope:.3f})")
+print(f"R={R}, P=(s, {Pn:.3f}), y'(0)={slope:.4f}")
