@@ -26,6 +26,7 @@ from lib.traj import DEFAULT_TRIALS_PATH, Position, read_experiment, read_trials
 NO_EVADE_M = 0.15
 AMBIGUOUS_LO_M = NO_EVADE_M - 0.02
 AMBIGUOUS_HI_M = NO_EVADE_M + 0.02
+ONSET_FRACTION = 0.10
 
 _SIDE_HEADER = re.compile(r"#\s*(izquierda|derecha):\s*id\s+([^,\s]+)", re.IGNORECASE)
 
@@ -56,6 +57,8 @@ class Walker:
     lado_propio: str
     delta_ca: float
     y_ca: float
+    onset: int | None
+    d_start: float | None
 
 
 @dataclass(frozen=True)
@@ -67,6 +70,10 @@ class Trial:
     higher_y: str
     yielding: str
     model: str
+    case: str
+    initiator: str
+    onset: int
+    d_start: float
     tracks: dict[str, dict[int, Position]]
 
 
@@ -144,6 +151,17 @@ def peak_sample(track: dict[int, Position], chord: Chord, person: str) -> tuple[
     return delta, x, y
 
 
+def onset_frame(track: dict[int, Position], chord: Chord, delta_peak: float) -> int:
+    # Signed: entering the corridor from the queue bends the start of the track to the opposite side
+    # of the evasion, and |delta| would fire on that bend instead of on the evasion.
+    sign = 1.0 if delta_peak > 0.0 else -1.0
+    threshold = ONSET_FRACTION * abs(delta_peak)
+    for frame in sorted(track):
+        if sign * lateral(chord, *track[frame]) >= threshold:
+            return frame
+    raise ValueError(f"no frame reaches {threshold:.4f} m, below its own peak {abs(delta_peak):.4f} m")
+
+
 def lab_side_of(chord: Chord, x: float, y: float) -> str:
     dy = y - chord_y(chord, x, y)
     if dy > 0.0:
@@ -214,11 +232,42 @@ def classify_model(left: Walker, right: Walker) -> str:
     return "ninguno"
 
 
+def classify_case(left: Walker, right: Walker) -> str:
+    sides = {walker.lado_propio for walker in (left, right) if walker.evades}
+    if sides == {"derecha"}:
+        return "por_derecha"
+    if sides == {"izquierda"}:
+        return "por_izquierda"
+    raise ValueError(
+        f"expected the evaders to share a side, got izquierda={left.lado_propio} derecha={right.lado_propio}"
+    )
+
+
+def position_at(track: dict[int, Position], frame: int) -> Position:
+    # Missing frames count as standing still: the last recorded position, or the first one
+    # if the pedestrian was not tracked yet.
+    earlier = [recorded for recorded in track if recorded <= frame]
+    return track[max(earlier) if earlier else min(track)]
+
+
+def start_distance(track: dict[int, Position], other: dict[int, Position], onset: int) -> float:
+    x, y = track[onset]
+    ox, oy = position_at(other, onset)
+    return math.hypot(x - ox, y - oy)
+
+
 def analyze_walker(
-    person: str, side: str, track: dict[int, Position], chord: Chord, x_ca: float, y_ca: float
+    person: str,
+    side: str,
+    track: dict[int, Position],
+    other: dict[int, Position],
+    chord: Chord,
+    x_ca: float,
+    y_ca: float,
 ) -> Walker:
     delta_peak, x_peak, y_peak = peak_sample(track, chord, person)
     evades = abs(delta_peak) >= NO_EVADE_M
+    onset = onset_frame(track, chord, delta_peak) if evades else None
     return Walker(
         person=person,
         side=side,
@@ -228,6 +277,8 @@ def analyze_walker(
         lado_propio=own_side(delta_peak, evades),
         delta_ca=lateral(chord, x_ca, y_ca),
         y_ca=y_ca,
+        onset=onset,
+        d_start=start_distance(track, other, onset) if onset is not None else None,
     )
 
 
@@ -255,8 +306,18 @@ def analyze_trial(path: Path, number: int, left_id: str, right_id: str) -> Trial
         d_min, left_frame, right_frame = closest_approach(left_track, right_track)
         left_xy, right_xy = left_track[left_frame], right_track[right_frame]
 
-        left = analyze_walker(left_id, "izquierda", left_track, left_chord, *left_xy)
-        right = analyze_walker(right_id, "derecha", right_track, right_chord, *right_xy)
+        left = analyze_walker(left_id, "izquierda", left_track, right_track, left_chord, *left_xy)
+        right = analyze_walker(right_id, "derecha", right_track, left_track, right_chord, *right_xy)
+
+        case = classify_case(left, right)
+        evaders = sorted(
+            (walker for walker in (left, right) if walker.evades), key=lambda walker: walker.onset
+        )
+        first = evaders[0]
+        if len(evaders) == 2 and evaders[1].onset == first.onset:
+            initiator = "empate"
+        else:
+            initiator = first.side
     except ValueError as error:
         message = str(error)
         if message.startswith(f"{path}:"):
@@ -278,6 +339,10 @@ def analyze_trial(path: Path, number: int, left_id: str, right_id: str) -> Trial
         higher_y=higher_y,
         yielding=classify_yielding(left.evades, right.evades),
         model=classify_model(left, right),
+        case=case,
+        initiator=initiator,
+        onset=first.onset,
+        d_start=first.d_start,
         tracks=tracks,
     )
 
@@ -295,6 +360,28 @@ def mean_std(values: list[float]) -> str:
 
 def count_own_side(walkers: list[Walker], label: str) -> int:
     return sum(1 for walker in walkers if own_side(walker.delta_peak, walker.evades) == label)
+
+
+def trial_d_starts(trials: list[Trial], case: str) -> list[float]:
+    return [trial.d_start for trial in trials if trial.case == case]
+
+
+def walker_d_starts(trials: list[Trial], case: str) -> list[float]:
+    return [
+        walker.d_start
+        for trial in trials
+        if trial.case == case
+        for walker in (trial.left, trial.right)
+        if walker.d_start is not None
+    ]
+
+
+def initiator_id(trial: Trial) -> str:
+    if trial.initiator == "izquierda":
+        return trial.left.person
+    if trial.initiator == "derecha":
+        return trial.right.person
+    return "empate"
 
 
 def write_table(path: Path, trials: list[Trial]) -> None:
@@ -331,6 +418,34 @@ def write_table(path: Path, trials: list[Trial]) -> None:
             f"{trial.model} {trial.left.delta_peak:.6f} {trial.right.delta_peak:.6f}"
         )
 
+    lines.append("")
+    lines.append(
+        f"# inicio: primer cuadro con delta hacia el lado del pico >= {ONSET_FRACTION:.2f} |delta_pico| del primer elusor; "
+        "d_inicio = distancia entre centros en ese cuadro"
+    )
+    lines.append(
+        "# caso por_derecha: los que eluden lo hacen a su derecha; por_izquierda: a su izquierda "
+        "(los que no eluden no tienen inicio; su prueba toma el caso del unico elusor)"
+    )
+    lines.append("# cuadros sin registro: el peaton esta quieto en su ultima (o primera) posicion")
+    lines.append("# prueba caso iniciador lado_iniciador cuadro_inicio d_inicio_m")
+    for trial in trials:
+        lines.append(
+            f"{trial.number} {trial.case} {initiator_id(trial)} {trial.initiator} "
+            f"{trial.onset} {trial.d_start:.6f}"
+        )
+
+    lines.append("")
+    lines.append("# d_inicio por persona: cada elusor en su propio cuadro de inicio")
+    lines.append("# prueba id lado caso cuadro_inicio d_inicio_m")
+    for trial in trials:
+        for walker in (trial.left, trial.right):
+            if walker.d_start is not None:
+                lines.append(
+                    f"{trial.number} {walker.person} {walker.side} {trial.case} "
+                    f"{walker.onset} {walker.d_start:.6f}"
+                )
+
     yielding = [trial.yielding for trial in trials]
     model = [trial.model for trial in trials]
     lines.extend(
@@ -359,6 +474,10 @@ def write_table(path: Path, trials: list[Trial]) -> None:
             f"# y_mayor izquierda {sum(1 for trial in trials if trial.higher_y == 'izquierda')}",
             f"# y_mayor derecha {sum(1 for trial in trials if trial.higher_y == 'derecha')}",
             f"# y_mayor empate {sum(1 for trial in trials if trial.higher_y == 'empate')}",
+            f"# d_inicio por_derecha {mean_std(trial_d_starts(trials, 'por_derecha'))}",
+            f"# d_inicio por_izquierda {mean_std(trial_d_starts(trials, 'por_izquierda'))}",
+            f"# d_inicio persona por_derecha {mean_std(walker_d_starts(trials, 'por_derecha'))}",
+            f"# d_inicio persona por_izquierda {mean_std(walker_d_starts(trials, 'por_izquierda'))}",
         ]
     )
     if ambiguous:
@@ -406,6 +525,10 @@ def print_summary(trials: list[Trial]) -> None:
         f"uno solo={model.count('uno_solo')}  "
         f"ninguno={model.count('ninguno')}"
     )
+    print(f"d_inicio por derecha:           {mean_std(trial_d_starts(trials, 'por_derecha'))}")
+    print(f"d_inicio por izquierda:         {mean_std(trial_d_starts(trials, 'por_izquierda'))}")
+    print(f"d_inicio persona por derecha:   {mean_std(walker_d_starts(trials, 'por_derecha'))}")
+    print(f"d_inicio persona por izquierda: {mean_std(walker_d_starts(trials, 'por_izquierda'))}")
 
 
 def _track_xy(track: dict[int, Position]) -> tuple[list[float], list[float]]:
@@ -483,6 +606,45 @@ def plot_histogram(trials: list[Trial], out_path: Path) -> None:
     )
     ax.set_ylim(0.0, max(mean + std for mean, std in zip(means, stds)) * 1.15)
     style_axes(ax, "Lado de elusión", r"Desvío lateral máximo $|\delta|$ (m)")
+    save_figure(fig, out_path)
+
+
+def plot_d_start(right: list[float], left: list[float], out_path: Path) -> None:
+    groups = (("Por derecha", right, BLUE), ("Por izquierda", left, VERMILLION))
+    fig, ax = new_figure()
+    tops: list[float] = []
+    for position, (title, values, color) in enumerate(groups):
+        if not values:
+            raise ValueError(f"no d_inicio values for {title}")
+        mean = statistics.fmean(values)
+        std = statistics.stdev(values) if len(values) >= 2 else 0.0
+        ax.bar(
+            position,
+            mean,
+            color=color,
+            edgecolor="black",
+            linewidth=0.6,
+            yerr=std,
+            capsize=4.5,
+            error_kw={"ecolor": "black", "elinewidth": 1.2},
+            zorder=2,
+        )
+        n = len(values)
+        offsets = [0.0] if n == 1 else [-0.25 + 0.5 * index / (n - 1) for index in range(n)]
+        ax.scatter(
+            [position + offset for offset in offsets],
+            values,
+            marker=MARKERS[0],
+            facecolor="white",
+            edgecolor="black",
+            linewidth=0.9,
+            s=45,
+            zorder=3,
+        )
+        tops.append(max(mean + std, max(values)))
+    ax.set_xticks(range(len(groups)), [title for title, _values, _color in groups])
+    ax.set_ylim(0.0, max(tops) * 1.15)
+    style_axes(ax, "Elusión", r"Distancia al iniciar el desvío $d_{\mathrm{inicio}}$ (m)")
     save_figure(fig, out_path)
 
 
@@ -624,6 +786,16 @@ def main() -> None:
         plot_deviations(trials, args.out_dir / "desvios_por_prueba.png")
         plot_deviation_distribution(trials, args.out_dir / "desvios_distribucion.png")
         plot_histogram(trials, args.out_dir / "desvios_histograma.png")
+        plot_d_start(
+            trial_d_starts(trials, "por_derecha"),
+            trial_d_starts(trials, "por_izquierda"),
+            args.out_dir / "d_inicio_por_caso.png",
+        )
+        plot_d_start(
+            walker_d_starts(trials, "por_derecha"),
+            walker_d_starts(trials, "por_izquierda"),
+            args.out_dir / "d_inicio_por_persona.png",
+        )
         plot_trajectories(trials, args.out_dir / "trayectorias_reales.png")
         plot_summary(trials, args.out_dir / "resumen_lados.png")
     except OSError as error:

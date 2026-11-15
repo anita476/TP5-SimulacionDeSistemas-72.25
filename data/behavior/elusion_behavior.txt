@@ -58,6 +58,62 @@
 18 0.573980 derecha solo_izquierda uno_solo 0.474767 0.083837
 19 0.609335 derecha ambos ambos_derecha 0.334586 0.346902
 
+# inicio: primer cuadro con delta hacia el lado del pico >= 0.10 |delta_pico| del primer elusor; d_inicio = distancia entre centros en ese cuadro
+# caso por_derecha: los que eluden lo hacen a su derecha; por_izquierda: a su izquierda (los que no eluden no tienen inicio; su prueba toma el caso del unico elusor)
+# cuadros sin registro: el peaton esta quieto en su ultima (o primera) posicion
+# prueba caso iniciador lado_iniciador cuadro_inicio d_inicio_m
+1 por_derecha 36 derecha 20090 6.619160
+3 por_derecha 1 derecha 20385 7.149479
+4 por_derecha 10 izquierda 20547 6.928488
+5 por_derecha 12 derecha 20692 7.297935
+6 por_izquierda 9 izquierda 20835 6.374716
+7 por_derecha 20 izquierda 20968 6.980384
+8 por_izquierda 27 izquierda 21131 6.281753
+9 por_derecha 39 derecha 21281 7.467815
+10 por_izquierda 42 derecha 21452 7.120105
+11 por_derecha 24 derecha 21611 6.782085
+12 por_izquierda 22 izquierda 21793 5.309194
+13 por_derecha 35 derecha 21932 7.382006
+14 por_izquierda 28 derecha 22087 7.010064
+15 por_derecha 34 derecha 22291 7.258941
+16 por_derecha 48 derecha 22451 7.569585
+17 por_derecha 45 derecha 22612 7.356798
+18 por_derecha 26 izquierda 22795 6.631279
+19 por_derecha 38 derecha 22971 7.059289
+
+# d_inicio por persona: cada elusor en su propio cuadro de inicio
+# prueba id lado caso cuadro_inicio d_inicio_m
+1 3 izquierda por_derecha 20106 3.854198
+1 36 derecha por_derecha 20090 6.619160
+3 43 izquierda por_derecha 20390 6.688285
+3 1 derecha por_derecha 20385 7.149479
+4 10 izquierda por_derecha 20547 6.928488
+5 12 derecha por_derecha 20692 7.297935
+6 9 izquierda por_izquierda 20835 6.374716
+6 6 derecha por_izquierda 20861 2.067564
+7 20 izquierda por_derecha 20968 6.980384
+8 27 izquierda por_izquierda 21131 6.281753
+8 37 derecha por_izquierda 21145 4.239116
+9 16 izquierda por_derecha 21299 5.362944
+9 39 derecha por_derecha 21281 7.467815
+10 42 derecha por_izquierda 21452 7.120105
+11 23 izquierda por_derecha 21614 6.494349
+11 24 derecha por_derecha 21611 6.782085
+12 22 izquierda por_izquierda 21793 5.309194
+13 15 izquierda por_derecha 21950 5.572064
+13 35 derecha por_derecha 21932 7.382006
+14 30 izquierda por_izquierda 22102 5.805621
+14 28 derecha por_izquierda 22087 7.010064
+15 46 izquierda por_derecha 22312 5.053478
+15 34 derecha por_derecha 22291 7.258941
+16 47 izquierda por_derecha 22460 7.045276
+16 48 derecha por_derecha 22451 7.569585
+17 2 izquierda por_derecha 22628 6.108089
+17 45 derecha por_derecha 22612 7.356798
+18 26 izquierda por_derecha 22795 6.631279
+19 29 izquierda por_derecha 22973 6.851185
+19 38 derecha por_derecha 22971 7.059289
+
 # resumen
 # umbral_no_elude_m 0.15
 # n_pruebas 18
@@ -81,6 +137,10 @@
 # y_mayor izquierda 5
 # y_mayor derecha 13
 # y_mayor empate 0
+# d_inicio por_derecha media=7.1141 m  std=0.3113 m  n=13
+# d_inicio por_izquierda media=6.4192 m  std=0.7234 m  n=5
+# d_inicio persona por_derecha media=6.6142 m  std=0.9164 m  n=22
+# d_inicio persona por_izquierda media=5.5260 m  std=1.6809 m  n=8
 # ambiguos |delta| en [0.13, 0.17] m: prueba id |delta_pico|
 # 5 4 0.130185
 # 10 17 0.139015

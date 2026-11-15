@@ -162,14 +162,23 @@ delta es la distancia con signo a la cuerda inicio-fin, positiva hacia su
 derecha (normal rx = uy, ry = -ux). Si |delta| < 0.15 m, cuenta como que 
 no elude.
 
+Cada prueba es de elusión por derecha si los que eluden lo hacen a su derecha y por izquierda
+si lo hacen a su izquierda; si elude uno solo, decide su lado. El inicio del corrimiento de un elusor es el primer cuadro
+en que delta, hacia el lado de su pico, llega al 10% de |delta_pico|; el iniciador es el
+elusor que empieza antes, y `d_inicio` es la distancia entre centros en ese cuadro
+(en los cuadros sin registro, el otro peatón se toma quieto en su última posición, o en la primera
+si todavía no había aparecido). `d_inicio_por_persona.png` repite la medida para cada elusor en su
+propio cuadro de inicio, como verificación; los que no eluden no tienen inicio y no aparecen.
+
 ```bash
 python scripts/analyze_behavior.py
 ```
 
 Escribe en `data/behavior/` la tabla `elusion_behavior.txt` (una fila por
-peatón, un bloque por prueba y el resumen) y las figuras
-`desvios_por_prueba.png`, `desvios_distribucion.png`, `desvios_histograma.png`, `trayectorias_reales.png`
-y `resumen_lados.png`.
+peatón, un bloque por prueba, un bloque de `d_inicio` y el resumen) y las figuras
+`desvios_por_prueba.png`, `desvios_distribucion.png`, `desvios_histograma.png`, `d_inicio_por_caso.png`,
+`d_inicio_por_persona.png`,
+`trayectorias_reales.png` y `resumen_lados.png`.
 
 ### Comparaciones de trayectorias 
 
