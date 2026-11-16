@@ -19,28 +19,81 @@
   \end{cols}
 \end{frame}
 
-\begin{frame}{Animación del sistema}
-  \begin{cols}
-    \begin{column}{0.72\textwidth}
-      \centering{\small Evento 15 (menor $E^{(2)}_\ell$)}\par\smallskip
-      \includegraphics[width=\linewidth,height=0.66\textheight,keepaspectratio]{anim_a.png}
-      \par\smallskip{\scriptsize\url{https://youtu.be/PENDIENTE}}
-    \end{column}
-    \begin{column}{0.25\textwidth}
-      \begin{parametros}
-        \item $\dlat = 0.25\uni{m}$
-        \item $\dact = 5\uni{m}$
-      \end{parametros}
-    \end{column}
-  \end{cols}
-\end{frame}
+\ifshowvideo
+  \begin{frame}{Animación del sistema}
+    \begin{cols}
+      \begin{column}{0.72\textwidth}
+        \centering{\small Evento 15 (menor $E^{(2)}_\ell$)}\par\smallskip
+        \includemedia[
+            width=0.80\linewidth,
+            height=0.60\linewidth,
+            activate=onclick,
+            addresource=Ejecucion_evento_15_menor_E2.mp4,
+            flashvars={
+                    Ejecucion_evento_15_menor_E2.mp4
+                    &autoPlay=false
+                    &loop=true
+            }
+            ]{\includegraphics[width=0.8\linewidth]{anim_a.png}}{VPlayer.swf}
+      \end{column}
+      \begin{column}{0.25\textwidth}
+        \begin{parametros}
+          \item $\dlat = 0.25\uni{m}$
+          \item $\dact = 5\uni{m}$
+        \end{parametros}
+      \end{column}
+    \end{cols}
+  \end{frame}
+\else
+  \begin{frame}{Animación del sistema}
+    \begin{cols}
+      \begin{column}{0.72\textwidth}
+        \centering{\small Evento 15 (menor $E^{(2)}_\ell$)}\par\smallskip
+        \includegraphics[width=\linewidth,height=0.66\textheight,keepaspectratio]{anim_a.png}
+        \par\smallskip{\scriptsize\url{https://youtu.be/KSQrVHfS_ZA}}
+      \end{column}
+      \begin{column}{0.25\textwidth}
+        \begin{parametros}
+          \item $\dlat = 0.25\uni{m}$
+          \item $\dact = 5\uni{m}$
+        \end{parametros}
+      \end{column}
+    \end{cols}
+  \end{frame}
+\fi
 
+\ifshowvideo
+  \begin{frame}{Animación del sistema}
+    \begin{cols}
+      \begin{column}{0.72\textwidth}
+        \centering{\small Evento 11 (mayor $E^{(2)}_\ell$)}\par\smallskip
+        \includemedia[
+              width=0.80\linewidth,
+              height=0.60\linewidth,
+              activate=onclick,
+              addresource=Ejecucion_evento_11_mayor_E2.mp4,
+              flashvars={
+                      Ejecucion_evento_11_mayor_E2.mp4
+                      &autoPlay=false
+                      &loop=true
+              }
+              ]{\includegraphics[width=0.8\linewidth]{anim_b.png}}{VPlayer.swf}
+      \end{column}
+      \begin{column}{0.25\textwidth}
+        \begin{parametros}
+          \item $\dlat = 0.25\uni{m}$
+          \item $\dact = 5\uni{m}$
+        \end{parametros}
+      \end{column}
+    \end{cols}
+  \end{frame}
+\else
 \begin{frame}{Animación del sistema}
   \begin{cols}
     \begin{column}{0.72\textwidth}
       \centering{\small Evento 11 (mayor $E^{(2)}_\ell$)}\par\smallskip
       \includegraphics[width=\linewidth,height=0.66\textheight,keepaspectratio]{anim_b.png}
-      \par\smallskip{\scriptsize\url{https://youtu.be/PENDIENTE}}
+      \par\smallskip{\scriptsize\url{https://youtu.be/dB3gDh1TF_U}}
     \end{column}
     \begin{column}{0.25\textwidth}
       \begin{parametros}
@@ -50,6 +103,7 @@
     \end{column}
   \end{cols}
 \end{frame}
+\fi
 
 \begin{frame}{Evolución temporal de $d^2_i$}
   \begin{columns}[c]
