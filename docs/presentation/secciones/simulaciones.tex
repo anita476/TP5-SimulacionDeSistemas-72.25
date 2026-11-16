@@ -75,9 +75,13 @@
     \langle E\rangle(\dlat,\,\dact) = \frac{1}{M}\sum_{\ell=1}^{M} E_\ell(\dlat,\,\dact)
   \]
   \vspace{2pt}
-  Barra de error: desvío estándar muestral entre eventos,\ $\langle E\rangle \pm \sigma_E$
+  Barra de error ($\langle E\rangle \pm \sigma_E$, desvío entre eventos) y ganancia de individualizar:
   \[
     \sigma_E = \sqrt{\frac{1}{M-1}\sum_{\ell=1}^{M}\big(E_\ell - \langle E\rangle\big)^2}
+    \qquad
+    G = \frac{\langle E\rangle_{\mathrm{pob}} - \langle E\rangle_{\mathrm{ind}}}{\langle E\rangle_{\mathrm{pob}}},
+    \quad
+    \langle E\rangle_{\mathrm{ind}} = \frac{1}{M}\sum_{\ell=1}^{M}\min_{\dlat,\,\dact} E_\ell
   \]
 \end{frame}
 
