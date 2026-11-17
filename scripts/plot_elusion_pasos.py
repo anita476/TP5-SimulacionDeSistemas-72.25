@@ -106,6 +106,9 @@ save(fig, "elusion_deteccion")
 # ---------------- Figura 2: dirección deseada ----------------
 fig, ax = scene(xlim=(-1.55, 13.35), ylim=(-2.25, 3.55))
 ax.plot([0, D], [0, 0], color="0.45", linestyle="--", linewidth=1.8, zorder=2)
+# instante de activación: la distancia entre centros de i y j vale d_act
+arrow(ax, (0, 0), (s, -l), color=D_ACT_COLOR, lw=2.8, scale=26, style="<->", zorder=8)
+ax.text(2.3, 1.05, r"$d_{\mathrm{act}}$", fontsize=FS, color=D_ACT_COLOR, ha="center", va="center")
 ax.add_patch(Circle((s, -l), R, facecolor="none", edgecolor=VERMILLION, linewidth=2.0,
                     linestyle=(0, (1, 2.4)), zorder=3, clip_on=False))
 x = np.linspace(0, D, 400)
